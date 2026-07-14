@@ -33,7 +33,7 @@ MonoBehaviour:
   Invalidated:
     m_PersistentCalls:
       m_Calls: []
-  isTesting: 1
+  isTesting: 0
   m_PrefabParent: {fileID: 1661912868639658944, guid: f158aa2be3df6489185ef721f6fd79c1,
     type: 3}
   m_FuturePrefabInstances:

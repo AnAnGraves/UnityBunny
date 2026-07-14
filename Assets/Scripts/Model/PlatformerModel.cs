@@ -30,13 +30,18 @@ namespace Platformer.Model
         /// <summary>
         /// A global jump modifier applied to all initial jump velocities.
         /// </summary>
-        public float jumpModifier = 1.5f;
+        public float jumpModifier = 1.0f;
 
         /// <summary>
         /// A global jump modifier applied to slow down an active jump when 
         /// the user releases the jump input.
         /// </summary>
-        public float jumpDeceleration = 0.5f;
+        public float jumpDeceleration = 0.0f;
+
+        /// <summary>
+        /// The rate at which world time flows when charging
+        /// </summary>
+        public float chargingTimeDilation = 0.2f;
 
     }
 }
