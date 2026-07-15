@@ -116,8 +116,12 @@ namespace Platformer.Mechanics
         private bool doLaunch;
         /*internal new*/ public Collider2D collider2d;
         /*internal new*/ public AudioSource audioSource;
+        /*internal new*/ public ParticleSystem chargeParticles;
+        /*internal new*/ public ParticleSystemRenderer chargeParticleRenderer;
         public Health health;
         public bool controlEnabled = true;
+
+        public Material[] chargeLevelMaterials = { null, null, null, null };
 
         bool jump;
         Vector2 move;
@@ -139,6 +143,8 @@ namespace Platformer.Mechanics
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
             DebugText = GetComponentInChildren<TextMeshProUGUI>();
+            chargeParticles = GetComponent<ParticleSystem>();
+            chargeParticleRenderer = GetComponent<ParticleSystemRenderer>();
 
             m_MoveAction = InputSystem.actions.FindAction("Player/Move");
             m_JumpAction = InputSystem.actions.FindAction("Player/Jump");
@@ -259,8 +265,17 @@ namespace Platformer.Mechanics
                     }
                     break;
                 case JumpState.Charging:
+
                     jumpChargeTime += Time.deltaTime;
                     chargeStage = CalculateChargeStage();
+
+                    chargeParticleRenderer.material = chargeLevelMaterials[Math.Clamp(chargeStage, 0, maxChargeStage)];
+
+                    if (!chargeParticles.isPlaying)
+                    {
+                        chargeParticles.Play();
+                    }
+
                     if (doLaunch)
                     {
                         jumpState = JumpState.Launch;
@@ -281,9 +296,14 @@ namespace Platformer.Mechanics
                         preBallisticTimeRemaining = 0.0f;
                         isPreBallistic = false;
                     }
+                    else if(!isPreBallistic)
+                    {
+                        chargeParticles.Stop();
+                    }
                     break;
                 case JumpState.Landed:
                     jumpState = JumpState.Grounded;
+                    chargeParticles.Stop();
                     break;
             }
         }
