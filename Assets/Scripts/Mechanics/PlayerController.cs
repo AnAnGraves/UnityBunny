@@ -11,7 +11,9 @@ using TMPro;
 using JetBrains.Annotations;
 using System.Text;
 using System;
+using System.Linq;
 using UnityEngine.Splines.Interpolators;
+using UnityEditor.Animations;
 
 namespace Platformer.Mechanics
 {
@@ -26,9 +28,19 @@ namespace Platformer.Mechanics
         public AudioClip ouchAudio;
 
         /// <summary>
-        /// Max horizontal speed of the player.
+        /// Max horizontal speed of the player. (u/s)
         /// </summary>
         public float maxSpeed = 7;
+
+        /// <summary>
+        /// Max horizontal acceleration of the player on the ground (u/s^2).
+        /// </summary>
+        public float groundAccel = 14;
+
+        /// <summary>
+        /// increased acceleration force when lowering speed.
+        /// </summary>
+        public float groundBraking = 28;
 
         /// <summary>
         /// Max horizontal acceleration per second in air when allowed
@@ -88,17 +100,47 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Highest possible charge state
         /// </summary>
-        public int chargeStage = 0;
+        private int chargeStage = 0;
 
         /// <summary>
         /// Is the player traveling in a straight line (no air-control, no gravity, until collision or state ends)
         /// </summary>
-        public bool isPreBallistic = false;
+        private bool isPreBallistic = false;
 
         /// <summary>
         /// Countdown to going ballistic
         /// </summary>
         private float preBallisticTimeRemaining = 0.0f;
+
+        /// <summary>
+        /// Used to enforce pre-ballistic constant velocity
+        /// </summary>
+        private Vector2 LastLaunchVelocity;
+
+        /// <summary>
+        /// Used in collision events as velocity becomes 0
+        /// </summary>
+        private Vector2 LastFrameVelocity;
+
+        /// <summary>
+        /// Used to enforce pre-ballistic constant velocity
+        /// </summary>
+        public PhysicsMaterial2D[] StickyMaterials = { null };
+
+        /// <summary>
+        /// required magnitude of velocity component pointing into surface to stick
+        /// </summary>
+        public float StickSpeedThreshold = 2.0f;
+
+        /// <summary>
+        /// how long to stay stuck before falling if stick charge isn't entered
+        /// </summary>
+        public float StickTime = 0.5f;
+
+        /// <summary>
+        /// countdown to unsticking
+        /// </summary>
+        private float timeUntilFall = 0.5f;
 
 
         //******* DEBUG *******
@@ -106,13 +148,12 @@ namespace Platformer.Mechanics
         Vector2 LastScreenPosition;
         Vector2 LastMousePosition;
         Vector2 LastLaunchComponents;
-        Vector2 LastLaunchVelocity;
 
         /* internal new */ public TextMeshProUGUI DebugText;
 
         //***** END DEBUG *****
 
-        public JumpState jumpState = JumpState.Grounded;
+        public JumpState state = JumpState.Grounded;
         private bool doLaunch;
         /*internal new*/ public Collider2D collider2d;
         /*internal new*/ public AudioSource audioSource;
@@ -146,6 +187,8 @@ namespace Platformer.Mechanics
             chargeParticles = GetComponent<ParticleSystem>();
             chargeParticleRenderer = GetComponent<ParticleSystemRenderer>();
 
+            chargeParticles.Stop();
+
             m_MoveAction = InputSystem.actions.FindAction("Player/Move");
             m_JumpAction = InputSystem.actions.FindAction("Player/Jump");
             
@@ -170,18 +213,22 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 //ground movement or air control
-                if(jumpState == JumpState.Grounded || (!isPreBallistic && jumpState == JumpState.InFlight) || jumpState == JumpState.Falling)
+                if(state == JumpState.Grounded || (!isPreBallistic && state == JumpState.InFlight) || state == JumpState.Falling)
                 { 
                     move.x = m_MoveAction.ReadValue<Vector2>().x; 
                 }
 
-
-                if (jumpState == JumpState.Grounded && m_JumpAction.WasPressedThisFrame())
+                if (state == JumpState.Grounded && m_JumpAction.WasPressedThisFrame())
                 {
                     //begin charging
-                    jumpState = JumpState.PrepareToJump;
+                    state = JumpState.PrepareToJump;
                 }
-                else if ((jumpState == JumpState.Charging || jumpState == JumpState.PrepareToJump) && m_JumpAction.WasReleasedThisFrame())
+                else if (state == JumpState.Stick && m_JumpAction.WasPressedThisFrame())
+                {
+                    //begin charging
+                    state = JumpState.StickCharge;
+                }
+                else if ((state == JumpState.Charging || state == JumpState.PrepareToJump || state == JumpState.StickCharge) && m_JumpAction.WasReleasedThisFrame())
                 {
                     //end charge and either b-hop or launch
                     doLaunch = true;
@@ -189,17 +236,18 @@ namespace Platformer.Mechanics
             }
             else
             {
+                //WHEN CONTROL DISABLED: 
                 //cancel charges without launching
-                if(jumpState == JumpState.Charging || jumpState == JumpState.PrepareToJump)
+                if(state == JumpState.Charging || state == JumpState.PrepareToJump)
                 {
                     //stop charging on the ground
                     jumpChargeTime = 0;
-                    jumpState = JumpState.Grounded;
-                } else if (jumpState == JumpState.StickCharge || jumpState == JumpState.Stick)
+                    state = JumpState.Grounded;
+                } else if (state == JumpState.StickCharge || state == JumpState.Stick)
                 {
                     //stop charging/clinging on walls and fall immediately
                     jumpChargeTime = 0;
-                    jumpState = JumpState.Falling;
+                    state = JumpState.Falling;
                 }
 
                 //kill horizontal momentum
@@ -218,6 +266,48 @@ namespace Platformer.Mechanics
             DebugText.ForceMeshUpdate();
 
             base.Update();
+        }
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if(state == JumpState.InFlight || state == JumpState.Falling)
+            {
+                if (StickyMaterials.Contains<PhysicsMaterial2D>(collision.collider.attachedRigidbody.sharedMaterial))
+                {
+                    Vector2 averageContactPoint = Vector2.zero;
+                    foreach (ContactPoint2D point in collision.contacts)
+                    {
+                        averageContactPoint += point.point;
+                    }
+                    averageContactPoint /= collision.contacts.Length;
+
+                    Vector2 effectiveAntiNormal = averageContactPoint - (Vector2)(collider2d.bounds.center);
+                    effectiveAntiNormal.Normalize();
+
+                    float stickVelocity = Vector2.Dot(LastFrameVelocity, effectiveAntiNormal); 
+                    if(state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
+                    {
+                        velocity = Vector2.zero;
+                        state = JumpState.Stick;
+                        isPreBallistic = false;
+                        timeUntilFall = StickTime;
+                    }
+                    else
+                    {
+                        if(isPreBallistic)
+                        {
+                            isPreBallistic = false;
+                        }
+
+                        //remove all velocity towards collision point
+                        LastFrameVelocity -= (effectiveAntiNormal * stickVelocity);
+                        if(LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed,2))
+                        {
+                            LastFrameVelocity = maxSpeed * LastFrameVelocity.normalized;
+                        }
+                        velocity = LastFrameVelocity;
+                    }
+                }
+            }
         }
 
         protected override void FixedUpdate()
@@ -240,7 +330,7 @@ namespace Platformer.Mechanics
 
         void UpdateJumpState()
         {
-            switch (jumpState)
+            switch (state)
             {
                 case JumpState.PrepareToJump:
                     jumpChargeTime += Time.deltaTime;
@@ -248,7 +338,7 @@ namespace Platformer.Mechanics
 
                     if(!IsGrounded) //run off a cliff before charge stops you
                     {
-                        jumpState = JumpState.InFlight;
+                        state = JumpState.InFlight;
                         jumpChargeTime = 0;
                         chargeStage = -1;
                         doLaunch = false;
@@ -257,13 +347,14 @@ namespace Platformer.Mechanics
 
                     if(chargeStage >= 0)
                     {
-                        jumpState = JumpState.Charging;
+                        state = JumpState.Charging;
                     } 
                     else if(doLaunch)
                     {
-                        jumpState = JumpState.Launch;
+                        state = JumpState.Launch;
                     }
                     break;
+
                 case JumpState.Charging:
 
                     jumpChargeTime += Time.deltaTime;
@@ -278,31 +369,75 @@ namespace Platformer.Mechanics
 
                     if (doLaunch)
                     {
-                        jumpState = JumpState.Launch;
+                        state = JumpState.Launch;
                     }
                     break;
+
                 case JumpState.Launch:
                     if (!IsGrounded)
                     {
                         Schedule<PlayerJumped>().player = this;
-                        jumpState = JumpState.InFlight;
+                        state = JumpState.InFlight;
                     }
                     break;
-                case JumpState.InFlight: //TODO: handle walls
+
+                case JumpState.InFlight: 
                     if (IsGrounded)
                     {
                         Schedule<PlayerLanded>().player = this;
-                        jumpState = JumpState.Landed;
+                        state = JumpState.Landed;
                         preBallisticTimeRemaining = 0.0f;
                         isPreBallistic = false;
+                        velocity.y = 0;
                     }
                     else if(!isPreBallistic)
                     {
                         chargeParticles.Stop();
                     }
                     break;
+
+                case JumpState.Stick:
+                    timeUntilFall = Mathf.Max(timeUntilFall - Time.deltaTime, 0.0f);
+                    if(timeUntilFall == 0.0f)
+                    {
+                        state = JumpState.Falling;
+                    }
+                    break;
+
+                case JumpState.StickCharge:
+                    jumpChargeTime += Time.deltaTime;
+                    chargeStage = CalculateChargeStage();
+
+                    chargeParticleRenderer.material = chargeLevelMaterials[Math.Clamp(chargeStage, 0, maxChargeStage)];
+
+                    if (!chargeParticles.isPlaying)
+                    {
+                        chargeParticles.Play();
+                    }
+                    break;
+
+                case JumpState.StickLaunch:
+                    Schedule<PlayerJumped>().player = this;
+                    state = JumpState.Falling;
+                    break;
+
+                case JumpState.Falling: //this is basically the same as InFlight but you can't stick again
+                    if (IsGrounded)
+                    {
+                        Schedule<PlayerLanded>().player = this;
+                        state = JumpState.Landed;
+                        preBallisticTimeRemaining = 0.0f;
+                        isPreBallistic = false;
+                        velocity.y = 0;
+                    }
+                    else if (!isPreBallistic)
+                    {
+                        chargeParticles.Stop();
+                    }
+                    break;
+
                 case JumpState.Landed:
-                    jumpState = JumpState.Grounded;
+                    state = JumpState.Grounded;
                     chargeParticles.Stop();
                     break;
             }
@@ -310,32 +445,80 @@ namespace Platformer.Mechanics
 
         protected override void ComputeVelocity()
         {
+            LastFrameVelocity = velocity;
             if (!IsGrounded)
             {
-                if (!isPreBallistic)
+                switch(state)
                 {
-                    // apply air control and drag
-                    velocity.x = velocity.x + (move.x * airControlLateral * Time.deltaTime);
-                    float overspeed = Math.Abs(velocity.x) - maxSpeed;
-                    float dragRatio = overspeed / (maxDragThreshold - maxSpeed);
-                    float drag = Mathf.Lerp(airControlLateral, maxDragLateral, dragRatio);
-                    if (velocity.x > maxSpeed)
-                    {
-                        //force left accel
-                        float maxDecel = velocity.x - (drag * Time.deltaTime);
-                        velocity.x = Mathf.Min(Mathf.Max(maxDecel, maxSpeed), velocity.x);
-                    }
-                    else if (velocity.x < -maxSpeed)
-                    {
-                        //force right accel
-                        //force left accel
-                        float maxDecel = velocity.x + (drag * Time.deltaTime);
-                        velocity.x = Mathf.Max(Mathf.Min(maxDecel, -maxSpeed), velocity.x);
-                    }
-                }
-                else if(jumpState == JumpState.InFlight)
-                {
-                    velocity = LastLaunchVelocity;
+                    case JumpState.InFlight:
+                    case JumpState.Falling:
+                    case JumpState.StickLaunch:
+
+                        if (!isPreBallistic)
+                        {
+                            // apply air control and drag
+                            velocity.x = velocity.x + (move.x * airControlLateral * Time.deltaTime);
+                            float overspeed = Math.Abs(velocity.x) - maxSpeed;
+                            float dragRatio = overspeed / (maxDragThreshold - maxSpeed);
+                            float drag = Mathf.Lerp(airControlLateral, maxDragLateral, dragRatio);
+                            if (velocity.x > maxSpeed)
+                            {
+                                //force left accel
+                                float maxDecel = velocity.x - (drag * Time.deltaTime);
+                                velocity.x = Mathf.Min(Mathf.Max(maxDecel, maxSpeed), velocity.x);
+                            }
+                            else if (velocity.x < -maxSpeed)
+                            {
+                                //force right accel
+                                //force left accel
+                                float maxDecel = velocity.x + (drag * Time.deltaTime);
+                                velocity.x = Mathf.Max(Mathf.Min(maxDecel, -maxSpeed), velocity.x);
+                            }
+                        }
+                        else
+                        {
+                            velocity = LastLaunchVelocity;
+                        }
+
+                        break;
+
+                    case JumpState.Stick:
+                        velocity = Vector2.zero;
+                        break;
+
+                    case JumpState.StickCharge:
+                        if(doLaunch)
+                        {
+                            //no b-hop when stickcharging
+
+                            //TODO: constrain angle, gamepad controls
+                            Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(this.body.position);
+                            Vector2 launchComponents = (Mouse.current.position.value - new Vector2(playerScreenPos.x, playerScreenPos.y)).normalized;
+
+                            velocity.x = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.x;
+                            velocity.y = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.y;
+                            preBallisticTimeRemaining = preBallisticTimes[chargeStage];
+                            if (preBallisticTimeRemaining > 0.0f)
+                            {
+                                isPreBallistic = true;
+                            }
+
+                            LastLaunchComponents = launchComponents;
+                            LastLaunchVelocity = velocity;
+
+                            jumpChargeTime = 0.0f;
+                            chargeStage = -1;
+                            doLaunch = false;
+                            state = JumpState.StickLaunch;
+                        }
+                        else 
+                        {
+                            velocity = Vector2.zero;
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
 
             }
@@ -370,14 +553,23 @@ namespace Platformer.Mechanics
                 chargeStage = -1;
                 doLaunch = false;
             }
-            else if(jumpState == JumpState.Charging)
+            else if(state == JumpState.Charging)
             {
                 velocity.x = 0;
             }
-            else 
+            else
             {
-                //just walkin'
-                velocity.x = move.x * maxSpeed;
+                //ground movement w/ accel
+                float accel = (Math.Sign(velocity.x) != 0 && (Math.Sign(move.x) != Math.Sign(move.x))) ? groundBraking : groundAccel;
+                float targetXVelocity = move.x * maxSpeed;
+                if(targetXVelocity > velocity.x)
+                {
+                    velocity.x = Mathf.Min(targetXVelocity, velocity.x + (accel * Time.deltaTime));
+                }
+                else if (targetXVelocity < velocity.x)
+                {
+                    velocity.x = Mathf.Max(targetXVelocity, velocity.x - (accel * Time.deltaTime)); 
+                }
             }
 
             if (move.x > 0.01f)
@@ -388,7 +580,7 @@ namespace Platformer.Mechanics
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
 
-            gravityModifier = isPreBallistic ? 0 : 1;
+            gravityModifier = (isPreBallistic || state == JumpState.Stick || state == JumpState.StickCharge || state == JumpState.StickLaunch) ? 0 : 1;
 
             targetVelocity.x = velocity.x;
             targetVelocity.y = velocity.y;
@@ -403,6 +595,7 @@ namespace Platformer.Mechanics
             InFlight,
             Stick,
             StickCharge,
+            StickLaunch,
             Falling,
             Landed
         }

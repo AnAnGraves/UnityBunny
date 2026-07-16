@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4326583848728327468}
   - component: {fileID: 2048752468590478853}
   - component: {fileID: 3960644067175116568}
-  - component: {fileID: 3968898148977308099}
+  - component: {fileID: 3811190053160715558}
   m_Layer: 13
   m_Name: Player
   m_TagString: Player
@@ -65,6 +65,8 @@ MonoBehaviour:
   respawnAudio: {fileID: 8300000, guid: e18959d46b63f3c4c8cc020a433cf848, type: 3}
   ouchAudio: {fileID: 8300000, guid: 6c05149e5a2fba64ba172e25a61074b7, type: 3}
   maxSpeed: 3
+  groundAccel: 14
+  groundBraking: 28
   airControlLateral: 3
   maxDragLateral: 9
   maxDragThreshold: 10
@@ -93,8 +95,15 @@ MonoBehaviour:
   jumpState: 0
   collider2d: {fileID: 0}
   audioSource: {fileID: 0}
+  chargeParticles: {fileID: 0}
+  chargeParticleRenderer: {fileID: 0}
   health: {fileID: 0}
   controlEnabled: 1
+  chargeLevelMaterials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!212 &212064061491315838
 SpriteRenderer:
   serializedVersion: 3
@@ -5134,8 +5143,8 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!58 &3968898148977308099
-CircleCollider2D:
+--- !u!61 &3811190053160715558
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5168,8 +5177,18 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.08326113, y: -0.12919998}
-  m_Radius: 0.26675892
+  m_Offset: {x: -0.0011568964, y: -0.10991001}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.28, y: 1.26}
+    newSize: {x: 1.28, y: 1.26}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.4122917, y: 0.6236801}
+  m_EdgeRadius: 0
 --- !u!1 &2519227376793069729
 GameObject:
   m_ObjectHideFlags: 0
