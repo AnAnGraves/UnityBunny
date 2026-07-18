@@ -76,12 +76,12 @@ namespace Platformer.Mechanics
         /// <summary>
         /// How long a stage 1 charge takes
         /// </summary>
-        public float[] chargeTimes = { 0.1f, 0.5f, 1.25f,  2.5f };
+        public float[] chargeTimes = { 0.5f, 1.0f, 1.75f,  2.75f };
 
         /// <summary>
         /// How long to fly straight (and block move input) before becoming subject to gravity again
         /// </summary>
-        public float[] preBallisticTimes = { 0.0f, 0.2f, 0.4f, 0.8f };
+        public float[] preBallisticTimes = { 0.0f, 0.33f, 0.67f, 1.0f };
 
         /// <summary>
         /// Whether to limit launch directions to a range around the normal vector
@@ -142,6 +142,11 @@ namespace Platformer.Mechanics
         /// countdown to unsticking
         /// </summary>
         private float timeUntilFall = 0.5f;
+
+        /// <summary>
+        /// normal of the surface you're launching from 
+        /// </summary>
+        private Vector2 launchNormal = Vector2.zero;
 
 
         //******* DEBUG *******
@@ -292,54 +297,112 @@ namespace Platformer.Mechanics
 
         protected void HandleTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
         {
-            SuperCustomProperties TiledProps = tileLayer ? tileLayer.gameObject.GetComponent<SuperCustomProperties>() : null;
 
-            if (TiledProps)
+            SuperTiled2Unity.CustomProperty physicsProp;
+            SuperCustomProperties TiledProps = tileLayer ? tileLayer.gameObject.GetComponent<SuperCustomProperties>() : null; 
+
+            bool validPhysics = TiledProps.TryGetCustomProperty("Physics", out physicsProp) ? physicsProp.m_Type == "int" : false;
+            SurfaceType physicsType = validPhysics ? (SurfaceType)(physicsProp.GetValueAsInt()) : SurfaceType.Invalid;
+
+            if (physicsType != SurfaceType.Invalid)
             {
-                SuperTiled2Unity.CustomProperty physicsProp;
-                if (TiledProps.TryGetCustomProperty("Physics", out physicsProp))
+                if(physicsType == SurfaceType.DeadlySurface)
                 {
-                    if (state == JumpState.InFlight || state == JumpState.Falling)
+                    //kill you
+                    Schedule<PlayerDeath>();
+                    return;
+                }
+
+                if (state == JumpState.InFlight || state == JumpState.Falling)
+                {
+                    switch (physicsType)
                     {
-                        if (physicsProp.m_Type == "int" && physicsProp.GetValueAsInt() == ((int)(SurfaceType.NormalSurface)))
-                        {
-                            Vector2 averageContactPoint = Vector2.zero;
-                            foreach (ContactPoint2D point in collision.contacts)
-                            {
-                                averageContactPoint += point.point;
-                            }
-                            averageContactPoint /= collision.contacts.Length;
-
-                            Vector2 effectiveAntiNormal = averageContactPoint - (Vector2)(collider2d.bounds.center);
-                            effectiveAntiNormal.Normalize();
-
-                            float stickVelocity = Vector2.Dot(LastFrameVelocity, effectiveAntiNormal);
-                            if (state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
-                            {
-                                velocity = Vector2.zero;
-                                state = JumpState.Stick;
-                                isPreBallistic = false;
-                                timeUntilFall = StickTime;
-                            }
-                            else
-                            {
-                                if (isPreBallistic)
-                                {
-                                    isPreBallistic = false;
-                                }
-
-                                //remove all velocity towards collision point
-                                LastFrameVelocity -= (effectiveAntiNormal * stickVelocity);
-                                if (LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed, 2))
-                                {
-                                    LastFrameVelocity = maxSpeed * LastFrameVelocity.normalized;
-                                }
-                                velocity = LastFrameVelocity;
-                            }
-                        }
+                        case SurfaceType.NormalSurface:
+                            HandleAirborneNormalSurfaceCollision(collision);
+                            return;                            
+                        case SurfaceType.RepelSurface:
+                            HandleAirborneRepelSurfaceCollision(collision);
+                            break;
+                        default:
+                            return;
                     }
                 }
             }
+        }
+
+        protected void HandleAirborneNormalSurfaceCollision(in Collision2D collision)
+        {
+            ContactPoint2D[] contactPoints = new ContactPoint2D[collision.contactCount];
+            collision.GetContacts(contactPoints);
+            Vector2 antiNormal = Vector2.zero;
+
+            foreach (ContactPoint2D point in contactPoints)
+            {
+                antiNormal += point.normal;
+            }
+
+            antiNormal.Normalize();
+            antiNormal *= -1;
+
+
+            if (-(antiNormal.y) > minGroundNormalY) // -y is equivalent to Vwctor2.Dot(antiNormal, Vectore2.down)
+            {
+                //grounded - don't need to stick
+                
+                //cancel out component of velocity into the ground
+                Vector2 velocityIntoGround = Vector2.Dot(LastFrameVelocity, antiNormal) * antiNormal;
+                LastFrameVelocity -= velocityIntoGround;
+
+                //slow ground velocity if needed
+                LastFrameVelocity = LastFrameVelocity.normalized * Mathf.Clamp(LastFrameVelocity.magnitude, -maxSpeed, maxSpeed);
+                velocity = LastFrameVelocity;
+
+                isPreBallistic = false;
+                return;
+            }
+
+            float stickVelocity = Vector2.Dot(LastFrameVelocity, antiNormal);
+            if (state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
+            {
+                velocity = Vector2.zero;
+                state = JumpState.Stick;
+                isPreBallistic = false;
+                timeUntilFall = StickTime;
+            }
+            else
+            {
+                if (isPreBallistic)
+                {
+                    isPreBallistic = false;
+                }
+
+                //remove all velocity towards collision point
+                LastFrameVelocity -= (antiNormal * stickVelocity);
+                if (LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed, 2))
+                {
+                    LastFrameVelocity = maxSpeed * LastFrameVelocity.normalized;
+                }
+                velocity = LastFrameVelocity;
+            }
+        }
+
+        protected void HandleAirborneRepelSurfaceCollision(in Collision2D collision)
+        {
+            ContactPoint2D[] contactPoints = new ContactPoint2D[collision.contactCount];
+            collision.GetContacts(contactPoints);
+            Vector2 normal = Vector2.zero;
+
+            foreach (ContactPoint2D point in contactPoints)
+            {
+                normal += point.normal;
+            }
+            normal.Normalize();
+
+            // reflection math
+            Vector2 normalVelocity = (normal * Vector2.Dot(normal, LastFrameVelocity));
+            LastFrameVelocity = LastFrameVelocity - (2 * normalVelocity);
+            velocity = LastFrameVelocity;
+            LastLaunchVelocity = LastFrameVelocity; //otherwise this will stomp the reflection
         }
 
         protected override void FixedUpdate()

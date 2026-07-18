@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="4" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="7" nextobjectid="1">
  <tileset firstgid="1" source="GrasslandTiled.tsx"/>
  <layer id="3" name="Background (No Physics)" width="30" height="20" tintcolor="#7f7f7f">
   <properties>
@@ -23,16 +23,16 @@
    eJxjYBgFo2AUDBTgIwEL0MB+AEo4AKs=
   </chunk>
    <chunk x="-16" y="-16" width="16" height="16">
-   eJxjYBgFIx3wA7EAEeokgJgPDYOACBCLEqE/AIiN0TAu/bjcg24GLv343INsBjn6kc0gVz8DAf3iROhnwaMf5D5YHOGLWwB3GgXm
+   eJxjYBgFIx3wA7EAEeokgJgPDYOACBCLEqE/AIiN0TAu/bjcg24GLv343INsBjn6kc0gVz8DAf3iROiHAVzhD4sjfHELAGmKBZI=
   </chunk>
    <chunk x="0" y="-16" width="16" height="16">
-   eJxjYBgFIxnwIWFZItTzA7EAEt8YCfsToV8EiEWx6MelF2hXAyH9+OwVJaCfkJsJ6ScEKNUvToZ+UJjxQXEAAf0AENgJVg==
+   eJxjYBgFIxnwIWFZItTzA7EAEt8YCfsToV8EiEWx6MelF2hXAyH9+OwVJaCfkJsJ6ScEKNUvToZ+UJjxQTG6HLp+APhJCIY=
   </chunk>
    <chunk x="-16" y="0" width="16" height="16">
-   eJxjYGBgEAFiUQbyAbn6jQdIPyMQ81PBfkYy9PNj0U8KECNDD8xePgaEn6kJQGYLYLFLALtyDECN9GdMgn249JPrBph+EOYjEaPrJxVTqh8ACbYKHQ==
+   eJxjYGBgEGGgDJCrn49C/cZI+kVJ0McIxPwU6Ec2h1T9/Fj0kwLEyNADsxcU3saEFJJptgAWuwSwK8cAoPATp8B+kH5K/EUt/SAsxwDxO7EYXT+pmFL9AIPoCaY=
   </chunk>
    <chunk x="0" y="0" width="16" height="16">
-   eJxjYCANiACxKIl6aKlfAIgZKdBPil5c+hmh7iBHPwyIU6jfGIj5iHAHPeOPH4ubBlv6IRWIMaDGFR+J2JgBEVfI/IHCAM+kCl0=
+   eJxjYCAdiJKhh1b6BYCYkQS9Imj6SdGLSz8j1B3k6IcBcQr1GwMxHxHuwKWfWECKfn4sbqLUfjEK9UtSqB8UzshxxUckloTqhWGYuPEAYwA1UAp1
   </chunk>
    <chunk x="16" y="0" width="16" height="16">
    eJxjYBgFo2AUkAv4CGABAvqNCWBRGusHAGvPA9s=
@@ -81,6 +81,54 @@
   </chunk>
    <chunk x="64" y="32" width="16" height="16">
    eJwzZmBgMB5APApGwSgYOAAA+hkGYQ==
+  </chunk>
+  </data>
+ </layer>
+ <layer id="4" name="Non-Stick" width="30" height="20" tintcolor="#00ffff">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="4"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="16" y="0" width="16" height="16">
+   eJxjYKAOYAJiPjQsRYJ+dSA2RsMOJOj3BWIWNMxMgv5RMApGIgAAiJYB6A==
+  </chunk>
+  </data>
+ </layer>
+ <layer id="5" name="Deadly" width="30" height="20" tintcolor="#ff0004">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-32" y="0" width="16" height="16">
+   eJxjYBgFo2AU0AIYE4EHWj8Ax+MFYg==
+  </chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+   eJxjYBgFo2AUkAuMh7h+AFCAAJo=
+  </chunk>
+   <chunk x="-32" y="16" width="16" height="16">
+   eJxjYMANAoDYmAAeBaNgFAxdAABSWQHp
+  </chunk>
+   <chunk x="-16" y="16" width="16" height="16">
+   eJzzZxgFo2AUjFQAAEAPAFA=
+  </chunk>
+  </data>
+ </layer>
+ <layer id="6" name="Repel" width="30" height="20" tintcolor="#bb8700">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="8"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-16" y="-16" width="16" height="16">
+   eJxjYBgFo2AUDDcQQKQ6ABCAAFE=
+  </chunk>
+   <chunk x="0" y="-16" width="16" height="16">
+   eJxjYBgFo2AUDFfgT0AeAA3gAFA=
+  </chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+   eJxjYIAAUQbKwEDrHwWjQJZC/XJUMGOoAQBJAwCY
+  </chunk>
+   <chunk x="0" y="0" width="16" height="16">
+   eJxjYCANiJCofrDpHwUjF0hQqFeSWg4ZRAAAHKMAhg==
   </chunk>
   </data>
  </layer>

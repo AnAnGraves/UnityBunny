@@ -6,12 +6,14 @@ using System.Collections.Generic;
 namespace SuperTiled2Unity
 {
     //Translates my custom Tiled enum Physics
-    public enum SurfaceType : ushort
+    //these AREN'T independent flags, but Tiled always treats enums as flag sets so the values are single on bits
+    public enum SurfaceType : ushort 
     {
-        NormalSurface = 1,      //Surface you can stick to
-        DeadlySurface,          //Surface what kills you on contact
-        NonStickSurface,        //Surface you CAN'T stick to
-        RepelSurface            //Surface that reverses your velocity then reflects it across the surface normal (like light hitting a mirror)
+        Invalid         = 0,           //used if a valid surface type can't be found
+        NormalSurface   = 1 << 0,      //Surface you can stick to
+        DeadlySurface    = 1 << 1,      //Surface what kills you on contact
+        NonStickSurface = 1 << 2,      //Surface you CAN'T stick to
+        RepelSurface    = 1 << 3       //Surface that reverses your velocity then reflects it across the surface normal (like light hitting a mirror)
     }
 
     [Serializable]
