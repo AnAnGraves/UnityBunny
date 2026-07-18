@@ -14,6 +14,7 @@ using System;
 using System.Linq;
 using UnityEngine.Splines.Interpolators;
 using UnityEditor.Animations;
+using SuperTiled2Unity;
 
 namespace Platformer.Mechanics
 {
@@ -98,9 +99,14 @@ namespace Platformer.Mechanics
         public int maxChargeStage = 3;
 
         /// <summary>
-        /// Highest possible charge state
+        /// Current charge state
         /// </summary>
         private int chargeStage = 0;
+
+        /// <summary>
+        /// Last calculated charge state, for identifying changes
+        /// </summary>
+        private int lastChargeStage = 0;
 
         /// <summary>
         /// Is the player traveling in a straight line (no air-control, no gravity, until collision or state ends)
@@ -121,11 +127,6 @@ namespace Platformer.Mechanics
         /// Used in collision events as velocity becomes 0
         /// </summary>
         private Vector2 LastFrameVelocity;
-
-        /// <summary>
-        /// Used to enforce pre-ballistic constant velocity
-        /// </summary>
-        public PhysicsMaterial2D[] StickyMaterials = { null };
 
         /// <summary>
         /// required magnitude of velocity component pointing into surface to stick
@@ -158,11 +159,11 @@ namespace Platformer.Mechanics
         /*internal new*/ public Collider2D collider2d;
         /*internal new*/ public AudioSource audioSource;
         /*internal new*/ public ParticleSystem chargeParticles;
-        /*internal new*/ public ParticleSystemRenderer chargeParticleRenderer;
+        /*internal new*/ public ParticleSystem.MainModule chargePFX;
         public Health health;
         public bool controlEnabled = true;
 
-        public Material[] chargeLevelMaterials = { null, null, null, null };
+        public Color[] chargeLevelColors = { Color.white, Color.red, Color.green, Color.blue };
 
         bool jump;
         Vector2 move;
@@ -185,7 +186,7 @@ namespace Platformer.Mechanics
             animator = GetComponent<Animator>();
             DebugText = GetComponentInChildren<TextMeshProUGUI>();
             chargeParticles = GetComponent<ParticleSystem>();
-            chargeParticleRenderer = GetComponent<ParticleSystemRenderer>();
+            chargePFX = chargeParticles.main;
 
             chargeParticles.Stop();
 
@@ -269,42 +270,73 @@ namespace Platformer.Mechanics
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if(state == JumpState.InFlight || state == JumpState.Falling)
+            
+            SuperTileLayer asTileLayer = null;
+            if(collision.collider.transform.parent)
             {
-                if (StickyMaterials.Contains<PhysicsMaterial2D>(collision.collider.attachedRigidbody.sharedMaterial))
+                if(collision.collider.transform.parent.parent)
                 {
-                    Vector2 averageContactPoint = Vector2.zero;
-                    foreach (ContactPoint2D point in collision.contacts)
+                    if(collision.collider.transform.parent.parent.gameObject)
                     {
-                        averageContactPoint += point.point;
-                    }
-                    averageContactPoint /= collision.contacts.Length;
-
-                    Vector2 effectiveAntiNormal = averageContactPoint - (Vector2)(collider2d.bounds.center);
-                    effectiveAntiNormal.Normalize();
-
-                    float stickVelocity = Vector2.Dot(LastFrameVelocity, effectiveAntiNormal); 
-                    if(state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
-                    {
-                        velocity = Vector2.zero;
-                        state = JumpState.Stick;
-                        isPreBallistic = false;
-                        timeUntilFall = StickTime;
-                    }
-                    else
-                    {
-                        if(isPreBallistic)
+                        asTileLayer = collision.collider.transform.parent.parent.gameObject.GetComponent<SuperTileLayer>();
+                        if(asTileLayer)
                         {
-                            isPreBallistic = false;
+                            HandleTileCollision(in asTileLayer, in collision);
                         }
+                    }
+                }
+            }
 
-                        //remove all velocity towards collision point
-                        LastFrameVelocity -= (effectiveAntiNormal * stickVelocity);
-                        if(LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed,2))
+            
+        }
+
+        protected void HandleTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
+        {
+            SuperCustomProperties TiledProps = tileLayer ? tileLayer.gameObject.GetComponent<SuperCustomProperties>() : null;
+
+            if (TiledProps)
+            {
+                SuperTiled2Unity.CustomProperty physicsProp;
+                if (TiledProps.TryGetCustomProperty("Physics", out physicsProp))
+                {
+                    if (state == JumpState.InFlight || state == JumpState.Falling)
+                    {
+                        if (physicsProp.m_Type == "int" && physicsProp.GetValueAsInt() == ((int)(SurfaceType.NormalSurface)))
                         {
-                            LastFrameVelocity = maxSpeed * LastFrameVelocity.normalized;
+                            Vector2 averageContactPoint = Vector2.zero;
+                            foreach (ContactPoint2D point in collision.contacts)
+                            {
+                                averageContactPoint += point.point;
+                            }
+                            averageContactPoint /= collision.contacts.Length;
+
+                            Vector2 effectiveAntiNormal = averageContactPoint - (Vector2)(collider2d.bounds.center);
+                            effectiveAntiNormal.Normalize();
+
+                            float stickVelocity = Vector2.Dot(LastFrameVelocity, effectiveAntiNormal);
+                            if (state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
+                            {
+                                velocity = Vector2.zero;
+                                state = JumpState.Stick;
+                                isPreBallistic = false;
+                                timeUntilFall = StickTime;
+                            }
+                            else
+                            {
+                                if (isPreBallistic)
+                                {
+                                    isPreBallistic = false;
+                                }
+
+                                //remove all velocity towards collision point
+                                LastFrameVelocity -= (effectiveAntiNormal * stickVelocity);
+                                if (LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed, 2))
+                                {
+                                    LastFrameVelocity = maxSpeed * LastFrameVelocity.normalized;
+                                }
+                                velocity = LastFrameVelocity;
+                            }
                         }
-                        velocity = LastFrameVelocity;
                     }
                 }
             }
@@ -321,10 +353,12 @@ namespace Platformer.Mechanics
             {
                 if(jumpChargeTime > chargeTimes[i])
                 {
+                    chargePFX.startColor = new ParticleSystem.MinMaxGradient(chargeLevelColors[Math.Clamp(i, 0, maxChargeStage)]);
                     return i;
                 }
             }
 
+            chargePFX.startColor = new ParticleSystem.MinMaxGradient(chargeLevelColors[0]);
             return -1; //hop not launch
         }
 
@@ -334,6 +368,7 @@ namespace Platformer.Mechanics
             {
                 case JumpState.PrepareToJump:
                     jumpChargeTime += Time.deltaTime;
+                    lastChargeStage = chargeStage;
                     chargeStage = CalculateChargeStage();
 
                     if(!IsGrounded) //run off a cliff before charge stops you
@@ -358,12 +393,12 @@ namespace Platformer.Mechanics
                 case JumpState.Charging:
 
                     jumpChargeTime += Time.deltaTime;
+                    lastChargeStage = chargeStage;
                     chargeStage = CalculateChargeStage();
-
-                    chargeParticleRenderer.material = chargeLevelMaterials[Math.Clamp(chargeStage, 0, maxChargeStage)];
 
                     if (!chargeParticles.isPlaying)
                     {
+                        chargeParticles.Simulate(0.25f * chargeParticles.main.startLifetime.Evaluate(0),true,true);
                         chargeParticles.Play();
                     }
 
@@ -406,12 +441,17 @@ namespace Platformer.Mechanics
 
                 case JumpState.StickCharge:
                     jumpChargeTime += Time.deltaTime;
+                    lastChargeStage = chargeStage;
                     chargeStage = CalculateChargeStage();
-
-                    chargeParticleRenderer.material = chargeLevelMaterials[Math.Clamp(chargeStage, 0, maxChargeStage)];
 
                     if (!chargeParticles.isPlaying)
                     {
+                        chargeParticles.Simulate(0.25f * chargeParticles.main.startLifetime.Evaluate(0), true, true);
+                        chargeParticles.Play();
+                    }
+                    else if (lastChargeStage != chargeStage)
+                    {
+                        chargePFX.startColor = new ParticleSystem.MinMaxGradient(chargeLevelColors[Math.Clamp(chargeStage, 0, maxChargeStage)]);
                         chargeParticles.Play();
                     }
                     break;
@@ -429,10 +469,6 @@ namespace Platformer.Mechanics
                         preBallisticTimeRemaining = 0.0f;
                         isPreBallistic = false;
                         velocity.y = 0;
-                    }
-                    else if (!isPreBallistic)
-                    {
-                        chargeParticles.Stop();
                     }
                     break;
 
@@ -489,27 +525,36 @@ namespace Platformer.Mechanics
                     case JumpState.StickCharge:
                         if(doLaunch)
                         {
-                            //no b-hop when stickcharging
-
-                            //TODO: constrain angle, gamepad controls
-                            Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(this.body.position);
-                            Vector2 launchComponents = (Mouse.current.position.value - new Vector2(playerScreenPos.x, playerScreenPos.y)).normalized;
-
-                            velocity.x = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.x;
-                            velocity.y = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.y;
-                            preBallisticTimeRemaining = preBallisticTimes[chargeStage];
-                            if (preBallisticTimeRemaining > 0.0f)
+                            if (chargeStage >= 0)
                             {
-                                isPreBallistic = true;
+                                //TODO: constrain angle, gamepad controls
+                                Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(this.body.position);
+                                Vector2 launchComponents = (Mouse.current.position.value - new Vector2(playerScreenPos.x, playerScreenPos.y)).normalized;
+
+                                velocity.x = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.x;
+                                velocity.y = launchSpeeds[chargeStage] * model.jumpModifier * launchComponents.y;
+                                preBallisticTimeRemaining = preBallisticTimes[chargeStage];
+                                if (preBallisticTimeRemaining > 0.0f)
+                                {
+                                    isPreBallistic = true;
+                                }
+
+                                LastLaunchComponents = launchComponents;
+                                LastLaunchVelocity = velocity;
+
+                                jumpChargeTime = 0.0f;
+                                chargeStage = -1;
+                                doLaunch = false;
+                                state = JumpState.StickLaunch;
                             }
-
-                            LastLaunchComponents = launchComponents;
-                            LastLaunchVelocity = velocity;
-
-                            jumpChargeTime = 0.0f;
-                            chargeStage = -1;
-                            doLaunch = false;
-                            state = JumpState.StickLaunch;
+                            else
+                            {
+                                //no b-hop, just fall
+                                jumpChargeTime = 0.0f;
+                                chargeStage = -1;
+                                doLaunch = false;
+                                state = JumpState.Falling;
+                            }
                         }
                         else 
                         {

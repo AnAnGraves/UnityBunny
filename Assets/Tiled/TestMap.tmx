@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="4" nextobjectid="1">
+ <tileset firstgid="1" source="GrasslandTiled.tsx"/>
+ <layer id="3" name="Background (No Physics)" width="30" height="20" tintcolor="#7f7f7f">
+  <properties>
+   <property name="unity:ignore" value="Collision"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-16" y="0" width="16" height="16">
+   eJxjYBgFlAIRIBYd1T8KhiAAAMx3AM4=
+  </chunk>
+  </data>
+ </layer>
+ <layer id="1" name="Regular Degular" width="30" height="20">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-16" y="-32" width="16" height="16">
+   eJxjYBgFo2AUDAbAD8R8JGJKAQBF3AC4
+  </chunk>
+   <chunk x="0" y="-32" width="16" height="16">
+   eJxjYBgFo2AUDBTgIwEL0MB+AEo4AKs=
+  </chunk>
+   <chunk x="-16" y="-16" width="16" height="16">
+   eJxjYBgFIx3wA7EAEeokgJgPDYOACBCLEqE/AIiN0TAu/bjcg24GLv343INsBjn6kc0gVz8DAf3iROhnwaMf5D5YHOGLWwB3GgXm
+  </chunk>
+   <chunk x="0" y="-16" width="16" height="16">
+   eJxjYBgFIxnwIWFZItTzA7EAEt8YCfsToV8EiEWx6MelF2hXAyH9+OwVJaCfkJsJ6ScEKNUvToZ+UJjxQXEAAf0AENgJVg==
+  </chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+   eJxjYGBgEAFiUQbyAbn6jQdIPyMQ81PBfkYy9PNj0U8KECNDD8xePgaEn6kJQGYLYLFLALtyDECN9GdMgn249JPrBph+EOYjEaPrJxVTqh8ACbYKHQ==
+  </chunk>
+   <chunk x="0" y="0" width="16" height="16">
+   eJxjYCANiACxKIl6aKlfAIgZKdBPil5c+hmh7iBHPwyIU6jfGIj5iHAHPeOPH4ubBlv6IRWIMaDGFR+J2JgBEVfI/IHCAM+kCl0=
+  </chunk>
+   <chunk x="16" y="0" width="16" height="16">
+   eJxjYBgFo2AUkAv4CGABAvqNCWBRGusHAGvPA9s=
+  </chunk>
+   <chunk x="32" y="0" width="16" height="16">
+   eJxjYBgFo4A8wEehfmMS7UK3jxT9lNqPSz8fBdh4EGAAcJEIXA==
+  </chunk>
+   <chunk x="48" y="0" width="16" height="16">
+   eJxjYBgFIxnwEZDjI6DGmICcMRFq6KFfgEL94hTqB2E+LJgU/bgwJfoBVKoI0Q==
+  </chunk>
+   <chunk x="64" y="0" width="16" height="16">
+   eJxjYBgFo2AUkAv4oJgUtcjYGIqJAcZ4MLn6AeGgAy0=
+  </chunk>
+   <chunk x="-16" y="16" width="16" height="16">
+   eJxjYGBgEAFiYzIxw6j+Uf2j+oesfgCTFS3h
+  </chunk>
+   <chunk x="0" y="16" width="16" height="16">
+   eJwzZmBgMB7Fo3gUj0gMAG/6MwE=
+  </chunk>
+   <chunk x="16" y="16" width="16" height="16">
+   eJwzZmBgMMaDRRnwA3x6R/WP6h/VP7j1AwByORrR
+  </chunk>
+   <chunk x="32" y="16" width="16" height="16">
+   eJwzZmBgMB7Fo3gUj0gMAG/6MwE=
+  </chunk>
+   <chunk x="48" y="16" width="16" height="16">
+   eJwzZsANjInEo/pH9Y/qH5r6AdViH+E=
+  </chunk>
+   <chunk x="64" y="16" width="16" height="16">
+   eJwzZmBgMAZiPiKw8SgexaN4WGEAWucxtA==
+  </chunk>
+   <chunk x="-16" y="32" width="16" height="16">
+   eJxjYGBgEAFiYzIxAxX0j4JRMAoGBgAAf3MFvQ==
+  </chunk>
+   <chunk x="0" y="32" width="16" height="16">
+   eJwzZmBgMB5APApGwSgYOAAA+hkGYQ==
+  </chunk>
+   <chunk x="16" y="32" width="16" height="16">
+   eJwzZmBgMMaDRRnwA3x6idE/CkbBKBg4AADPlANb
+  </chunk>
+   <chunk x="32" y="32" width="16" height="16">
+   eJwzZmBgMB5APApGwSgYOAAA+hkGYQ==
+  </chunk>
+   <chunk x="48" y="32" width="16" height="16">
+   eJwzZsANjInElOgfBaNgFAwcAADXigP9
+  </chunk>
+   <chunk x="64" y="32" width="16" height="16">
+   eJwzZmBgMB5APApGwSgYOAAA+hkGYQ==
+  </chunk>
+  </data>
+ </layer>
+ <layer id="2" name="Foreground (No Physics)" width="30" height="20" tintcolor="#ffffff">
+  <properties>
+   <property name="unity:ignore" value="Collision"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-16" y="-16" width="16" height="16">
+   eJxjYBgFo2AUDAQwHgT6ASykAJo=
+  </chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+   eJxjYCAfGFOgdzDopxYQAWLRUf2jYAgCAOZ5AWc=
+  </chunk>
+  </data>
+ </layer>
+</map>

@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+
+
+
+namespace SuperTiled2Unity
+{
+    //Translates my custom Tiled enum Physics
+    public enum SurfaceType : ushort
+    {
+        NormalSurface = 1,      //Surface you can stick to
+        DeadlySurface,          //Surface what kills you on contact
+        NonStickSurface,        //Surface you CAN'T stick to
+        RepelSurface            //Surface that reverses your velocity then reflects it across the surface normal (like light hitting a mirror)
+    }
+
+    [Serializable]
+    public class CustomProperty
+    {
+        public string m_Name;
+        public string m_Type;
+        public string m_Value;
+
+        public bool IsEmpty => string.IsNullOrEmpty(m_Name);
+    }
+
+    // Helper extension methods
+    public static class CustomPropertyListExtensions
+    {
+        public static bool TryGetProperty(this List<CustomProperty> list, string propertyName, out CustomProperty property)
+        {
+            if (list != null)
+            {
+                property = list.Find(p => String.Equals(p.m_Name, propertyName, StringComparison.OrdinalIgnoreCase));
+                return property != null;
+            }
+
+            property = null;
+            return false;
+        }
+    }
+}

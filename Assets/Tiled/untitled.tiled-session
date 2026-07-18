@@ -1,0 +1,28 @@
+{
+    "activeFile": "GrasslandTiled.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "GrasslandTiled.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        }
+    },
+    "last.imagePath": "F:/UNITY/PROJ/Bunny/Tiled",
+    "last.objectTemplatePath": "F:/UNITY/PROJ/Bunny/Tiled",
+    "openFiles": [
+        "GrasslandTiled.tsx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "GrasslandTiled.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.spacing": 10,
+    "tileset.tileSize": {
+        "height": 128,
+        "width": 128
+    }
+}

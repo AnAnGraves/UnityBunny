@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "name": "PhysicsType",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "NormalSurface",
+            "DeadlySurface",
+            "NonStickSurface",
+            "RepelSurface"
+        ],
+        "valuesAsFlags": true
+    }
+]
