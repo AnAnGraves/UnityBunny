@@ -4,14 +4,14 @@
  <image source="Grassland.png" width="1232" height="1232"/>
  <tile id="23">
   <objectgroup draworder="index" id="2">
-   <object id="2" template="Triangle.tx" gid="0" x="0" y="128" rotation="0">
+   <object id="2" template="Triangle.tx" x="0" y="128" rotation="0">
     <polygon points="0,0 128,-128 128,0 0,0"/>
    </object>
   </objectgroup>
  </tile>
  <tile id="28">
   <objectgroup draworder="index" id="2">
-   <object id="2" template="Triangle.tx" gid="0" x="128" y="128" rotation="0">
+   <object id="2" template="Triangle.tx" x="128" y="128" rotation="0">
     <polygon points="0,0 -128,-128 -128,0 0,0"/>
    </object>
   </objectgroup>
@@ -28,7 +28,7 @@
  </tile>
  <tile id="15">
   <objectgroup draworder="index" id="2">
-   <object id="3" template="LeftPartial.tx" x="0.0434783" y="0"/>
+   <object id="3" template="LeftPartial.tx" x="0" y="0"/>
   </objectgroup>
  </tile>
  <tile id="32">
@@ -44,15 +44,15 @@
  </tile>
  <tile id="40">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="HalfRect.tx" gid="0" x="0" y="64" rotation="0"/>
-   <object id="2" template="HalfTri.tx" gid="0" x="128.065" y="63.9674" rotation="0">
+   <object id="1" template="HalfRect.tx" x="0" y="64" rotation="0"/>
+   <object id="2" template="HalfTri.tx" x="128.065" y="63.9674" rotation="0">
     <polygon points="0,0 -128,0 -127.969,-64"/>
    </object>
   </objectgroup>
  </tile>
  <tile id="37">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="HalfTri.tx" gid="0" x="128" y="128" rotation="0">
+   <object id="1" template="HalfTri.tx" x="128" y="128" rotation="0">
     <polygon points="0,0 -128,0 -127.969,-64"/>
    </object>
   </objectgroup>
@@ -85,12 +85,12 @@
  </tile>
  <tile id="16">
   <objectgroup draworder="index" id="3">
-   <object id="2" template="LeftPartial.tx" x="15.8261" y="0.0434783"/>
+   <object id="2" template="LeftPartial.tx" x="16" y="0"/>
   </objectgroup>
  </tile>
  <tile id="18">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="LeftPartial.tx" x="0" y="0.0434783"/>
+   <object id="1" template="LeftPartial.tx" x="0" y="0"/>
   </objectgroup>
  </tile>
  <tile id="36">
@@ -105,14 +105,14 @@
  </tile>
  <tile id="78">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="Triangle.tx" gid="0" x="128" y="0" rotation="0">
+   <object id="1" template="Triangle.tx" x="128" y="0" rotation="0">
     <polygon points="0,0 -128,128 -128,0 0,0"/>
    </object>
   </objectgroup>
  </tile>
  <tile id="21">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="LeftPartial.tx" x="15.9565" y="-0.0869565"/>
+   <object id="1" template="LeftPartial.tx" x="16" y="0"/>
   </objectgroup>
  </tile>
  <tile id="50">
@@ -122,7 +122,7 @@
  </tile>
  <tile id="22">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="LeftPartial.tx" x="-0.130435" y="0"/>
+   <object id="1" template="LeftPartial.tx" x="0" y="0"/>
   </objectgroup>
  </tile>
  <tile id="26">

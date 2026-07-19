@@ -22,6 +22,21 @@ namespace Platformer.Mechanics
         public float gravityModifier = 1f;
 
         /// <summary>
+        /// A custom gravity coefficient applied to this entity.
+        /// </summary>
+        protected Vector2 lastSurfacePoint = Vector2.zero;
+
+        /// <summary>
+        /// A custom gravity coefficient applied to this entity.
+        /// </summary>
+        protected Vector2 lastSurfaceNormal = Vector2.up;
+
+        /// <summary>
+        /// How much moving up a slope should hamper speed, where 1.0f is the base behavior and 0.0f is no penalty
+        /// </summary>
+        public float slopeEffect = 1.0f;
+
+        /// <summary>
         /// environmentally dependent player gravity. automatically sets the normalized gravity direction when updated.
         /// </summary>
         private Vector2 _pGrav = Vector2.down;
@@ -157,6 +172,9 @@ namespace Platformer.Mechanics
                 {
                     var currentNormal = hitBuffer[i].normal;
 
+                    lastSurfacePoint = hitBuffer[0].point;
+                    lastSurfaceNormal = hitBuffer[0].normal;
+
                     float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
 
                     //is this surface flat enough to land on?
@@ -177,7 +195,10 @@ namespace Platformer.Mechanics
                         if (projection < 0)
                         {
                             //slower velocity if moving against the normal (up a hill).
-                            velocity = velocity - (projection * currentNormal);
+                            velocity = velocity - (slopeEffect * (projection * currentNormal));
+
+                            //slight boost up to ease transition
+                            velocity += personalGravityDirection * -0.05f;
                         }
                     }
                     else

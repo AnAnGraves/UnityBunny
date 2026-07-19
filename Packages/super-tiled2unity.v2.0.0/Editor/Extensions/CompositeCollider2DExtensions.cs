@@ -52,6 +52,7 @@ namespace SuperTiled2Unity.Editor
             var combined = go.AddComponent<PolygonCollider2D>();
             combined.pathCount = composite.pathCount;
             combined.isTrigger = composite.isTrigger;
+            combined.sharedMaterial = ST2USettings.instance.m_DefaultPhysMat;
 
             // Copy composite paths to combined PolygonCollider2D
             for (int p = 0; p < composite.pathCount; p++)
@@ -112,6 +113,7 @@ namespace SuperTiled2Unity.Editor
                 var edge = goEdge.AddComponent<EdgeCollider2D>();
                 edge.isTrigger = composite.isTrigger;
                 edge.points = points.ToArray();
+                edge.sharedMaterial = ST2USettings.instance.m_DefaultPhysMat;
 
                 goEdge.AddComponent<SuperColliderComponent>();
             }

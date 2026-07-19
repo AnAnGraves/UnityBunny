@@ -19,6 +19,7 @@ namespace SuperTiled2Unity.Editor
         public TextAsset m_ObjectTypesXml = null;
         public string m_ParseXmlError = string.Empty;
         public CompositeCollider2D.GeometryType m_CollisionGeometryType = CompositeCollider2D.GeometryType.Polygons;
+        public PhysicsMaterial2D m_DefaultPhysMat = null;
 
         public List<Color> m_LayerColors = new List<Color>()
         {

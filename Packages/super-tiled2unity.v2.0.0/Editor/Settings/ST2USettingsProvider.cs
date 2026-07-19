@@ -132,6 +132,13 @@ namespace SuperTiled2Unity.Editor
                 EditorGUILayout.Space();
             }
 
+            //Default PhysMat
+            {
+                var physMatProperty = m_SerializedObject.FindProperty(nameof(ST2USettings.m_DefaultPhysMat));
+                physMatProperty.objectReferenceValue = EditorGUILayout.ObjectField(SettingsContent.DefaultPhysMatContent, physMatProperty.objectReferenceValue, typeof(PhysicsMaterial2D), false);
+                EditorGUILayout.Space();
+            }
+
             // Animation settings
             {
                 var animationPrpoerty = m_SerializedObject.FindProperty(nameof(ST2USettings.m_AnimationFramerate));
@@ -372,6 +379,7 @@ namespace SuperTiled2Unity.Editor
             public static readonly GUIContent DefaultEdgesPerEllipseContent = new GUIContent("Default Edges Per Ellipse", "How many edges to use when appromixating ellipse/circle colliders. (Default Setting)");
             public static readonly GUIContent AnimationFramerateContent = new GUIContent("Animation Framerate", "How many frames per second for tile animations.");
             public static readonly GUIContent DefaultMaterialContent = new GUIContent("Default Material", "Set to the material you want to use for sprites and tiles imported by SuperTiled2Unity. Leave empy to use built-in sprite material.");
+            public static readonly GUIContent DefaultPhysMatContent = new GUIContent("Default Physics Material", "Physics material applied to all tilemap colliders by default.");
             public static readonly GUIContent MaterialMatchingsContent = new GUIContent("Material Matchings", "Match these materials by Tiled Layer names.");
             public static readonly GUIContent ObjectTypesXmlContent = new GUIContent("Object Types Xml", "Set to an Object Types Xml file exported from Tiled Object Type Editor.");
             public static readonly GUIContent PrefabReplacmentsContent = new GUIContent("Prefab Replacements", "List of prefabs to replace Tiled Object Types during import.");

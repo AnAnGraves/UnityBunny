@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Platformer.Gameplay;
-using static Platformer.Core.Simulation;
-using Platformer.Model;
+﻿using JetBrains.Annotations;
 using Platformer.Core;
+using Platformer.Gameplay;
+using Platformer.Model;
+using SuperTiled2Unity;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using TMPro;
+using UnityEditor.Animations;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
-using TMPro;
-using JetBrains.Annotations;
-using System.Text;
-using System;
-using System.Linq;
 using UnityEngine.Splines.Interpolators;
-using UnityEditor.Animations;
-using SuperTiled2Unity;
+using static Platformer.Core.Simulation;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 namespace Platformer.Mechanics
 {
@@ -148,6 +149,10 @@ namespace Platformer.Mechanics
         /// </summary>
         private Vector2 launchNormal = Vector2.zero;
 
+        /// <summary>
+        /// latch to prevent processing multiple reflect hits per frame
+        /// </summary>
+        private bool reflectedThisFrame = false;
 
         //******* DEBUG *******
 
@@ -202,9 +207,16 @@ namespace Platformer.Mechanics
             m_JumpAction.Enable();
         }
 
+        protected void DebugDraw()
+        {
+            Debug.DrawLine(lastSurfacePoint, lastSurfacePoint + lastSurfaceNormal, Color.red, 0.05f);
+        }
         protected override void Update()
         {
+            DebugDraw();
             UpdateGravity();
+
+            reflectedThisFrame = false;
 
             //update whether the player is pre-ballistic
             if(isPreBallistic)
@@ -278,8 +290,6 @@ namespace Platformer.Mechanics
 
         private void UpdateGravity()
         {
-
-
             float gravMagnitude = Physics2D.gravity.magnitude;
             const float diagonalAxisMagnitude = 0.70710678f; // 1 / sqrt(2), the absolute value of both axes for normalized diagonals
             var spriteTx = spriteRenderer.transform;
@@ -288,7 +298,7 @@ namespace Platformer.Mechanics
             personalGravity = gravMagnitude * Vector2.down;
 
 
-            List<SuperTile> triggerTiles = UtilityFunctions.FindTriggerTilesAtPoint(collider2d.bounds.center);
+            List<SuperTile> triggerTiles = UtilityFunctions.FindTriggerTilesAtPoint(Bounds.center);
             bool found = false;
             foreach(SuperTile tile in triggerTiles)
             {
@@ -384,6 +394,12 @@ namespace Platformer.Mechanics
                     return;
                 }
 
+                //attempt to knock player out of weird edge cases with... edges...
+                if(Mathf.Abs(Vector2.Dot(LastFrameVelocity.normalized, collision.contacts[0].normal)) < 0.01f)
+                {
+                    body.position = body.position + collision.contacts[0].normal * 0.05f;
+                }
+
                 if (state == JumpState.InFlight || state == JumpState.Falling)
                 {
                     switch (physicsType)
@@ -459,6 +475,9 @@ namespace Platformer.Mechanics
 
         protected void HandleAirborneRepelSurfaceCollision(in Collision2D collision)
         {
+            if (reflectedThisFrame) return;
+            reflectedThisFrame = true;
+
             ContactPoint2D[] contactPoints = new ContactPoint2D[collision.contactCount];
             collision.GetContacts(contactPoints);
             Vector2 normal = Vector2.zero;
