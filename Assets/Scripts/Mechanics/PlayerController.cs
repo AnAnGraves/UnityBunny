@@ -204,6 +204,8 @@ namespace Platformer.Mechanics
 
         protected override void Update()
         {
+            UpdateGravity();
+
             //update whether the player is pre-ballistic
             if(isPreBallistic)
             {
@@ -273,9 +275,78 @@ namespace Platformer.Mechanics
 
             base.Update();
         }
+
+        private void UpdateGravity()
+        {
+
+
+            float gravMagnitude = Physics2D.gravity.magnitude;
+            const float diagonalAxisMagnitude = 0.70710678f; // 1 / sqrt(2), the absolute value of both axes for normalized diagonals
+            var spriteTx = spriteRenderer.transform;
+            
+            //if we don't find any gravity tile, we should have gravity down
+            personalGravity = gravMagnitude * Vector2.down;
+
+
+            List<SuperTile> triggerTiles = UtilityFunctions.FindTriggerTilesAtPoint(collider2d.bounds.center);
+            bool found = false;
+            foreach(SuperTile tile in triggerTiles)
+            {
+                //we should only ever find one gravity tile, so break if we hit one
+                if (found) break;
+
+                switch((SuperTiled2Unity.GravityDirection)(tile.GetPropertyValueAsInt("Gravity")))
+                {
+                    case GravityDirection.INVALID:
+                        continue;
+                    case GravityDirection.D:
+                        personalGravity = gravMagnitude * Vector2.down;
+                        found = true;
+                        break;
+                    case GravityDirection.DL:
+                        personalGravity = gravMagnitude * (new Vector2(-diagonalAxisMagnitude, -diagonalAxisMagnitude));
+                        found = true;
+                        break;
+                    case GravityDirection.L:
+                        personalGravity = gravMagnitude * Vector2.left;
+                        found = true;
+                        break;
+                    case GravityDirection.UL:
+                        personalGravity = gravMagnitude * (new Vector2(-diagonalAxisMagnitude, diagonalAxisMagnitude));
+                        found = true;
+                        break;
+                    case GravityDirection.U:
+                        personalGravity = gravMagnitude * Vector2.up;
+                        found = true;
+                        break;
+                    case GravityDirection.UR:
+                        personalGravity = gravMagnitude * (new Vector2(diagonalAxisMagnitude, diagonalAxisMagnitude));
+                        found = true;
+                        break;
+                    case GravityDirection.R:
+                        personalGravity = gravMagnitude * Vector2.right;
+                        found = true;
+                        break;
+                    case GravityDirection.DR:
+                        personalGravity = gravMagnitude * (new Vector2(diagonalAxisMagnitude, -diagonalAxisMagnitude));
+                        found = true;
+                        break;
+                }
+            }
+
+            float angle = Mathf.Atan2(personalGravityDirection.y, personalGravityDirection.x) * Mathf.Rad2Deg;
+            angle += 90.0f; //otherwise faces down in normal gravity
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+            spriteTx.rotation = targetRotation;
+        }
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            
+            if(collision.collider.isTrigger)
+            {
+                return;
+            }
+
             SuperTileLayer asTileLayer = null;
             if(collision.collider.transform.parent)
             {
@@ -345,7 +416,7 @@ namespace Platformer.Mechanics
             antiNormal *= -1;
 
 
-            if (-(antiNormal.y) > minGroundNormalY) // -y is equivalent to Vwctor2.Dot(antiNormal, Vectore2.down)
+            if (Vector2.Dot(personalGravityDirection, antiNormal) > minGroundNormalY)
             {
                 //grounded - don't need to stick
                 

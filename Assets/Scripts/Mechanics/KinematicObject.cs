@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Platformer.Core;
+using Platformer.Model;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +20,31 @@ namespace Platformer.Mechanics
         /// A custom gravity coefficient applied to this entity.
         /// </summary>
         public float gravityModifier = 1f;
+
+        /// <summary>
+        /// environmentally dependent player gravity. automatically sets the normalized gravity direction when updated.
+        /// </summary>
+        private Vector2 _pGrav = Vector2.down;
+        public Vector2 personalGravity
+        {
+            get => _pGrav;
+
+            set
+            {
+                _pGrav = value;
+                _pGravDir = _pGrav.normalized;
+            }
+        }
+
+        /// <summary>
+        /// direction of environmentally dependent player gravity. cannot be manually set.
+        /// </summary>
+        private Vector2 _pGravDir = Vector2.down;
+        public Vector2 personalGravityDirection
+        {
+            get => _pGravDir;
+        }
+
 
         /// <summary>
         /// The current velocity of the entity.
@@ -83,6 +110,7 @@ namespace Platformer.Mechanics
 
         protected virtual void Start()
         {
+            personalGravity = Physics2D.gravity;
             contactFilter.useTriggers = false;
             contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
             contactFilter.useLayerMask = true;
@@ -101,27 +129,23 @@ namespace Platformer.Mechanics
 
         protected virtual void FixedUpdate()
         {
-            velocity += gravityModifier * Physics2D.gravity * Time.deltaTime;
+            velocity += gravityModifier * personalGravity * Time.deltaTime;
 
             velocity.x = targetVelocity.x;
 
             IsGrounded = false;
 
-            var deltaPosition = velocity * Time.deltaTime;
+            var moveAlongGravity = (personalGravityDirection * Vector2.Dot(personalGravityDirection, velocity)) * Time.deltaTime;
 
-            var moveAlongGround = new Vector2(groundNormal.y, -groundNormal.x);
+            var moveAlongGround = (velocity - moveAlongGravity) * Time.deltaTime;//new Vector2(groundNormal.y, -groundNormal.x);
 
-            var move = moveAlongGround * deltaPosition.x;
+            PerformMovement(moveAlongGround, false);
 
-            PerformMovement(move, false);
-
-            move = Vector2.up * deltaPosition.y;
-
-            PerformMovement(move, true);
+            PerformMovement(moveAlongGravity, true);
 
         }
 
-        void PerformMovement(Vector2 move, bool yMovement)
+        void PerformMovement(Vector2 move, bool yMovement) //true is movement on the axis of gravity, false is movement perpendicular to gravity
         {
             var distance = move.magnitude;
 
@@ -133,15 +157,17 @@ namespace Platformer.Mechanics
                 {
                     var currentNormal = hitBuffer[i].normal;
 
+                    float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
+
                     //is this surface flat enough to land on?
-                    if (currentNormal.y > minGroundNormalY)
+                    if (groundedness > minGroundNormalY)
                     {
                         IsGrounded = true;
                         // if moving up, change the groundNormal to new surface normal.
                         if (yMovement)
                         {
                             groundNormal = currentNormal;
-                            currentNormal.x = 0;
+                            //currentNormal.x = 0;
                         }
                     }
                     if (IsGrounded)
@@ -151,14 +177,13 @@ namespace Platformer.Mechanics
                         if (projection < 0)
                         {
                             //slower velocity if moving against the normal (up a hill).
-                            velocity = velocity - projection * currentNormal;
+                            velocity = velocity - (projection * currentNormal);
                         }
                     }
                     else
                     {
-                        //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
-                        velocity.x *= 0;
-                        velocity.y = Mathf.Min(velocity.y, 0);
+                        //We are airborne, but hit something, so cancel any velocity not in the direction of gravity -- FORMERLY: cancel vertical up and horizontal velocity.
+                        velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
                     }
                     //remove shellDistance from actual move distance.
                     var modifiedDistance = hitBuffer[i].distance - shellRadius;

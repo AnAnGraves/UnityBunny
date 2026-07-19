@@ -21,7 +21,25 @@
                 "NonStickSurface",
                 "RepelSurface"
             ],
-            "valuesAsFlags": true
+            "valuesAsFlags": false
+        },
+        {
+            "id": 2,
+            "name": "GravityDirection",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "INVALID",
+                "D",
+                "DL",
+                "L",
+                "UL",
+                "U",
+                "UR",
+                "R",
+                "DR"
+            ],
+            "valuesAsFlags": false
         }
     ]
 }

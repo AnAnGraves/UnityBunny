@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="7" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" backgroundcolor="#320037" nextlayerid="8" nextobjectid="1">
  <tileset firstgid="1" source="GrasslandTiled.tsx"/>
+ <tileset firstgid="82" source="DirectionTiles.tsx"/>
  <layer id="3" name="Background (No Physics)" width="30" height="20" tintcolor="#7f7f7f">
   <properties>
    <property name="unity:ignore" value="Collision"/>
@@ -142,6 +143,44 @@
   </chunk>
    <chunk x="-16" y="0" width="16" height="16">
    eJxjYCAfGFOgdzDopxYQAWLRUf2jYAgCAOZ5AWc=
+  </chunk>
+  </data>
+ </layer>
+ <layer id="7" name="GravityChange" width="30" height="20" opacity="0.1">
+  <properties>
+   <property name="unity:IsTrigger" type="bool" value="true"/>
+   <property name="unity:ignore" value="false"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   <chunk x="-16" y="-32" width="16" height="16">
+   eJxjYBgFo2AUDAcQQgYGAHtwBEU=
+  </chunk>
+   <chunk x="0" y="-32" width="16" height="16">
+   eJxjYBgFo2AUDFUQQiJGBwCpYAPx
+  </chunk>
+   <chunk x="-32" y="-16" width="16" height="16">
+   eJxjYBgFo4B0EArFo/qHtn4AyhwFUQ==
+  </chunk>
+   <chunk x="-16" y="-16" width="16" height="16">
+   eJxjYECAEDIwwyDSPwpIB6Gj+ke0fgA0Lw91
+  </chunk>
+   <chunk x="0" y="-16" width="16" height="16">
+   eJwLYWBgCCEBowNS9NJC/ygYGBAMxaP6h7Z+APgBEQE=
+  </chunk>
+   <chunk x="16" y="-16" width="16" height="16">
+   eJxjYBgFIxkEE4lH9Q9P/QBgtRnx
+  </chunk>
+   <chunk x="-32" y="0" width="16" height="16">
+   eJxjYCAPhEIxuWBU/6j+kax/sAAApWkIow==
+  </chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+   eJwLZaAMhI7qH9U/gvUPdQAAzxYEUg==
+  </chunk>
+   <chunk x="0" y="0" width="16" height="16">
+   eJxjYCAPBEMxuWBU/6j+kax/sAAALzEIbw==
+  </chunk>
+   <chunk x="16" y="0" width="16" height="16">
+   eJwLZmBgCCYC4wLE6B3VP6p/uOof6gAAck4qJw==
   </chunk>
   </data>
  </layer>
