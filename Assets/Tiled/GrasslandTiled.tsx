@@ -18,7 +18,7 @@
  </tile>
  <tile id="14">
   <objectgroup draworder="index" id="2">
-   <object id="2" template="LeftPartial.tx" x="15.9688" y="-0.0118056"/>
+   <object id="2" template="LeftPartial.tx" x="16" y="0"/>
   </objectgroup>
  </tile>
  <tile id="13">

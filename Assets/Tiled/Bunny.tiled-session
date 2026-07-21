@@ -12,12 +12,20 @@
             "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
+        "Prefabs/FloatingIsland1.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 3,
+                "y": 608.5
+            }
+        },
         "Prefabs/TemplatePrefab.tmx": {
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 2230.6666666666665,
-                "y": 1580.6666666666665
+                "x": 1902.6666666666665,
+                "y": 1000.6666666666666
             }
         },
         "TestMap.tmx": {
@@ -45,6 +53,7 @@
     "project": "Bunny.tiled-project",
     "property.type": "PhysicsLayer",
     "recentFiles": [
+        "Prefabs/TemplatePrefab.tmx",
         "GrasslandTiled.tsx",
         "DirectionTiles.tsx",
         "TestMap.tmx"
