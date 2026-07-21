@@ -35,7 +35,7 @@
         "TestMap.tmx"
     ],
     "project": "Bunny.tiled-project",
-    "property.type": "GravityDirection",
+    "property.type": "PhysicsLayer",
     "recentFiles": [
         "GrasslandTiled.tsx",
         "DirectionTiles.tsx",

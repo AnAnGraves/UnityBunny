@@ -154,6 +154,8 @@ namespace Platformer.Mechanics
         /// </summary>
         private bool reflectedThisFrame = false;
 
+        public float RunAnimThreshold = 0.1f;
+
         //******* DEBUG *******
 
         Vector2 LastScreenPosition;
@@ -775,13 +777,19 @@ namespace Platformer.Mechanics
             else if (move.x < -0.01f)
                 spriteRenderer.flipX = true;
 
-            animator.SetBool("grounded", IsGrounded);
-            animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
+            animator.SetBool("grounded", IsStateOnGround());
+            animator.SetFloat("velocityX", (Mathf.Abs(move.x) > RunAnimThreshold ? Mathf.Abs(move.x) : 0.0f) / maxSpeed);
 
             gravityModifier = (isPreBallistic || state == JumpState.Stick || state == JumpState.StickCharge || state == JumpState.StickLaunch) ? 0 : 1;
 
             targetVelocity.x = velocity.x;
             targetVelocity.y = velocity.y;
+        }
+
+        //for use in animation to prevent flickering
+        protected bool IsStateOnGround()
+        {
+            return !( state == JumpState.InFlight || state == JumpState.Falling || state == JumpState.Launch || state == JumpState.StickLaunch );
         }
 
         public enum JumpState

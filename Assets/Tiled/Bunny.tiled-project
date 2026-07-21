@@ -11,19 +11,6 @@
     ],
     "propertyTypes": [
         {
-            "id": 1,
-            "name": "PhysicsType",
-            "storageType": "int",
-            "type": "enum",
-            "values": [
-                "NormalSurface",
-                "DeadlySurface",
-                "NonStickSurface",
-                "RepelSurface"
-            ],
-            "valuesAsFlags": false
-        },
-        {
             "id": 2,
             "name": "GravityDirection",
             "storageType": "int",
@@ -38,6 +25,33 @@
                 "UR",
                 "R",
                 "DR"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 3,
+            "name": "PhysicsLayer",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Gravity",
+                "Terrain",
+                "Pickup",
+                "NoCollide"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 1,
+            "name": "PhysicsType",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "INVALID",
+                "Regular",
+                "Deadly",
+                "NonStick",
+                "Repel"
             ],
             "valuesAsFlags": false
         }

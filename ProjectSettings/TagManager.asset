@@ -9,19 +9,19 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Terrain
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - GhostEnemy
+  - Projectile
+  - GhostProjectile
+  - NoCollide
+  - Gravity
+  - PickUp
+  - FloatingPickup
+  - TerrainOnly
   - 
   - 
   - 
@@ -51,3 +51,4 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
+  m_MigratedRenderPipelines: []

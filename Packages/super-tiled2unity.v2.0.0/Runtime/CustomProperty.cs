@@ -10,10 +10,10 @@ namespace SuperTiled2Unity
     public enum SurfaceType : ushort
     {
         Invalid = 0,           //used if a valid surface type can't be found
-        NormalSurface = 1 << 0,      //Surface you can stick to
-        DeadlySurface = 1 << 1,      //Surface what kills you on contact
-        NonStickSurface = 1 << 2,      //Surface you CAN'T stick to
-        RepelSurface = 1 << 3       //Surface that reverses your velocity then reflects it across the surface normal (like light hitting a mirror)
+        NormalSurface = 1,      //Surface you can stick to
+        DeadlySurface = 2,      //Surface what kills you on contact
+        NonStickSurface = 3,      //Surface you CAN'T stick to
+        RepelSurface = 4       //Surface that reverses your velocity then reflects it across the surface normal (like light hitting a mirror)
     }
 
     //Translates my custom Tiled enum Gravity

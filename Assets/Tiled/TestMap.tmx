@@ -5,6 +5,7 @@
  <layer id="3" name="Background (No Physics)" width="30" height="20" tintcolor="#7f7f7f">
   <properties>
    <property name="unity:ignore" value="Collision"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="NoCollide"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-16" y="0" width="16" height="16">
@@ -15,6 +16,7 @@
  <layer id="1" name="Regular Degular" width="30" height="20">
   <properties>
    <property name="Physics" type="int" propertytype="PhysicsType" value="1"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-16" y="-32" width="16" height="16">
@@ -87,7 +89,8 @@
  </layer>
  <layer id="4" name="Non-Stick" width="30" height="20" tintcolor="#00ffff">
   <properties>
-   <property name="Physics" type="int" propertytype="PhysicsType" value="4"/>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="3"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="16" y="0" width="16" height="16">
@@ -98,6 +101,7 @@
  <layer id="5" name="Deadly" width="30" height="20" tintcolor="#ff0004">
   <properties>
    <property name="Physics" type="int" propertytype="PhysicsType" value="2"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-32" y="0" width="16" height="16">
@@ -116,7 +120,8 @@
  </layer>
  <layer id="6" name="Repel" width="30" height="20" tintcolor="#bb8700">
   <properties>
-   <property name="Physics" type="int" propertytype="PhysicsType" value="8"/>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="4"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-16" y="-16" width="16" height="16">
@@ -136,6 +141,7 @@
  <layer id="2" name="Foreground (No Physics)" width="30" height="20" tintcolor="#ffffff">
   <properties>
    <property name="unity:ignore" value="Collision"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="NoCollide"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-16" y="-16" width="16" height="16">
@@ -153,6 +159,7 @@
   <properties>
    <property name="unity:IsTrigger" type="bool" value="true"/>
    <property name="unity:ignore" value="false"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Gravity"/>
   </properties>
   <data encoding="base64" compression="zlib">
    <chunk x="-16" y="-32" width="16" height="16">
