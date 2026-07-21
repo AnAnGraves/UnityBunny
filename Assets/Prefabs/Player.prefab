@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4326583848728327468}
   - component: {fileID: 2048752468590478853}
   - component: {fileID: 3960644067175116568}
-  - component: {fileID: 3811190053160715558}
+  - component: {fileID: 4510757612169275585}
   m_Layer: 13
   m_Name: Player
   m_TagString: Player
@@ -93,6 +93,7 @@ MonoBehaviour:
   maxChargeStage: 3
   StickSpeedThreshold: 2
   StickTime: 0.5
+  RunAnimThreshold: 0.1
   DebugText: {fileID: 0}
   state: 0
   collider2d: {fileID: 0}
@@ -5144,8 +5145,8 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!61 &3811190053160715558
-BoxCollider2D:
+--- !u!66 &4510757612169275585
+CompositeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5178,18 +5179,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0011568964, y: -0.10991001}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 1.26}
-    newSize: {x: 1.28, y: 1.26}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.4122917, y: 0.6236801}
+  m_Offset: {x: 0, y: 0}
+  m_GeometryType: 0
+  m_GenerationType: 0
   m_EdgeRadius: 0
+  m_ColliderPaths: []
+  m_CompositePaths:
+    m_Paths: []
+  m_VertexDistance: 0.0005
+  m_OffsetDistance: 0.00005
+  m_UseDelaunayMesh: 0
+  m_CompositeGameObject: {fileID: 1208144871472054}
 --- !u!1 &1126692517122377232
 GameObject:
   m_ObjectHideFlags: 0

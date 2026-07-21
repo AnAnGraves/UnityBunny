@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="4" height="6" tilewidth="128" tileheight="128" infinite="0" nextlayerid="8" nextobjectid="1">
+ <tileset firstgid="1" source="../GrasslandTiled.tsx"/>
+ <tileset firstgid="82" source="../DirectionTiles.tsx"/>
+ <layer id="6" name="Background" width="4" height="6" tintcolor="#7f7f7f">
+  <properties>
+   <property name="unity:ignore" value="Collision"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="NoCollide"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYMAPBIHYGIqFgVgMiS9OQC8IAAA3sAEe
+  </data>
+ </layer>
+ <layer id="1" name="RegularDegular" width="4" height="6">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="1"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJyTYEAAWSA2RsOEAB8aDkDS6w/EAF3EAj8=
+  </data>
+ </layer>
+ <layer id="2" name="Deadly" width="4" height="6" tintcolor="#ff0000">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="2"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYGBg4INiWgAACjgAHQ==
+  </data>
+ </layer>
+ <layer id="3" name="NonStick" width="4" height="6">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="3"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYKAtAAAAYAAB
+  </data>
+ </layer>
+ <layer id="4" name="Repel" width="4" height="6">
+  <properties>
+   <property name="Physics" type="int" propertytype="PhysicsType" value="4"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Terrain"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYKAtAAAAYAAB
+  </data>
+ </layer>
+ <layer id="5" name="Foreground" width="4" height="6">
+  <properties>
+   <property name="unity:ignore" value="Collision"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="NoCollide"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFxmgYBNSB2AFJDTKfDw2jAwBo4AHT
+  </data>
+ </layer>
+ <layer id="7" name="GravityChange" width="4" height="6" opacity="0.1">
+  <properties>
+   <property name="unity:IsTrigger" type="bool" value="true"/>
+   <property name="unity:ignore" value="false"/>
+   <property name="unity:layer" propertytype="PhysicsLayer" value="Gravity"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYKAtAAAAYAAB
+  </data>
+ </layer>
+</map>

@@ -12,9 +12,17 @@
             "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
+        "Prefabs/TemplatePrefab.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2230.6666666666665,
+                "y": 1580.6666666666665
+            }
+        },
         "TestMap.tmx": {
             "scale": 0.25,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
                 "x": -200,
                 "y": 910
@@ -24,7 +32,7 @@
     "last.imagePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
     "last.objectTemplatePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
     "last.objectTypesPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/propertytypes.json",
-    "map.fixedSize": false,
+    "map.fixedSize": true,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 128,
