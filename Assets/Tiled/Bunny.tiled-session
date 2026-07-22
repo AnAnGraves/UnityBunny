@@ -1,6 +1,9 @@
 {
-    "activeFile": "TestMap.tmx",
+    "activeFile": "Prefabs/FloatingIsland1.tmx",
     "expandedProjectPaths": [
+        "Maps",
+        "Prefabs",
+        "Tilesets",
         "."
     ],
     "fileStates": {
@@ -16,8 +19,8 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 3,
-                "y": 608.5
+                "x": 256,
+                "y": 383.5
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -25,38 +28,51 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1902.6666666666665,
-                "y": 1000.6666666666666
+                "y": 1219.3333333333333
             }
         },
         "TestMap.tmx": {
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": -200,
-                "y": 910
+                "x": 1480,
+                "y": 1110
             }
+        },
+        "Tilesets/DirectionTiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilesets/GrasslandTiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
+    "last.externalTilesetPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/Tilesets",
     "last.imagePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
     "last.objectTemplatePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
-    "last.objectTypesPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/propertytypes.json",
+    "last.objectTypesPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/propertytypes.xml",
     "map.fixedSize": true,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 128,
     "map.tileWidth": 128,
     "openFiles": [
-        "GrasslandTiled.tsx",
-        "DirectionTiles.tsx",
-        "TestMap.tmx"
+        "Tilesets/DirectionTiles.tsx",
+        "Tilesets/GrasslandTiles.tsx",
+        "TestMap.tmx",
+        "Prefabs/FloatingIsland1.tmx"
     ],
     "project": "Bunny.tiled-project",
-    "property.type": "PhysicsLayer",
+    "property.type": "int",
     "recentFiles": [
+        "Prefabs/FloatingIsland1.tmx",
+        "TestMap.tmx",
+        "Tilesets/DirectionTiles.tsx",
+        "Tilesets/GrasslandTiles.tsx",
         "Prefabs/TemplatePrefab.tmx",
-        "GrasslandTiled.tsx",
         "DirectionTiles.tsx",
-        "TestMap.tmx"
+        "GrasslandTiled.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.spacing": 10,

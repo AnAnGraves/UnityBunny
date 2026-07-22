@@ -8,6 +8,8 @@ using UnityEngine.Tilemaps;
 
 class UtilityFunctions
 {
+    public const string SurfaceTypeKey = "SurfaceType";
+
     //modified from code shared by Michael Borgwardt on Stack Overflow
     public static bool NearlyEqual(in float a, in float b)
     {

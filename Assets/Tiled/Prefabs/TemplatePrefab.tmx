@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="0" nextlayerid="8" nextobjectid="1">
- <tileset firstgid="1" source="../GrasslandTiled.tsx"/>
- <tileset firstgid="82" source="../DirectionTiles.tsx"/>
+ <tileset firstgid="1" source="../Tilesets/GrasslandTiles.tsx"/>
+ <tileset firstgid="82" source="../Tilesets/DirectionTiles.tsx"/>
  <layer id="6" name="Background" width="30" height="20" tintcolor="#7f7f7f">
   <properties>
    <property name="unity:ignore" value="Collision"/>

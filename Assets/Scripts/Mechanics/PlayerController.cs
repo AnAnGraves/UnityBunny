@@ -360,17 +360,21 @@ namespace Platformer.Mechanics
             }
 
             SuperTileLayer asTileLayer = null;
-            if(collision.collider.transform.parent)
+            var ancestor = collision.collider.transform.parent;
+
+            while(ancestor)
             {
-                if(collision.collider.transform.parent.parent)
+                if(ancestor.gameObject)
                 {
-                    if(collision.collider.transform.parent.parent.gameObject)
+                    asTileLayer = ancestor.gameObject.GetComponent<SuperTileLayer>();
+                    if(asTileLayer)
                     {
-                        asTileLayer = collision.collider.transform.parent.parent.gameObject.GetComponent<SuperTileLayer>();
-                        if(asTileLayer)
-                        {
-                            HandleTileCollision(in asTileLayer, in collision);
-                        }
+                        HandleTileCollision(in asTileLayer, in collision);
+                        break;
+                    }
+                    else
+                    {
+                        ancestor = ancestor.parent;
                     }
                 }
             }
@@ -384,12 +388,12 @@ namespace Platformer.Mechanics
             SuperTiled2Unity.CustomProperty physicsProp;
             SuperCustomProperties TiledProps = tileLayer ? tileLayer.gameObject.GetComponent<SuperCustomProperties>() : null; 
 
-            bool validPhysics = TiledProps.TryGetCustomProperty("Physics", out physicsProp) ? physicsProp.m_Type == "int" : false;
-            SurfaceType physicsType = validPhysics ? (SurfaceType)(physicsProp.GetValueAsInt()) : SurfaceType.Invalid;
+            bool validPhysics = TiledProps.TryGetCustomProperty(UtilityFunctions.SurfaceTypeKey, out physicsProp) ? physicsProp.m_Type == "int" : false;
+            SurfaceType surfaceType = validPhysics ? (SurfaceType)(physicsProp.GetValueAsInt()) : SurfaceType.Invalid;
 
-            if (physicsType != SurfaceType.Invalid)
+            if (surfaceType != SurfaceType.Invalid)
             {
-                if(physicsType == SurfaceType.DeadlySurface)
+                if(surfaceType == SurfaceType.DeadlySurface)
                 {
                     //kill you
                     Schedule<PlayerDeath>();
@@ -404,7 +408,7 @@ namespace Platformer.Mechanics
 
                 if (state == JumpState.InFlight || state == JumpState.Falling)
                 {
-                    switch (physicsType)
+                    switch (surfaceType)
                     {
                         case SurfaceType.NormalSurface:
                             HandleAirborneNormalSurfaceCollision(collision);
@@ -568,6 +572,10 @@ namespace Platformer.Mechanics
                     {
                         Schedule<PlayerJumped>().player = this;
                         state = JumpState.InFlight;
+                    }
+                    else
+                    {
+                        body.position = body.position + lastSurfaceNormal * 0.05f;
                     }
                     break;
 

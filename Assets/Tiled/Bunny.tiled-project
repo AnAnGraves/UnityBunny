@@ -5,9 +5,7 @@
     "compatibilityVersion": 1100,
     "extensionsPath": "extensions",
     "folders": [
-        ".",
-        "Maps",
-        "Prefabs"
+        "."
     ],
     "properties": [
     ],
@@ -29,6 +27,40 @@
                 "DR"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ff7600a4",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+                {
+                    "name": "RenderOrder",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "unity:IsTrigger",
+                    "type": "bool",
+                    "value": true
+                },
+                {
+                    "name": "unity:ignore",
+                    "type": "string",
+                    "value": "Visual"
+                },
+                {
+                    "name": "unity:layer",
+                    "propertyType": "PhysicsLayer",
+                    "type": "string",
+                    "value": "Gravity"
+                }
+            ],
+            "name": "GravityLayer",
+            "type": "class",
+            "useAs": [
+                "layer",
+                "project"
+            ]
         },
         {
             "id": 3,
@@ -56,6 +88,66 @@
                 "Repel"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ff00a413",
+            "drawFill": true,
+            "id": 4,
+            "members": [
+                {
+                    "name": "RenderOrder",
+                    "type": "int",
+                    "value": 10
+                },
+                {
+                    "name": "SurfaceType",
+                    "propertyType": "PhysicsType",
+                    "type": "int",
+                    "value": 1
+                },
+                {
+                    "name": "unity:layer",
+                    "propertyType": "PhysicsLayer",
+                    "type": "string",
+                    "value": "Terrain"
+                }
+            ],
+            "name": "TerrainLayer",
+            "type": "class",
+            "useAs": [
+                "layer",
+                "project"
+            ]
+        },
+        {
+            "color": "#ff689fa4",
+            "drawFill": true,
+            "id": 6,
+            "members": [
+                {
+                    "name": "RenderOrder",
+                    "type": "int",
+                    "value": 100
+                },
+                {
+                    "name": "unity:ignore",
+                    "type": "string",
+                    "value": "Collision"
+                },
+                {
+                    "name": "unity:layer",
+                    "propertyType": "PhysicsLayer",
+                    "type": "string",
+                    "value": "NoCollide"
+                }
+            ],
+            "name": "VisualOnlyLayer",
+            "type": "class",
+            "useAs": [
+                "property",
+                "layer",
+                "project"
+            ]
         }
     ]
 }

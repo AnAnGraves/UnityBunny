@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="GravityLayer" color="#7600a4">
+  <property name="RenderOrder" type="int" default="0"/>
+  <property name="unity:IsTrigger" type="bool" default="true"/>
+  <property name="unity:ignore" type="string" default="Visual"/>
+  <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="Gravity"/>
+ </objecttype>
+ <objecttype name="TerrainLayer" color="#00a413">
+  <property name="RenderOrder" type="int" default="10"/>
+  <property name="SurfaceType" type="int" propertytype="PhysicsType" default="1"/>
+  <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="Terrain"/>
+ </objecttype>
+ <objecttype name="VisualOnlyLayer" color="#689fa4">
+  <property name="RenderOrder" type="int" default="100"/>
+  <property name="unity:ignore" type="string" default="Collision"/>
+  <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="NoCollide"/>
+ </objecttype>
+</objecttypes>

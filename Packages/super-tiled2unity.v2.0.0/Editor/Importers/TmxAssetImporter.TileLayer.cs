@@ -34,8 +34,9 @@ namespace SuperTiled2Unity.Editor
 
             // Create the game object that contains the layer and add it to the grid parent
             var layerComponent = goParent.AddSuperLayerGameObject<SuperTileLayer>(new SuperTileLayerLoader(xLayer, this), SuperImportContext);
+            string objectType = xLayer.GetAttributeAs<string>("class");
 
-            AddSuperCustomProperties(layerComponent.gameObject, xLayer.Element("properties"));
+            AddSuperCustomProperties(layerComponent.gameObject, xLayer.Element("properties"), objectType);
             RendererSorter.BeginTileLayer(layerComponent);
 
             using (SuperImportContext.BeginIsTriggerOverride(layerComponent.gameObject))
@@ -138,6 +139,22 @@ namespace SuperTiled2Unity.Editor
             tilemap.tileAnchor = new Vector3(0, 0, 0);
 
             AddTilemapRendererComponent(go);
+            SuperCustomProperties props = go.GetComponent<SuperCustomProperties>();
+            if(props)
+            {
+                TilemapRenderer trComp = go.GetComponent<TilemapRenderer>();
+                if (trComp)
+                {
+                    CustomProperty orderProp;
+                    if (props.TryGetCustomProperty("RenderOrder", out orderProp))
+                    {
+                        if (orderProp.m_Type == "int")
+                        {
+                            trComp.sortingOrder = orderProp.GetValueAsInt();
+                        }
+                    }
+                }
+            }
 
             // Figure out our opacity
             var layer = go.GetComponent<SuperLayer>();
