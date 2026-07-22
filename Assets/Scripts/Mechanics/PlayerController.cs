@@ -194,10 +194,10 @@ namespace Platformer.Mechanics
             health = GetComponent<Health>();
             audioSource = GetComponent<AudioSource>();
             collider2d = GetComponent<Collider2D>();
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            animator = GetComponent<Animator>();
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            animator = GetComponentInChildren<Animator>();
             DebugText = GetComponentInChildren<TextMeshProUGUI>();
-            chargeParticles = GetComponent<ParticleSystem>();
+            chargeParticles = GetComponentInChildren<ParticleSystem>();
             chargePFX = chargeParticles.main;
 
             chargeParticles.Stop();
@@ -245,15 +245,23 @@ namespace Platformer.Mechanics
                     //begin charging
                     state = JumpState.PrepareToJump;
                 }
-                else if (state == JumpState.Stick && m_JumpAction.WasPressedThisFrame())
+                else if (state == JumpState.Stick)
                 {
-                    //begin charging
-                    state = JumpState.StickCharge;
+                    move.x = 0f;
+                    if (m_JumpAction.WasPressedThisFrame())
+                    {
+                        //begin charging
+                        state = JumpState.StickCharge;
+                    }
                 }
-                else if ((state == JumpState.Charging || state == JumpState.PrepareToJump || state == JumpState.StickCharge) && m_JumpAction.WasReleasedThisFrame())
+                else if ((state == JumpState.Charging || state == JumpState.PrepareToJump || state == JumpState.StickCharge))
                 {
-                    //end charge and either b-hop or launch
-                    doLaunch = true;
+                    move.x = state == JumpState.PrepareToJump ? m_MoveAction.ReadValue<Vector2>().x : 0f; //when in charge anim, no move inputs
+                    if (m_JumpAction.WasReleasedThisFrame())
+                    {
+                        //end charge and either b-hop or launch
+                        doLaunch = true;
+                    }
                 }
             }
             else
@@ -294,7 +302,6 @@ namespace Platformer.Mechanics
         {
             float gravMagnitude = Physics2D.gravity.magnitude;
             const float diagonalAxisMagnitude = 0.70710678f; // 1 / sqrt(2), the absolute value of both axes for normalized diagonals
-            var spriteTx = spriteRenderer.transform;
             
             //if we don't find any gravity tile, we should have gravity down
             personalGravity = gravMagnitude * Vector2.down;
@@ -346,7 +353,9 @@ namespace Platformer.Mechanics
                 }
             }
 
-            float angle = Mathf.Atan2(personalGravityDirection.y, personalGravityDirection.x) * Mathf.Rad2Deg;
+            var spriteTx = spriteRenderer.transform;
+            Vector2 downVector = IsStateOnGround() ? -lastSurfaceNormal : personalGravityDirection;
+            float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
             angle += 90.0f; //otherwise faces down in normal gravity
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
             spriteTx.rotation = targetRotation;

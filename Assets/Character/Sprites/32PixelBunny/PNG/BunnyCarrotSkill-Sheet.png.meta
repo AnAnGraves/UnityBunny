@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: bc5930c05cdbb00418bfa37771fc40af
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1602123555156584084
+    second: BunnyCarrotSkill-Sheet_0
+  - first:
+      213: 8143219495372588424
+    second: BunnyCarrotSkill-Sheet_1
+  - first:
+      213: 3253459081670157520
+    second: BunnyCarrotSkill-Sheet_2
+  - first:
+      213: -7690857765082471418
+    second: BunnyCarrotSkill-Sheet_3
+  - first:
+      213: -636361810932159617
+    second: BunnyCarrotSkill-Sheet_4
+  - first:
+      213: -3149615380274871534
+    second: BunnyCarrotSkill-Sheet_5
+  - first:
+      213: 8723708935520585284
+    second: BunnyCarrotSkill-Sheet_6
+  - first:
+      213: -7454486622507421804
+    second: BunnyCarrotSkill-Sheet_7
+  - first:
+      213: 5337281191416899239
+    second: BunnyCarrotSkill-Sheet_8
+  - first:
+      213: -9202079150828563177
+    second: BunnyCarrotSkill-Sheet_9
+  - first:
+      213: -6991458038287436928
+    second: BunnyCarrotSkill-Sheet_10
+  - first:
+      213: -4859581946964783542
+    second: BunnyCarrotSkill-Sheet_11
+  - first:
+      213: -5988739156335008936
+    second: BunnyCarrotSkill-Sheet_12
+  - first:
+      213: 4327162096064289086
+    second: BunnyCarrotSkill-Sheet_13
+  - first:
+      213: -3143034136337925879
+    second: BunnyCarrotSkill-Sheet_14
+  - first:
+      213: -5639225842773841521
+    second: BunnyCarrotSkill-Sheet_15
+  - first:
+      213: -6807580475531452000
+    second: BunnyCarrotSkill-Sheet_16
+  - first:
+      213: -9222045557208548435
+    second: BunnyCarrotSkill-Sheet_17
+  - first:
+      213: 8756159504440188110
+    second: BunnyCarrotSkill-Sheet_18
+  - first:
+      213: -8597740221053240276
+    second: BunnyCarrotSkill-Sheet_19
+  - first:
+      213: -7232927480970142920
+    second: BunnyCarrotSkill-Sheet_20
+  - first:
+      213: -7758642255451086384
+    second: BunnyCarrotSkill-Sheet_21
+  - first:
+      213: 2752701018829048064
+    second: BunnyCarrotSkill-Sheet_22
+  - first:
+      213: 881199652041206843
+    second: BunnyCarrotSkill-Sheet_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 0
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 496e46f82e2eb3610800000000000000
+      internalID: 1602123555156584084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 25
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88508b58cf6820170800000000000000
+      internalID: 8143219495372588424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 22
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d4e7361ccb962d20800000000000000
+      internalID: 3253459081670157520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 17
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 604643e4c95944590800000000000000
+      internalID: -7690857765082471418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 0
+        width: 42
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7ba3c6fd403b27f0800000000000000
+      internalID: -636361810932159617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2130c9fbf715a44d0800000000000000
+      internalID: -3149615380274871534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 0
+        width: 20
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4460b918e07d01970800000000000000
+      internalID: 8723708935520585284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49f2b8299e75c8890800000000000000
+      internalID: -7454486622507421804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a627c827f4d11a40800000000000000
+      internalID: 5337281191416899239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 715d5db54c5ab4080800000000000000
+      internalID: -9202079150828563177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 083f3ddd4f959fe90800000000000000
+      internalID: -6991458038287436928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4e434667fb4f8cb0800000000000000
+      internalID: -4859581946964783542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 4
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 853ed2e8779b3eca0800000000000000
+      internalID: -5988739156335008936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e395275000b2d0c30800000000000000
+      internalID: 4327162096064289086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 0
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 909b6a20b13b164d0800000000000000
+      internalID: -3143034136337925879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f89234159f17db1b0800000000000000
+      internalID: -5639225842773841521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 0
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a1201820ad9681a0800000000000000
+      internalID: -6807580475531452000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dab7d1c1d66b40080800000000000000
+      internalID: -9222045557208548435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 0
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc51da5da0248970800000000000000
+      internalID: 8756159504440188110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 0
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2c780d52d0bea880800000000000000
+      internalID: -8597740221053240276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 0
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83b1d9a17ca7f9b90800000000000000
+      internalID: -7232927480970142920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 30
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d1a088c9f3c35490800000000000000
+      internalID: -7758642255451086384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_22
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 0
+        width: 40
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00949200efe833620800000000000000
+      internalID: 2752701018829048064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BunnyCarrotSkill-Sheet_23
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 3
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3c2d1c2a66aa3c00800000000000000
+      internalID: 881199652041206843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      BunnyCarrotSkill-Sheet_0: 1602123555156584084
+      BunnyCarrotSkill-Sheet_1: 8143219495372588424
+      BunnyCarrotSkill-Sheet_10: -6991458038287436928
+      BunnyCarrotSkill-Sheet_11: -4859581946964783542
+      BunnyCarrotSkill-Sheet_12: -5988739156335008936
+      BunnyCarrotSkill-Sheet_13: 4327162096064289086
+      BunnyCarrotSkill-Sheet_14: -3143034136337925879
+      BunnyCarrotSkill-Sheet_15: -5639225842773841521
+      BunnyCarrotSkill-Sheet_16: -6807580475531452000
+      BunnyCarrotSkill-Sheet_17: -9222045557208548435
+      BunnyCarrotSkill-Sheet_18: 8756159504440188110
+      BunnyCarrotSkill-Sheet_19: -8597740221053240276
+      BunnyCarrotSkill-Sheet_2: 3253459081670157520
+      BunnyCarrotSkill-Sheet_20: -7232927480970142920
+      BunnyCarrotSkill-Sheet_21: -7758642255451086384
+      BunnyCarrotSkill-Sheet_22: 2752701018829048064
+      BunnyCarrotSkill-Sheet_23: 881199652041206843
+      BunnyCarrotSkill-Sheet_3: -7690857765082471418
+      BunnyCarrotSkill-Sheet_4: -636361810932159617
+      BunnyCarrotSkill-Sheet_5: -3149615380274871534
+      BunnyCarrotSkill-Sheet_6: 8723708935520585284
+      BunnyCarrotSkill-Sheet_7: -7454486622507421804
+      BunnyCarrotSkill-Sheet_8: 5337281191416899239
+      BunnyCarrotSkill-Sheet_9: -9202079150828563177
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

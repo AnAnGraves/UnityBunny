@@ -17,7 +17,7 @@
  </layer>
  <layer id="1" name="RegularDegular" class="TerrainLayer" width="4" height="6">
   <data encoding="base64" compression="zlib">
-   eJyTYEAAWSA2RsOEAB8aDkDS6w/EAF3EAj8=
+   eJyTYGBg4INiWSA2RsOEAB8aDkDS6w/EAGecAls=
   </data>
  </layer>
  <layer id="2" name="Deadly" class="TerrainLayer" width="4" height="6" tintcolor="#ff0000">
@@ -26,7 +26,7 @@
    <property name="SurfaceType" type="int" propertytype="PhysicsType" value="2"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYGBg4INiWgAACjgAHQ==
+   eJxjYKAtAAAAYAAB
   </data>
  </layer>
  <layer id="3" name="NonStick" class="TerrainLayer" width="4" height="6">

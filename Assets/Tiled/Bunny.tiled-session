@@ -1,10 +1,10 @@
 {
     "activeFile": "Prefabs/FloatingIsland1.tmx",
     "expandedProjectPaths": [
-        "Maps",
-        "Prefabs",
         "Tilesets",
-        "."
+        "Maps",
+        ".",
+        "Prefabs"
     ],
     "fileStates": {
         "DirectionTiles.tsx": {
@@ -14,6 +14,14 @@
         "GrasslandTiled.tsx": {
             "scaleInDock": 0.75,
             "scaleInEditor": 1.5
+        },
+        "Maps/TestMap.tmx": {
+            "scale": 0.12981654575892856,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 3073.5681470137833,
+                "y": 1020.6711265146023
+            }
         },
         "Prefabs/FloatingIsland1.tmx": {
             "scale": 1,
@@ -44,7 +52,7 @@
             "scaleInEditor": 1
         },
         "Tilesets/GrasslandTiles.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.5,
             "scaleInEditor": 1
         }
     },
@@ -60,16 +68,17 @@
     "openFiles": [
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
-        "TestMap.tmx",
+        "Maps/TestMap.tmx",
         "Prefabs/FloatingIsland1.tmx"
     ],
     "project": "Bunny.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "Prefabs/FloatingIsland1.tmx",
-        "TestMap.tmx",
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
+        "Maps/TestMap.tmx",
+        "Prefabs/FloatingIsland1.tmx",
+        "TestMap.tmx",
         "Prefabs/TemplatePrefab.tmx",
         "DirectionTiles.tsx",
         "GrasslandTiled.tsx"
