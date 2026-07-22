@@ -166,12 +166,12 @@ namespace Platformer.Mechanics
 
         //***** END DEBUG *****
 
-        public JumpState state = JumpState.Grounded;
+        internal JumpState state = JumpState.Grounded;
         private bool doLaunch;
-        /*internal new*/ public Collider2D collider2d;
-        /*internal new*/ public AudioSource audioSource;
-        /*internal new*/ public ParticleSystem chargeParticles;
-        /*internal new*/ public ParticleSystem.MainModule chargePFX;
+        /*internal*/ public Collider2D collider2d;
+        /*internal*/ public AudioSource audioSource;
+        internal ParticleSystem chargeParticles;
+        internal ParticleSystem.MainModule chargePFX;
         public Health health;
         public bool controlEnabled = true;
 
@@ -180,7 +180,7 @@ namespace Platformer.Mechanics
         bool jump;
         Vector2 move;
         Vector2 launchVector;
-        SpriteRenderer spriteRenderer;
+        internal SpriteRenderer spriteRenderer;
         internal Animator animator;
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
@@ -584,7 +584,7 @@ namespace Platformer.Mechanics
                     }
                     else
                     {
-                        body.position = body.position + lastSurfaceNormal * 0.05f;
+                        body.position = body.position + lastSurfaceNormal * 0.01f;
                     }
                     break;
 
@@ -777,14 +777,15 @@ namespace Platformer.Mechanics
             else
             {
                 //ground movement w/ accel
-                float accel = (Math.Sign(velocity.x) != 0 && (Math.Sign(move.x) != Math.Sign(move.x))) ? groundBraking : groundAccel;
                 float targetXVelocity = move.x * maxSpeed;
                 if(targetXVelocity > velocity.x)
                 {
+                    float accel = Math.Sign(velocity.x) == 1 ? groundAccel : groundBraking;
                     velocity.x = Mathf.Min(targetXVelocity, velocity.x + (accel * Time.deltaTime));
                 }
                 else if (targetXVelocity < velocity.x)
                 {
+                    float accel = Math.Sign(velocity.x) == -1 ? groundAccel : groundBraking;
                     velocity.x = Mathf.Max(targetXVelocity, velocity.x - (accel * Time.deltaTime)); 
                 }
             }

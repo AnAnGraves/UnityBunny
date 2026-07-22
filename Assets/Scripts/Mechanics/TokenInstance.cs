@@ -1,4 +1,6 @@
+using Platformer.Core;
 using Platformer.Gameplay;
+using Platformer.Model;
 using UnityEngine;
 using static Platformer.Core.Simulation;
 
@@ -40,14 +42,11 @@ namespace Platformer.Mechanics
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            //only exectue OnPlayerEnter if the player collides with this token.
-            var player = other.gameObject.GetComponent<PlayerController>();
-            if (player != null) OnPlayerEnter(player);
-        }
+            //floating tokens only collide with player, don't have to check collider
 
-        void OnPlayerEnter(PlayerController player)
-        {
+            //do nothing if collected already
             if (collected) return;
+            
             //disable the gameObject and remove it from the controller update list.
             frame = 0;
             sprites = collectedAnimation;
@@ -56,7 +55,7 @@ namespace Platformer.Mechanics
             //send an event into the gameplay system to perform some behaviour.
             var ev = Schedule<PlayerTokenCollision>();
             ev.token = this;
-            ev.player = player;
+            ev.player = Simulation.GetModel<PlatformerModel>().player;
         }
     }
 }

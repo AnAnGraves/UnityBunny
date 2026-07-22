@@ -147,48 +147,6 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: -3, y: 4}
   spriteSheetImportData:
-  - name: BunnyJump-Sheet_12
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
-    rect:
-      serializedVersion: 2
-      x: 385
-      y: 5
-      width: 23
-      height: 23
-    spriteID: b3c880362ec9f0e469d72eb61eecdfed
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 0, y: 0}
-  - name: BunnyJump-Sheet_13
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
-    rect:
-      serializedVersion: 2
-      x: 417
-      y: 4
-      width: 23
-      height: 23
-    spriteID: 84c965cdb90dcb645942a5f18e98a361
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 0, y: 0}
   - name: BunnyJump-Sheet_14
     originalName: 
     pivot: {x: 0.5, y: 0.5}
