@@ -6,6 +6,15 @@
   <property name="unity:ignore" type="string" default="Visual"/>
   <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="Gravity"/>
  </objecttype>
+ <objecttype name="HiddenLayer" color="#a0a0a4">
+  <property name="RenderOrder" type="int" default="0"/>
+  <property name="unity:ignore" type="string" default="Collision"/>
+  <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="NoCollide"/>
+ </objecttype>
+ <objecttype name="RailLayer" color="#a05000">
+  <property name="RenderOrder" type="int" default="30"/>
+  <property name="unity:layer" type="string" propertytype="PhysicsLayer" default="Rail"/>
+ </objecttype>
  <objecttype name="TerrainLayer" color="#00a413">
   <property name="RenderOrder" type="int" default="10"/>
   <property name="SurfaceType" type="int" propertytype="PhysicsType" default="1"/>

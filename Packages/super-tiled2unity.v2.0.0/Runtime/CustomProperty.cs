@@ -5,6 +5,16 @@ using System.Collections.Generic;
 
 namespace SuperTiled2Unity
 {
+
+    public class TiledStringDefinitions
+    {
+        public const string SurfaceTypeKey = "SurfaceType";
+
+        public const string SpecialTileKey = "SpecialTileType";
+
+        public const string PlatformRegistrationKey = "PlatformRegistration";
+    }
+
     //Translates my custom Tiled enum Physics
     //these AREN'T independent flags, but were initially created as flags in Tiled, so they're still Bit values
     public enum SurfaceType : ushort

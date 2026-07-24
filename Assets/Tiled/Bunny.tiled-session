@@ -1,26 +1,44 @@
 {
-    "activeFile": "Prefabs/FloatingIsland1.tmx",
+    "activeFile": "Maps/TestMap.tmx",
     "expandedProjectPaths": [
-        "Tilesets",
-        "Maps",
         ".",
-        "Prefabs"
+        "Prefabs/MovingPlatforms",
+        "Tilesets",
+        "Prefabs",
+        "Maps"
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "DirectionTiles.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1.5
+        },
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/MovingPlatformMap.tmx": {
+            "scale": 7.95625,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 128.01256873527103,
+                "y": 112.05027494108404
+            }
+        },
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/omega.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/tracks.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 45
         },
         "GrasslandTiled.tsx": {
             "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
         "Maps/TestMap.tmx": {
-            "scale": 0.12981654575892856,
-            "selectedLayer": 4,
+            "scale": 0.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 3073.5681470137833,
-                "y": 1020.6711265146023
+                "x": 3138,
+                "y": 1025
             }
         },
         "Prefabs/FloatingIsland1.tmx": {
@@ -29,6 +47,14 @@
             "viewCenter": {
                 "x": 256,
                 "y": 383.5
+            }
+        },
+        "Prefabs/MovingPlatforms/TestMovingPlatform.tmx": {
+            "scale": 1.40125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 418.5548617305976,
+                "y": 128.09991079393396
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -54,39 +80,61 @@
         "Tilesets/GrasslandTiles.tsx": {
             "scaleInDock": 0.5,
             "scaleInEditor": 1
+        },
+        "Tilesets/RailTiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "Tilesets/UtilityTiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilesets/omega.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 4
         }
     },
     "last.externalTilesetPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/Tilesets",
-    "last.imagePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
+    "last.imagePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/Tilesets",
     "last.objectTemplatePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
     "last.objectTypesPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/propertytypes.xml",
     "map.fixedSize": true,
+    "map.height": 10,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 128,
     "map.tileWidth": 128,
+    "map.width": 10,
     "openFiles": [
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
+        "Tilesets/RailTiles.tsx",
         "Maps/TestMap.tmx",
-        "Prefabs/FloatingIsland1.tmx"
+        "Prefabs/FloatingIsland1.tmx",
+        "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
+        "Tilesets/UtilityTiles.tsx"
     ],
     "project": "Bunny.tiled-project",
-    "property.type": "int",
+    "property.type": "SpecialTileType",
     "recentFiles": [
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
-        "Maps/TestMap.tmx",
+        "Tilesets/RailTiles.tsx",
+        "Tilesets/UtilityTiles.tsx",
+        "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
         "Prefabs/FloatingIsland1.tmx",
-        "TestMap.tmx",
-        "Prefabs/TemplatePrefab.tmx",
-        "DirectionTiles.tsx",
-        "GrasslandTiled.tsx"
+        "Maps/TestMap.tmx",
+        "Tilesets/omega.tsx",
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/tracks.tsx",
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/MovingPlatformMap.tmx",
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/omega.tsx",
+        "TestMap.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.spacing": 10,
     "tileset.tileSize": {
         "height": 128,
         "width": 128
-    }
+    },
+    "tileset.useTransparentColor": true
 }

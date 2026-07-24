@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="7" height="2" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="../../Tilesets/GrasslandTiles.tsx"/>
+ <tileset firstgid="82" source="../../Tilesets/UtilityTiles.tsx"/>
+ <layer id="1" name="Moving Platform" class="TerrainLayer" width="7" height="2" opacity="0.13">
+  <properties>
+   <property name="RenderOrder" type="int" value="35"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzjY2Bg4MOBA4DYGAv2B2IAKvwCAQ==
+  </data>
+ </layer>
+ <layer id="2" name="Pivot Mark" class="HiddenLayer" width="7" height="2">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAOBKHxAQVYAFM=
+  </data>
+ </layer>
+</map>

@@ -68,6 +68,11 @@ namespace SuperTiled2Unity.Editor
             CheckHelpers();
 
             // Note: we are assuming the PolygonCollider2D is convex when using this function
+            if(polygon.pathCount == 0)
+            {
+                //Debug.LogWarning("Polygon ollider contains no paths");
+                return;
+            }
             Vector3 offset = polygon.transform.TransformVector(polygon.offset);
             var points = polygon.GetPath(0).Select(pt => polygon.transform.TransformPoint(pt) + offset).ToArray();
             DrawAsConvexPolygon(polygon.gameObject, points);

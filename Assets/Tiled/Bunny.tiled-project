@@ -63,6 +63,36 @@
             ]
         },
         {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 10,
+            "members": [
+                {
+                    "name": "RenderOrder",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "unity:ignore",
+                    "type": "string",
+                    "value": "Collision"
+                },
+                {
+                    "name": "unity:layer",
+                    "propertyType": "PhysicsLayer",
+                    "type": "string",
+                    "value": "NoCollide"
+                }
+            ],
+            "name": "HiddenLayer",
+            "type": "class",
+            "useAs": [
+                "property",
+                "layer",
+                "project"
+            ]
+        },
+        {
             "id": 3,
             "name": "PhysicsLayer",
             "storageType": "string",
@@ -71,7 +101,8 @@
                 "Gravity",
                 "Terrain",
                 "Pickup",
-                "NoCollide"
+                "NoCollide",
+                "Rail"
             ],
             "valuesAsFlags": false
         },
@@ -86,6 +117,39 @@
                 "Deadly",
                 "NonStick",
                 "Repel"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa05000",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "RenderOrder",
+                    "type": "int",
+                    "value": 30
+                },
+                {
+                    "name": "unity:layer",
+                    "propertyType": "PhysicsLayer",
+                    "type": "string",
+                    "value": "Rail"
+                }
+            ],
+            "name": "RailLayer",
+            "type": "class",
+            "useAs": [
+                "layer"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "SpecialTileType",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "PlatformRegistration"
             ],
             "valuesAsFlags": false
         },
@@ -144,7 +208,6 @@
             "name": "VisualOnlyLayer",
             "type": "class",
             "useAs": [
-                "property",
                 "layer",
                 "project"
             ]

@@ -397,7 +397,7 @@ namespace Platformer.Mechanics
             SuperTiled2Unity.CustomProperty physicsProp;
             SuperCustomProperties TiledProps = tileLayer ? tileLayer.gameObject.GetComponent<SuperCustomProperties>() : null; 
 
-            bool validPhysics = TiledProps.TryGetCustomProperty(UtilityFunctions.SurfaceTypeKey, out physicsProp) ? physicsProp.m_Type == "int" : false;
+            bool validPhysics = TiledProps.TryGetCustomProperty(TiledStringDefinitions.SurfaceTypeKey, out physicsProp) ? physicsProp.m_Type == "int" : false;
             SurfaceType surfaceType = validPhysics ? (SurfaceType)(physicsProp.GetValueAsInt()) : SurfaceType.Invalid;
 
             if (surfaceType != SurfaceType.Invalid)

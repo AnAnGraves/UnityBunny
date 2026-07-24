@@ -70,6 +70,27 @@ MonoBehaviour:
     - m_Name: unity:layer
       m_Type: string
       m_Value: Gravity
+  - m_Name: HiddenLayer
+    m_Color: {r: 0.627451, g: 0.627451, b: 0.6431373, a: 1}
+    m_CustomProperties:
+    - m_Name: RenderOrder
+      m_Type: int
+      m_Value: 0
+    - m_Name: unity:ignore
+      m_Type: string
+      m_Value: Collision
+    - m_Name: unity:layer
+      m_Type: string
+      m_Value: NoCollide
+  - m_Name: RailLayer
+    m_Color: {r: 0.627451, g: 0.3137255, b: 0, a: 1}
+    m_CustomProperties:
+    - m_Name: RenderOrder
+      m_Type: int
+      m_Value: 30
+    - m_Name: unity:layer
+      m_Type: string
+      m_Value: Rail
   - m_Name: TerrainLayer
     m_Color: {r: 0, g: 0.6431373, b: 0.07450981, a: 1}
     m_CustomProperties:
