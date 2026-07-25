@@ -209,6 +209,12 @@ namespace Platformer.Mechanics
             m_JumpAction.Enable();
         }
 
+        protected override void OnDisable()
+        {
+            //if(transform.parent) transform.SetParent(null);
+            base.OnDisable();
+        }
+
         protected void DebugDraw()
         {
             Debug.DrawLine(lastSurfacePoint, lastSurfacePoint + lastSurfaceNormal, Color.red, 0.05f);
@@ -363,7 +369,7 @@ namespace Platformer.Mechanics
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if(collision.collider.isTrigger)
+            if (collision.collider.isTrigger)
             {
                 return;
             }
@@ -371,14 +377,14 @@ namespace Platformer.Mechanics
             SuperTileLayer asTileLayer = null;
             var ancestor = collision.collider.transform.parent;
 
-            while(ancestor)
+            while (ancestor)
             {
-                if(ancestor.gameObject)
+                if (ancestor.gameObject)
                 {
                     asTileLayer = ancestor.gameObject.GetComponent<SuperTileLayer>();
-                    if(asTileLayer)
+                    if (asTileLayer)
                     {
-                        HandleTileCollision(in asTileLayer, in collision);
+                        HandleBeginTileCollision(in asTileLayer, in collision);
                         break;
                     }
                     else
@@ -388,10 +394,50 @@ namespace Platformer.Mechanics
                 }
             }
 
-            
+
         }
 
-        protected void HandleTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
+        private void OnCollisionExit2D (Collision2D collision)
+        {
+            if (collision.collider.isTrigger)
+            {
+                return;
+            }
+
+            SuperTileLayer asTileLayer = null;
+            var ancestor = collision.collider.transform.parent;
+
+            while (ancestor)
+            {
+                if (ancestor.gameObject)
+                {
+                    asTileLayer = ancestor.gameObject.GetComponent<SuperTileLayer>();
+                    if (asTileLayer)
+                    {
+                        HandleEndTileCollision(in asTileLayer, in collision);
+                        break;
+                    }
+                    else
+                    {
+                        ancestor = ancestor.parent;
+                    }
+                }
+            }
+
+
+        }
+
+
+
+        protected void HandleEndTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
+        {
+            if(transform.parent == collision.collider.gameObject.transform)
+            {
+                //transform.SetParent(null);
+            }
+        }
+
+        protected void HandleBeginTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
         {
 
             SuperTiled2Unity.CustomProperty physicsProp;
@@ -409,8 +455,11 @@ namespace Platformer.Mechanics
                     return;
                 }
 
+                float surfaceness = Vector2.Dot(-personalGravityDirection, collision.contacts[0].normal);
+
                 //attempt to knock player out of weird edge cases with... edges...
-                if(Mathf.Abs(Vector2.Dot(LastFrameVelocity.normalized, collision.contacts[0].normal)) < 0.01f)
+                //check whether you are moving roughly parallel to the surface AND the surface is not (currently) a valid walkable surface
+                if (Mathf.Abs(Vector2.Dot(LastFrameVelocity.normalized, collision.contacts[0].normal)) < 0.01f && Math.Abs(surfaceness) < minFloorSurfaceness)
                 {
                     body.position = body.position + collision.contacts[0].normal * 0.05f;
                 }
@@ -428,6 +477,11 @@ namespace Platformer.Mechanics
                         default:
                             return;
                     }
+                }
+                else if(surfaceness > minFloorSurfaceness)
+                {
+                    //if the surface doesn't kill you and you're walking and it's a floor, attach to it
+                    //transform.SetParent(collision.collider.gameObject.transform);
                 }
             }
         }
@@ -447,7 +501,7 @@ namespace Platformer.Mechanics
             antiNormal *= -1;
 
 
-            if (Vector2.Dot(personalGravityDirection, antiNormal) > minGroundNormalY)
+            if (Vector2.Dot(personalGravityDirection, antiNormal) > minFloorSurfaceness)
             {
                 //grounded - don't need to stick
                 
@@ -458,6 +512,8 @@ namespace Platformer.Mechanics
                 //slow ground velocity if needed
                 LastFrameVelocity = LastFrameVelocity.normalized * Mathf.Clamp(LastFrameVelocity.magnitude, -maxSpeed, maxSpeed);
                 velocity = LastFrameVelocity;
+
+                //transform.SetParent(collision.collider.gameObject.transform);
 
                 isPreBallistic = false;
                 return;
@@ -470,6 +526,8 @@ namespace Platformer.Mechanics
                 state = JumpState.Stick;
                 isPreBallistic = false;
                 timeUntilFall = StickTime;
+
+                //transform.SetParent(collision.collider.gameObject.transform);
             }
             else
             {
@@ -699,6 +757,8 @@ namespace Platformer.Mechanics
                         {
                             if (chargeStage >= 0)
                             {
+                                //if(transform.parent) transform.SetParent(null);
+
                                 //TODO: constrain angle, gamepad controls
                                 Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(this.body.position);
                                 Vector2 launchComponents = (Mouse.current.position.value - new Vector2(playerScreenPos.x, playerScreenPos.y)).normalized;
@@ -741,6 +801,9 @@ namespace Platformer.Mechanics
             }
             else if (doLaunch)
             {
+                //detach
+                //if(transform.parent) transform.SetParent(null);
+
                 //b-hop
                 if (chargeStage < 0)
                 {

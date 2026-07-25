@@ -18,7 +18,7 @@ namespace SuperMovingPlatform
         public float MaxDistanceFromTrack = 0.2f;
 
         // Speed is in pixels per second
-        public float m_Speed = 0.5f;
+        public float m_Speed = 1f;
         public Vector2 m_InitialDirection = Vector2.right;
 
         public bool DebugDrawPath = false;

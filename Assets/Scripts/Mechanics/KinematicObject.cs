@@ -14,7 +14,7 @@ namespace Platformer.Mechanics
         /// <summary>
         /// The minimum normal (dot product) considered suitable for the entity sit on.
         /// </summary>
-        public float minGroundNormalY = .65f;
+        public float minFloorSurfaceness = .65f;
 
         /// <summary>
         /// A custom gravity coefficient applied to this entity.
@@ -178,7 +178,7 @@ namespace Platformer.Mechanics
                     float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
 
                     //is this surface flat enough to land on?
-                    if (groundedness > minGroundNormalY)
+                    if (groundedness > minFloorSurfaceness)
                     {
                         IsGrounded = true;
                         // if moving up, change the groundNormal to new surface normal.

@@ -1,11 +1,11 @@
 {
-    "activeFile": "Maps/TestMap.tmx",
+    "activeFile": "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
     "expandedProjectPaths": [
-        ".",
-        "Prefabs/MovingPlatforms",
         "Tilesets",
-        "Prefabs",
-        "Maps"
+        ".",
+        "Maps",
+        "Prefabs/MovingPlatforms",
+        "Prefabs"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -53,8 +53,8 @@
             "scale": 1.40125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 418.5548617305976,
-                "y": 128.09991079393396
+                "x": 491.34701159678855,
+                "y": 143.08652988403207
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -120,10 +120,10 @@
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
         "Tilesets/RailTiles.tsx",
+        "Maps/TestMap.tmx",
+        "Prefabs/FloatingIsland1.tmx",
         "Tilesets/UtilityTiles.tsx",
         "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
-        "Prefabs/FloatingIsland1.tmx",
-        "Maps/TestMap.tmx",
         "Tilesets/omega.tsx",
         "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/tracks.tsx",
         "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/MovingPlatformMap.tmx",
