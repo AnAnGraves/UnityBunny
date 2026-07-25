@@ -15,10 +15,10 @@ namespace SuperMovingPlatform
     public class MovingPlatformOnTrack : MonoBehaviour
     {
         // How close we need to be to a track to start off attached to it
-        public float MaxDistanceFromTrack = 16.0f;
+        public float MaxDistanceFromTrack = 0.2f;
 
         // Speed is in pixels per second
-        public float m_Speed = 1.0f;
+        public float m_Speed = 0.5f;
         public Vector2 m_InitialDirection = Vector2.right;
 
         public bool DebugDrawPath = false;
@@ -34,8 +34,6 @@ namespace SuperMovingPlatform
 
         public void Start()
         {
-            Setup();
-
             IEnumerable<Collider2D> TrackCollidersInRange = FindObjectsByType<EdgeCollider2D>().Where(edge => edge.gameObject.layer == LayerMask.NameToLayer("Rail"));
             bool foundTrack = false;
             foreach(Collider2D col in TrackCollidersInRange)
@@ -53,12 +51,16 @@ namespace SuperMovingPlatform
             }
         }
 
-        public void Setup()
+        public void Reset()
         {
             Assert.IsNotNull(gameObject);
-            
+
             GameObject goTilemap = GetComponentInChildren<SuperMap>().gameObject;
-            Assert.IsNotNull(goTilemap);
+            if (!goTilemap)
+            {
+                Debug.LogError("Moving platform requires an attached SuperMap - add one as a child and then reset the platform component.");
+                return;
+            }
 
             Tilemap[] tileLayers = goTilemap.GetComponentsInChildren<Tilemap>();
             Assert.IsTrue(tileLayers.Length > 0);
@@ -188,6 +190,10 @@ namespace SuperMovingPlatform
 
         private void Update()
         {
+            Debug.DrawLine(transform.position, transform.position + (Vector3.up * MaxDistanceFromTrack), Color.aquamarine);
+            Debug.DrawLine(transform.position, transform.position + (Vector3.down * MaxDistanceFromTrack), Color.aquamarine);
+            Debug.DrawLine(transform.position, transform.position + (Vector3.left * MaxDistanceFromTrack), Color.aquamarine);
+            Debug.DrawLine(transform.position, transform.position + (Vector3.up * MaxDistanceFromTrack), Color.aquamarine);
             if (m_CurrentPointIndex == -1)
             {
                 //Debug.LogError("Platform is not attached to a track.");

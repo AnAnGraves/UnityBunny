@@ -2,7 +2,7 @@
 <map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="7" height="2" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" source="../../Tilesets/GrasslandTiles.tsx"/>
  <tileset firstgid="82" source="../../Tilesets/UtilityTiles.tsx"/>
- <layer id="1" name="Moving Platform" class="TerrainLayer" width="7" height="2" opacity="0.13">
+ <layer id="1" name="Moving Platform" class="TerrainLayer" width="7" height="2">
   <properties>
    <property name="RenderOrder" type="int" value="35"/>
   </properties>

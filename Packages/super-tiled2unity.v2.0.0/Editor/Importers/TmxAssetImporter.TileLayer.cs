@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework.Constraints;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,10 +50,131 @@ namespace SuperTiled2Unity.Editor
                 }
             }
 
+            //BUNNY CUSTOM: for Rail Layers, the paths can't be split into chunks, so decunk them.
+
+            if(layerComponent.gameObject.layer == LayerMask.NameToLayer("Rail"))
+            {
+                DechunkEdgeColliders(layerComponent.gameObject);
+            }
+
+            //END BUNNY CUSTOM
+
             RendererSorter.EndTileLayer(layerComponent);
 
             return layerComponent;
         }
+
+        //BUNNY CUSTOM: Rail layer dechunking function
+
+        //each, for each Path, if its start or end equals the start or end of an existing tmpPath
+        private void DechunkEdgeColliders(GameObject goLayer)
+        {
+            Debug.Assert(goLayer.layer == LayerMask.NameToLayer("Rail"));
+            IEnumerable<EdgeCollider2D> chunks = goLayer.GetComponentsInChildren<EdgeCollider2D>();
+            List<List<Vector2>> paths = chunks.Select<EdgeCollider2D, List<Vector2>>(edge => edge.points.ToList()).ToList();
+
+            //destroy all of the old children of this layer
+            for(var i = goLayer.transform.childCount-1; i >= 0; --i)
+            {
+                DestroyImmediate(goLayer.transform.GetChild(i).gameObject);
+            }
+
+            List<List<Vector2>> tmpPaths = new List<List<Vector2>>(); //holds the lists that are being constructed on this pass so we don't alter the list we're iterating over
+            bool changeMadeThisLoop = true;
+            while(changeMadeThisLoop)
+            {
+                changeMadeThisLoop = false;
+                foreach(List<Vector2> path in paths)
+                {
+                    bool foundMatch = false;
+                    List<Vector2> firstPath = new List<Vector2>();
+                    List<Vector2> secondPath = new List<Vector2>();
+                    List<List<Vector2>> tmpTmpPaths = tmpPaths.ToList(); //tmpPaths is being built over the outer loop, now we're going to iterate over it too, so we need another temp list
+                    foreach (List<Vector2> otherPath in tmpPaths)
+                    {
+                        //four possible cases where they connect from two conditions:
+                        //  - paths are going in the same direction or we need to reverse this path
+                        //  - this path, when ordered correctly, is before or after the other
+                        if ((path.First() - otherPath.Last()).sqrMagnitude < 0.01f)
+                        {
+                            //path is after otherPath and ordered correctly
+                            foundMatch = true;
+                            firstPath = otherPath.ToList();
+                            secondPath = path.ToList();
+                            tmpTmpPaths.Remove(otherPath);
+                            break;
+                        }
+                        else if ((path.Last() - otherPath.First()).sqrMagnitude < 0.01f)
+                        {
+                            //path is before otherPath and ordered correctly
+                            foundMatch = true;
+                            firstPath = path.ToList();
+                            secondPath = otherPath.ToList();
+                            tmpTmpPaths.Remove(otherPath);
+                            break;
+                        }
+                        else if ((path.First() - otherPath.First()).sqrMagnitude < 0.01f)
+                        {
+                            //path is before otherPath and ordered backwards
+                            foundMatch = true;
+                            firstPath = path.ToList();
+                            firstPath.Reverse();
+                            secondPath = otherPath.ToList();
+                            tmpTmpPaths.Remove(otherPath);
+                            break;
+                        }
+                        else if ((path.Last() - otherPath.Last()).sqrMagnitude < 0.01f)
+                        {
+                            //path is after otherPath and ordered backwards
+                            foundMatch = true;
+                            firstPath = otherPath.ToList();
+                            secondPath = path.ToList();
+                            secondPath.Reverse();
+                            tmpTmpPaths.Remove(otherPath);
+                            break;
+                        }
+                    }
+
+                    //after we either find a match or exhaust possibilities...
+                    if (foundMatch)
+                    {
+                        changeMadeThisLoop = true;
+                        secondPath.RemoveAt(0); //de-duplicate matching point
+                        firstPath.AddRange(secondPath); //append second path to first
+                        tmpTmpPaths.Add(firstPath); //replace the removed path from tmpTmpPaths with the modified one
+                        tmpPaths = tmpTmpPaths.ToList(); //assign tmpTmpPaths back to tmpPaths
+                        tmpTmpPaths.Clear();
+                    }
+                    else
+                    {
+                        tmpTmpPaths.Add(path);
+                        tmpPaths = tmpTmpPaths.ToList();
+                        tmpTmpPaths.Clear();
+                    }
+                }
+
+                //finally replace the paths with what we came up with this cycle
+                paths = tmpPaths.ToList();
+                tmpPaths.Clear();
+            }
+
+            //turn each remaining disconnected path into a new EdgeCollider2D child of the layer
+            int idx = 0;
+            foreach(List<Vector2> path in paths)
+            {
+                GameObject trackCollider = new GameObject(String.Format("Track {0}", idx++));// Assign the parent (pass the parent's Transform)
+                trackCollider.transform.SetParent(goLayer.transform);
+                trackCollider.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                trackCollider.transform.localScale = Vector3.one;
+                trackCollider.layer = LayerMask.NameToLayer("Rail");
+
+                EdgeCollider2D edge = trackCollider.AddComponent<EdgeCollider2D>();
+                edge.points = path.ToArray();
+            }
+
+        }
+
+        //END BUNNY CUSTOM
 
         private void ProcessLayerData(GameObject goLayer, XElement xData)
         {

@@ -155,17 +155,23 @@
    <property name="unity:layer" propertytype="PhysicsLayer" value="Rail"/>
   </properties>
   <data encoding="base64" compression="zlib">
+   <chunk x="-32" y="-32" width="16" height="16">
+   eJxjYBgFo2BgQBSF+uNH9VOsHwD5nwKV
+  </chunk>
    <chunk x="-16" y="-32" width="16" height="16">
-   eJxjYBgFo4AyEAXEMWRiEIin0P5R/eQDAK12B50=
+   eJxjYBgFo4B8EEMhHgUDCwBoBwXB
   </chunk>
    <chunk x="0" y="-32" width="16" height="16">
-   eJxjYBgFo4B8EEMGjqbQzvhR/VTTDwDNIwdC
+   eJxjYBgFo4B8EEMBjqbQ7vhR/RTrBwDTugf6
+  </chunk>
+   <chunk x="-32" y="-16" width="16" height="16">
+   eJxjYCAfxFOgdzDoj6VQ/ygYBUMdAAAGswF7
   </chunk>
    <chunk x="-16" y="-16" width="16" height="16">
-   eJxjYGBgiGegDAy0/lggjiETj4JRMJIBAAlDBoM=
+   eJxjYBjaIIZCPApGwUgGAAiOBcE=
   </chunk>
    <chunk x="0" y="-16" width="16" height="16">
-   eJxjYCAdxJOhh1b6Y8jAcRTaPwpGwXABANVBBig=
+   eJxjYCAfxFOgl1r6YyjAcRTaPwpGwVAHAPi3BuA=
   </chunk>
   </data>
  </layer>
