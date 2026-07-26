@@ -1,9 +1,11 @@
-﻿using SuperTiled2Unity;
+﻿using Platformer.Mechanics;
+using SuperTiled2Unity;
 using SuperTiled2Unity.Editor;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Unity.Tutorials.Core.Editor;
 using Unity.U2D.Physics;
 using UnityEngine;
@@ -12,6 +14,7 @@ using UnityEngine.Tilemaps;
 
 namespace SuperMovingPlatform
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     public class MovingPlatformOnTrack : MonoBehaviour
     {
         // How close we need to be to a track to start off attached to it
@@ -31,6 +34,14 @@ namespace SuperMovingPlatform
 
         // How we are going to advance through our edges (-1 or 1)
         private int m_IndexAdvance = 1;
+
+        Dictionary<KinematicObject, int> carriedKOs = new Dictionary<KinematicObject, int>();
+
+        public Vector2 lastVelocity
+        {
+            get;
+            protected set;
+        }
 
         public void Start()
         {
@@ -54,6 +65,15 @@ namespace SuperMovingPlatform
         public void Reset()
         {
             Assert.IsNotNull(gameObject);
+
+            Rigidbody2D rbComp = gameObject.GetComponent<Rigidbody2D>();
+            if(!rbComp)
+            {
+                rbComp = gameObject.AddComponent<Rigidbody2D>();
+            }
+            Assert.IsNotNull(rbComp);
+            rbComp.bodyType = RigidbodyType2D.Static;
+            rbComp.sharedMaterial = ST2USettings.instance.m_DefaultPhysMat;
 
             GameObject goTilemap = GetComponentInChildren<SuperMap>().gameObject;
             if (!goTilemap)
@@ -188,7 +208,7 @@ namespace SuperMovingPlatform
             return A + (u * P2);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             Debug.DrawLine(transform.position, transform.position + (Vector3.up * MaxDistanceFromTrack), Color.aquamarine);
             Debug.DrawLine(transform.position, transform.position + (Vector3.down * MaxDistanceFromTrack), Color.aquamarine);
@@ -197,13 +217,24 @@ namespace SuperMovingPlatform
             if (m_CurrentPointIndex == -1)
             {
                 //Debug.LogError("Platform is not attached to a track.");
+                lastVelocity = Vector2.zero;
                 return;
             }
+
+            Vector2 startPos = transform.position;
 
             float t = 1.0f;
             while (t > 0.0f)
             {
                 t = MoveAlongTrack(t);
+            }
+
+            Vector2 delta = (Vector2)(transform.position) - startPos;
+            lastVelocity = delta / Time.deltaTime;
+
+            foreach(KinematicObject kine in carriedKOs.Select(p => p.Key))
+            {
+                kine.PlatformRideMovement(delta, gameObject);
             }
 
             for(int i = 0; i < m_Points.Count && DebugDrawPath; ++i)
@@ -270,6 +301,52 @@ namespace SuperMovingPlatform
                 // How much movement do we have left over as a ratio?
                 float leftOverRatio = (dotDesired - dotLimit) / (dotDesired - dotStart);
                 return leftOverRatio * t;
+            }
+        }
+
+        protected void OnCollisionEnter2D(Collision2D collision)
+        {
+            GameObject maybeKinematic = collision.collider.gameObject;
+            while (maybeKinematic)
+            {
+                KinematicObject kine = maybeKinematic.GetComponent<KinematicObject>();
+                if (kine)
+                {
+                    kine.RequestAddToPlatform(gameObject);
+                    int count = 0;
+                    carriedKOs.TryGetValue(kine, out count);
+                    carriedKOs[kine] = ++count;
+                }
+
+                maybeKinematic = maybeKinematic.transform.parent ? maybeKinematic.transform.parent.gameObject : null;
+            }
+        }
+
+        protected void OnCollisionExit2D(Collision2D collision)
+        {
+            GameObject maybeKinematic = collision.collider.gameObject;
+            while (maybeKinematic)
+            {
+                KinematicObject kine = maybeKinematic.GetComponent<KinematicObject>();
+                if (kine)
+                {
+                    kine.RemoveFromPlatform(gameObject);
+                    int count = 0;
+                    if(carriedKOs.TryGetValue(kine, out count))
+                    {
+                        --count;
+                        if(count == 0)
+                        {
+                            carriedKOs.Remove(kine);
+                        }
+                        else
+                        {
+                            carriedKOs[kine] = count;
+                        }
+                    }
+                }
+
+                maybeKinematic = maybeKinematic.transform.parent ? maybeKinematic.transform.parent.gameObject : null;
             }
         }
     }

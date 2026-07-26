@@ -67,4 +67,17 @@ class UtilityFunctions
 
         return outTiles;
     }
+
+    //returns shortest edge-to-edge distance if bounds do not touch or overlap, or zero if they do
+    //in other words, if output > 0 they are not in contact
+    public static float ShortestSquareDistanceBetweenTwoBounds(Bounds A, Bounds B)
+    {
+        // Calculate the distance or overlap on each axis
+        float distX = Mathf.Max(0, Mathf.Abs(A.center.x - B.center.x) - (A.extents.x + B.extents.x));
+        float distY = Mathf.Max(0, Mathf.Abs(A.center.y - B.center.y) - (A.extents.y + B.extents.y));
+        float distZ = Mathf.Max(0, Mathf.Abs(A.center.z - B.center.z) - (A.extents.z + B.extents.z));
+
+        // Combine the axis distances into a 3D Euclidean distance
+        return (distX * distX) + (distY * distY) + (distZ * distZ);
+    }
 }

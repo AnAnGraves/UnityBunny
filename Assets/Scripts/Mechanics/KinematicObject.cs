@@ -1,8 +1,10 @@
 ﻿using Platformer.Core;
 using Platformer.Model;
+using SuperMovingPlatform;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 namespace Platformer.Mechanics
 {
@@ -40,6 +42,22 @@ namespace Platformer.Mechanics
         /// environmentally dependent player gravity. automatically sets the normalized gravity direction when updated.
         /// </summary>
         private Vector2 _pGrav = Vector2.down;
+
+        /// <summary>
+        /// Objects that want to parent the object but currently are not doing so
+        /// </summary>
+        private List<GameObject> potentialParents = new List<GameObject>();
+
+        /// <summary>
+        /// Is this object a player?
+        /// </summary>
+        private bool bIsPlayer = false;
+
+        /// <summary>
+        /// this is the only platform allowed to freely upda
+        /// </summary>
+        GameObject riddenPlatform = null;
+
         public Vector2 personalGravity
         {
             get => _pGrav;
@@ -121,6 +139,8 @@ namespace Platformer.Mechanics
         protected virtual void OnDisable()
         {
             body.bodyType = RigidbodyType2D.Dynamic;
+            if(transform.parent) transform.SetParent(null);
+            potentialParents.Clear();
         }
 
         protected virtual void Start()
@@ -129,6 +149,7 @@ namespace Platformer.Mechanics
             contactFilter.useTriggers = false;
             contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
             contactFilter.useLayerMask = true;
+            bIsPlayer = (gameObject.GetComponent<PlayerController>() != null);
         }
 
         protected virtual void Update()
@@ -140,6 +161,38 @@ namespace Platformer.Mechanics
         protected virtual void ComputeVelocity()
         {
 
+        }
+
+        public void RequestAddToPlatform(GameObject goParent)
+        {
+            if (riddenPlatform == null)
+            {
+                riddenPlatform = goParent;
+            }
+            else
+            {
+                potentialParents.Add(goParent);
+            }
+        }
+
+        public void RemoveFromPlatform(GameObject goParent)
+        {
+            if (riddenPlatform == goParent)
+            {
+                if(potentialParents.Count > 0)
+                {
+                    riddenPlatform = potentialParents[0];
+                    potentialParents.RemoveAt(0);
+                }
+                else
+                {
+                    riddenPlatform = null;
+                }
+            }
+            else
+            {
+                potentialParents.Remove(goParent);
+            }
         }
 
         protected virtual void FixedUpdate()
@@ -158,6 +211,13 @@ namespace Platformer.Mechanics
 
             PerformMovement(moveAlongGravity, true);
 
+        }
+
+        //parenting the player to 
+        public void PlatformRideMovement(Vector2 move, GameObject source)
+        {
+            if (source != riddenPlatform) return;
+            body.position = body.position + move;
         }
 
         void PerformMovement(Vector2 move, bool yMovement) //true is movement on the axis of gravity, false is movement perpendicular to gravity

@@ -158,6 +158,15 @@ namespace SuperTiled2Unity.Editor
                 tmpPaths.Clear();
             }
 
+            //closed paths will have the same start an end point! remove the end
+            foreach(List<Vector2> path in paths)
+            {
+                if ((path.First() - path.Last()).sqrMagnitude < 0.01f)
+                {
+                    path.RemoveAt(0);
+                }
+            }
+
             //turn each remaining disconnected path into a new EdgeCollider2D child of the layer
             int idx = 0;
             foreach(List<Vector2> path in paths)
