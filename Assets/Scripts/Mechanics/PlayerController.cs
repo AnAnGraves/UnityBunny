@@ -158,6 +158,8 @@ namespace Platformer.Mechanics
 
         //******* DEBUG *******
 
+        Vector2 LastEffectiveVelocity;
+        Vector2 LastWorldPosition;
         Vector2 LastScreenPosition;
         Vector2 LastMousePosition;
         Vector2 LastLaunchComponents;
@@ -217,7 +219,27 @@ namespace Platformer.Mechanics
 
         protected void DebugDraw()
         {
-            Debug.DrawLine(lastSurfacePoint, lastSurfacePoint + lastSurfaceNormal, Color.red, 0.05f);
+            //surface contact debug UI
+            //Debug.DrawLine(lastSurfacePoint, lastSurfacePoint + lastSurfaceNormal, Color.red);
+
+            //true velocity debug UI
+            //most draw calls the position hasnt actually updated
+            //Vector2 effectiveVelocity = ((Vector2)(transform.position) - LastWorldPosition);
+            //if (effectiveVelocity.sqrMagnitude > 0.001f) LastEffectiveVelocity = effectiveVelocity;
+            //Debug.DrawLine(transform.position, (Vector2)(transform.position) + LastEffectiveVelocity * 30.0f, Color.magenta);
+            //LastWorldPosition = transform.position;
+
+            //reported velocity debug UI
+            //Debug.DrawLine(collider2d.bounds.center, (Vector2)(collider2d.bounds.center) + LastFrameVelocity.normalized * 2.0f, Color.cyan);
+
+            //chargiing debug UI
+            if (chargeStage >= 0 && (state == JumpState.Charging || state == JumpState.StickCharge))
+            {
+                Debug.DrawLine(collider2d.bounds.center, (Vector2)(collider2d.bounds.center) + ((LastMousePosition - LastScreenPosition).normalized * (chargeStage + 1) * 0.75f), chargeLevelColors[chargeStage]);
+            }
+
+            DebugText.SetText(String.Format("POSITION: {0:F2}, {1:F2} \nMOUSE: {2:F2}, {3:F2} \nCOMPONENTS: {4:F2}, {5:F2} \nL. VELOCITY: {6:F2}, {7:F2} \nVELOCITY {8:F2}, {9:F2}",
+                LastScreenPosition.x, LastScreenPosition.y, LastMousePosition.x, LastMousePosition.y, LastLaunchComponents.x, LastLaunchComponents.y, LastLaunchVelocity.x, LastLaunchVelocity.y, velocity.x, velocity.y));
         }
         protected override void Update()
         {
@@ -293,11 +315,8 @@ namespace Platformer.Mechanics
 
             UpdateJumpState();
 
-            LastScreenPosition = Camera.main.WorldToScreenPoint(body.position);
+            LastScreenPosition = Camera.main.WorldToScreenPoint(collider2d.bounds.center);
             LastMousePosition = Mouse.current.position.value;
-
-            DebugText.SetText(String.Format( "POSITION: {0:F2}, {1:F2} \nMOUSE: {2:F2}, {3:F2} \nCOMPONENTS: {4:F2}, {5:F2} \nL. VELOCITY: {6:F2}, {7:F2} \nVELOCITY {8:F2}, {9:F2}", 
-                LastScreenPosition.x, LastScreenPosition.y, LastMousePosition.x, LastMousePosition.y, LastLaunchComponents.x, LastLaunchComponents.y, LastLaunchVelocity.x, LastLaunchVelocity.y, velocity.x, velocity.y));
 
             DebugText.ForceMeshUpdate();
 

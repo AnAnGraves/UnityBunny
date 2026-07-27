@@ -1,11 +1,11 @@
 {
     "activeFile": "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
     "expandedProjectPaths": [
-        "Tilesets",
         ".",
         "Maps",
-        "Prefabs/MovingPlatforms",
-        "Prefabs"
+        "Prefabs",
+        "Tilesets",
+        "Prefabs/MovingPlatforms"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -37,8 +37,8 @@
             "scale": 0.5,
             "selectedLayer": 6,
             "viewCenter": {
-                "x": 1611,
-                "y": -1787
+                "x": 3138,
+                "y": 1025
             }
         },
         "Prefabs/FloatingIsland1.tmx": {
@@ -53,8 +53,8 @@
             "scale": 1.40125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 491.34701159678855,
-                "y": 143.08652988403207
+                "x": 1008.7421944692238,
+                "y": 501.3380909901873
             }
         },
         "Prefabs/TemplatePrefab.tmx": {

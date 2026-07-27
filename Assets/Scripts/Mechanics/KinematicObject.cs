@@ -4,6 +4,7 @@ using SuperMovingPlatform;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 namespace Platformer.Mechanics
@@ -58,6 +59,8 @@ namespace Platformer.Mechanics
         /// </summary>
         GameObject riddenPlatform = null;
 
+        InputAction snapAction;
+
         public Vector2 personalGravity
         {
             get => _pGrav;
@@ -99,6 +102,7 @@ namespace Platformer.Mechanics
         protected const float minMoveDistance = 0.001f;
         protected const float shellRadius = 0.01f;
 
+        bool drewVelThisFrame = false;
 
         /// <summary>
         /// Bounce the object's vertical velocity.
@@ -139,7 +143,7 @@ namespace Platformer.Mechanics
         protected virtual void OnDisable()
         {
             body.bodyType = RigidbodyType2D.Dynamic;
-            if(transform.parent) transform.SetParent(null);
+            if(transform.parent && transform.parent.gameObject.activeSelf) transform.SetParent(null);
             potentialParents.Clear();
         }
 
@@ -150,10 +154,14 @@ namespace Platformer.Mechanics
             contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
             contactFilter.useLayerMask = true;
             bIsPlayer = (gameObject.GetComponent<PlayerController>() != null);
+
+            snapAction = InputSystem.actions.FindAction("Player/DebugSnapshot");
+            snapAction.Enable();
         }
 
         protected virtual void Update()
         {
+            drewVelThisFrame = false;
             targetVelocity = Vector2.zero;
             ComputeVelocity();
         }
@@ -205,7 +213,28 @@ namespace Platformer.Mechanics
 
             var moveAlongGravity = (personalGravityDirection * Vector2.Dot(personalGravityDirection, velocity)) * Time.deltaTime;
 
-            var moveAlongGround = (velocity - moveAlongGravity) * Time.deltaTime;//new Vector2(groundNormal.y, -groundNormal.x);
+            var moveAlongGround = (Vector2.Perpendicular(personalGravityDirection) * Vector2.Dot(Vector2.Perpendicular(personalGravityDirection), velocity)) * Time.deltaTime;
+            Vector2 nominalMovement = velocity * Time.deltaTime;
+
+            bool snapped = snapAction.IsPressed();
+            if (!drewVelThisFrame && snapped)
+            {
+                //draw what should be a box with a diagonal if all is working
+                float drawVelocityScale = 30.0f;
+
+                Collider2D collider2d = gameObject.GetComponent<Collider2D>();
+                Vector2 origin = collider2d ? collider2d.bounds.center : transform.position;
+                
+                Vector2 vertical = origin + (moveAlongGravity * drawVelocityScale);
+                Vector2 horizontal = origin + (moveAlongGround * drawVelocityScale);
+                Vector2 corner = (Vector2)(transform.position) + (nominalMovement * drawVelocityScale);
+                Debug.DrawLine(origin, vertical, Color.blue, 1f);  // origin -> top left
+                Debug.DrawLine(vertical, corner, Color.cyan, 1f);// top left -> top right 
+                Debug.DrawLine(origin, horizontal, Color.red, 1f);  // origin -> bottom right
+                Debug.DrawLine(horizontal, corner, Color.yellow, 1f); // bottom left -> top right
+                Debug.DrawLine(origin, corner, Color.green, 1f);    // origin -> top right
+                drewVelThisFrame = true;
+            }
 
             PerformMovement(moveAlongGround, false);
 
@@ -271,7 +300,7 @@ namespace Platformer.Mechanics
                     distance = modifiedDistance < distance ? modifiedDistance : distance;
                 }
             }
-            body.position = body.position + move.normalized * distance;
+            body.position += move.normalized * distance;
         }
 
     }
