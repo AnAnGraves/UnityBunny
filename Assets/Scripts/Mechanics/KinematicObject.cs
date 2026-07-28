@@ -296,7 +296,7 @@ namespace Platformer.Mechanics
                         bHitATopOrBottom = true;
                     }
 
-                    //remove shellDistance from actual move distance.
+                    //if this is a new shortest move, replace the move info
                     if (modifiedDistance < distance)
                     {
                         distance = modifiedDistance;
@@ -304,6 +304,21 @@ namespace Platformer.Mechanics
                         lastSurfacePoint = hitBuffer[i].point;
                         lastSurfaceNormal = hitBuffer[i].normal;
                     }
+
+                    //if we touch a moving platform not carrying us, let it know so that it doesn't move away without noticing
+                    //I made moving platforms so I get to say they can onnly be root level GameObjects, saving some type checks
+                    GameObject MaybePlatform = hitBuffer[i].collider.gameObject;
+                    while (MaybePlatform && MaybePlatform.transform.parent != null)
+                    {
+                        MaybePlatform = MaybePlatform.transform.parent.gameObject;
+                    }
+
+                    MovingPlatformOnTrack Platform = MaybePlatform.GetComponent<MovingPlatformOnTrack>();
+                    if (Platform)
+                    {
+                        Platform.HandleKOContactMidUpdate(this);
+                    }
+
                 }
 
                 if (bHitAWall)

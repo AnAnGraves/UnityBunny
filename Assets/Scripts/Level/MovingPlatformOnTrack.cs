@@ -238,7 +238,7 @@ namespace SuperMovingPlatform
             {
                 pair.Key.PlatformRideMovement(delta, gameObject);
 
-                //remove CKOs AFTER one final update, otherwise landing on descending platforms breaks
+                //remove zero count KOs added mid-update
                 if(pair.Value < 1)
                 {
                     toRemove.Add(pair.Key);
@@ -319,6 +319,18 @@ namespace SuperMovingPlatform
             }
         }
 
+        //it's possible for a KO to update before this platform, touch it and stop, and then have this platform move away before the collision is registered
+        //to handle this, when KOs hit a moving platform they notify it, and if the platform is not tracking it the KO it is added to the carried map with
+        //a contact count of zero, which causes it to update this frame then be removed, which should preserve their contact to be handled by the normal
+        //collision handling. if we were tracking it already do nothing.
+        public void HandleKOContactMidUpdate(KinematicObject kine)
+        {
+            if(!carriedKOs.ContainsKey(kine))
+            {
+                carriedKOs.Add(kine, 0);
+            }
+        }
+
         protected void OnCollisionEnter2D(Collision2D collision)
         {
             GameObject maybeKinematic = collision.collider.gameObject;
@@ -331,6 +343,7 @@ namespace SuperMovingPlatform
                     int count = 0;
                     carriedKOs.TryGetValue(kine, out count);
                     carriedKOs[kine] = ++count;
+                    return; //shouldn't be a case where a KO is a child of a KO so we can just exit after the first
                 }
 
                 maybeKinematic = maybeKinematic.transform.parent ? maybeKinematic.transform.parent.gameObject : null;
@@ -349,9 +362,16 @@ namespace SuperMovingPlatform
                     if(carriedKOs.TryGetValue(kine, out count))
                     {
                         --count;
-                        carriedKOs[kine] = count;
-                        //DON'T ACTUALLY REMOVE 0 CONTACT KOs YET! otherwise landings on descending platforms break
+                        if (count < 1)
+                        {
+                            carriedKOs.Remove(kine);
+                        }
+                        else
+                        {
+                            carriedKOs[kine] = count;
+                        }
                     }
+                    return; //shouldn't be a case where a KO is a child of a KO so we can just exit after the first
                 }
 
                 maybeKinematic = maybeKinematic.transform.parent ? maybeKinematic.transform.parent.gameObject : null;
