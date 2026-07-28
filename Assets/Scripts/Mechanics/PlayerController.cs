@@ -873,9 +873,9 @@ namespace Platformer.Mechanics
             }
 
             if (move.x > 0.01f)
-                spriteRenderer.flipX = false;
+                spriteRenderer.flipX = personalGravityDirection.y > 0 ? true : false;
             else if (move.x < -0.01f)
-                spriteRenderer.flipX = true;
+                spriteRenderer.flipX = personalGravityDirection.y > 0 ? false : true;
 
             animator.SetBool("grounded", IsStateOnGround());
             animator.SetFloat("velocityX", (Mathf.Abs(move.x) > RunAnimThreshold ? Mathf.Abs(move.x) : 0.0f) / maxSpeed);
