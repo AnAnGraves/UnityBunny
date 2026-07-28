@@ -251,18 +251,21 @@ namespace Platformer.Mechanics
 
         void PerformMovement(Vector2 move, bool yMovement) //true is movement on the axis of gravity, false is movement perpendicular to gravity
         {
+            Vector2 slopeMovement = Vector2.zero;
+            Vector2 direction = move.normalized;
             var distance = move.magnitude;
 
             if (distance > minMoveDistance)
             {
                 //check if we hit anything in current direction of travel
                 var count = body.Cast(move, contactFilter, hitBuffer, distance + shellRadius);
+                bool bHitAWall = false; //for airborne collisions, if we hit something horizontally then start 'falling' (we might still Stick instead)
+                bool bHitATopOrBottom = false; //if we hit something vertically, kill vertical velocity
                 for (var i = 0; i < count; i++)
                 {
                     var currentNormal = hitBuffer[i].normal;
-
-                    lastSurfacePoint = hitBuffer[0].point;
-                    lastSurfaceNormal = hitBuffer[0].normal;
+                    float modifiedDistance = hitBuffer[i].distance - (shellRadius);
+                    Vector2 modifiedSlopeMovement = Vector2.zero; //if we hit something before the slope we always want to cancel the slope move
 
                     float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
 
@@ -270,37 +273,94 @@ namespace Platformer.Mechanics
                     if (groundedness > minFloorSurfaceness)
                     {
                         IsGrounded = true;
-                        // if moving up, change the groundNormal to new surface normal.
-                        if (yMovement)
-                        {
-                            groundNormal = currentNormal;
-                            //currentNormal.x = 0;
-                        }
+                        groundNormal = currentNormal;
                     }
-                    if (IsGrounded)
+                    
+                    if(!yMovement)
                     {
-                        //how much of our velocity aligns with surface normal?
-                        var projection = Vector2.Dot(velocity, currentNormal);
-                        if (projection < 0)
+                        if(IsGrounded) //hit some kind of slope
                         {
-                            //slower velocity if moving against the normal (up a hill).
-                            velocity = velocity - (slopeEffect * (projection * currentNormal));
+                            //uphill direction vector
+                            Vector2 uphillSlope = Vector2.Reflect(-1f * currentNormal, direction).normalized;
 
-                            //slight boost up to ease transition
-                            velocity += personalGravityDirection * -0.05f;
+                            //project movement onto slope
+                            modifiedSlopeMovement = uphillSlope * (Vector2.Dot(uphillSlope, direction) * distance);
+                        }
+                        else //hit a surface we couldn't land on in while airborne
+                        {
+                            bHitAWall = true;
                         }
                     }
                     else
                     {
-                        //We are airborne, but hit something, so cancel any velocity not in the direction of gravity -- FORMERLY: cancel vertical up and horizontal velocity.
-                        velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
+                        bHitATopOrBottom = true;
                     }
+
                     //remove shellDistance from actual move distance.
-                    var modifiedDistance = hitBuffer[i].distance - shellRadius;
-                    distance = modifiedDistance < distance ? modifiedDistance : distance;
+                    if (modifiedDistance < distance)
+                    {
+                        distance = modifiedDistance;
+                        slopeMovement = modifiedSlopeMovement;
+                        lastSurfacePoint = hitBuffer[i].point;
+                        lastSurfaceNormal = hitBuffer[i].normal;
+                    }
+                }
+
+                if (bHitAWall)
+                {
+                    velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
+                }
+                if(bHitATopOrBottom)
+                {
+                    Vector2 lateral = Vector2.Perpendicular(personalGravityDirection);
+                    velocity = lateral * Vector2.Dot(lateral, velocity);
                 }
             }
-            body.position += move.normalized * distance;
+
+            body.position += direction * distance;
+            if(slopeMovement.magnitude > minMoveDistance)
+            {
+                PerformSlopeMovement(slopeMovement);
+            }
+        }
+
+        //needed so movement that hits a slope can redo hit tests on that move but not cascade via recursion
+        void PerformSlopeMovement(Vector2 move)
+        {
+            Vector2 direction = move.normalized;
+            var distance = move.magnitude;
+
+            //all we do is check if we hit anything in current direction of travel
+            //and if we do cut off movement at the shortest distance
+            var count = body.Cast(move, contactFilter, hitBuffer, distance + shellRadius);
+            bool bHitAWall = false; //for airborne collisions, if we hit something horizontally then start 'falling' (we might still Stick instead)
+            for (var i = 0; i < count; i++)
+            {
+                var currentNormal = hitBuffer[i].normal;
+
+                //make sure this isn't a slight variation in slope or minor overlap
+                if(Mathf.Abs(Vector2.Dot(direction, currentNormal)) > 0.9f)
+                {
+                    continue;
+                }
+
+                float modifiedDistance = hitBuffer[i].distance - (shellRadius);
+
+                //remove shellDistance from actual move distance.
+                if (modifiedDistance < distance)
+                {
+                    distance = modifiedDistance;
+                    lastSurfacePoint = hitBuffer[i].point;
+                    lastSurfaceNormal = hitBuffer[i].normal;
+                    bHitAWall = true;
+                }
+            }
+
+            body.position += direction * distance;
+            if (bHitAWall)
+            {
+                velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
+            }
         }
 
     }

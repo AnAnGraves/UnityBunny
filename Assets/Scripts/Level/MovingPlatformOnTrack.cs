@@ -35,6 +35,7 @@ namespace SuperMovingPlatform
         // How we are going to advance through our edges (-1 or 1)
         private int m_IndexAdvance = 1;
 
+        //list of game objects currently considered to be riding on this platform - this is not quite guaranteed to equal the KOs in contact with it
         Dictionary<KinematicObject, int> carriedKOs = new Dictionary<KinematicObject, int>();
 
         public Vector2 lastVelocity
@@ -213,7 +214,7 @@ namespace SuperMovingPlatform
             Debug.DrawLine(transform.position, transform.position + (Vector3.up * MaxDistanceFromTrack), Color.aquamarine);
             Debug.DrawLine(transform.position, transform.position + (Vector3.down * MaxDistanceFromTrack), Color.aquamarine);
             Debug.DrawLine(transform.position, transform.position + (Vector3.left * MaxDistanceFromTrack), Color.aquamarine);
-            Debug.DrawLine(transform.position, transform.position + (Vector3.up * MaxDistanceFromTrack), Color.aquamarine);
+            Debug.DrawLine(transform.position, transform.position + (Vector3.right * MaxDistanceFromTrack), Color.aquamarine);
             if (m_CurrentPointIndex == -1)
             {
                 //Debug.LogError("Platform is not attached to a track.");
@@ -232,9 +233,23 @@ namespace SuperMovingPlatform
             Vector2 delta = (Vector2)(transform.position) - startPos;
             lastVelocity = delta / Time.deltaTime;
 
-            foreach(KinematicObject kine in carriedKOs.Select(p => p.Key))
+            List<KinematicObject> toRemove = new List<KinematicObject>(); //can't modify list while iterating
+            foreach(var pair in carriedKOs)
             {
-                kine.PlatformRideMovement(delta, gameObject);
+                pair.Key.PlatformRideMovement(delta, gameObject);
+
+                //remove CKOs AFTER one final update, otherwise landing on descending platforms breaks
+                if(pair.Value < 1)
+                {
+                    toRemove.Add(pair.Key);
+                }
+            }
+
+            //NOW we can remove them
+            foreach(var kine in toRemove)
+            {
+                carriedKOs.Remove(kine);
+                kine.RemoveFromPlatform(gameObject);
             }
 
             for(int i = 0; i < m_Points.Count && DebugDrawPath; ++i)
@@ -330,19 +345,12 @@ namespace SuperMovingPlatform
                 KinematicObject kine = maybeKinematic.GetComponent<KinematicObject>();
                 if (kine)
                 {
-                    kine.RemoveFromPlatform(gameObject);
                     int count = 0;
                     if(carriedKOs.TryGetValue(kine, out count))
                     {
                         --count;
-                        if(count == 0)
-                        {
-                            carriedKOs.Remove(kine);
-                        }
-                        else
-                        {
-                            carriedKOs[kine] = count;
-                        }
+                        carriedKOs[kine] = count;
+                        //DON'T ACTUALLY REMOVE 0 CONTACT KOs YET! otherwise landings on descending platforms break
                     }
                 }
 
