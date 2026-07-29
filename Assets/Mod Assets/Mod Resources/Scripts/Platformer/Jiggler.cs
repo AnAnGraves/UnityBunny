@@ -23,7 +23,7 @@ public class Jiggler : MonoBehaviour
 
     [Header("Scale Jiggler")]
     public bool jigScale = true;
-    public Vector3 scaleJigAmount = new Vector3(.1f, -.1f, .1f);
+    public Vector3 scaleJigAmount = new(.1f, -.1f, .1f);
     [Range(0, 120)]
     public float scaleFrequency = 10;
     float scaleTime;

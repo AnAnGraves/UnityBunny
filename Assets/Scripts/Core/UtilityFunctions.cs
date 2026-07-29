@@ -40,8 +40,8 @@ class UtilityFunctions
     {
         // Directly finds all 2D colliders overlapping the point
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(point);
-        List<Tilemap> overlappingTilemaps = new List<Tilemap>();
-        List<SuperTile> outTiles = new List<SuperTile>();
+        List<Tilemap> overlappingTilemaps = new();
+        List<SuperTile> outTiles = new();
 
         foreach (Collider2D col in hitColliders)
         {

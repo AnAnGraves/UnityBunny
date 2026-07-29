@@ -40,14 +40,24 @@ namespace Platformer.Mechanics
         public float slopeEffect = 1.0f;
 
         /// <summary>
-        /// environmentally dependent player gravity. automatically sets the normalized gravity direction when updated.
+        /// backs parametere personalGravity
         /// </summary>
         private Vector2 _pGrav = Vector2.down;
 
         /// <summary>
+        /// backs parameter personalGravityDirection
+        /// </summary>
+        private Vector2 _pGravDir = Vector2.down;
+
+        /// <summary>
+        /// backs parameter lateralDirection
+        /// </summary>
+        private Vector2 _pLateralDir = Vector2.right;
+
+        /// <summary>
         /// Objects that want to parent the object but currently are not doing so
         /// </summary>
-        private List<GameObject> potentialParents = new List<GameObject>();
+        private List<GameObject> potentialParents = new();
 
         /// <summary>
         /// Is this object a player?
@@ -59,8 +69,21 @@ namespace Platformer.Mechanics
         /// </summary>
         GameObject riddenPlatform = null;
 
+        /// <summary>
+        /// Stores calculated platform velocity to be imparted when the platform is disconnected from
+        /// </summary>
+        protected Vector2 platformVelocity = Vector2.zero;
+
+        /// <summary>
+        /// Flag to add platform velocity on this update
+        /// </summary>
+        bool bLeftPlatform = false;
+
         InputAction snapAction;
 
+        /// <summary>
+        /// environmentally dependent player gravity. automatically sets the gravity and lateral directions when updated
+        /// </summary>
         public Vector2 personalGravity
         {
             get => _pGrav;
@@ -69,16 +92,24 @@ namespace Platformer.Mechanics
             {
                 _pGrav = value;
                 _pGravDir = _pGrav.normalized;
+                _pLateralDir = Vector2.Perpendicular(_pGravDir);
             }
         }
 
         /// <summary>
         /// direction of environmentally dependent player gravity. cannot be manually set.
         /// </summary>
-        private Vector2 _pGravDir = Vector2.down;
         public Vector2 personalGravityDirection
         {
             get => _pGravDir;
+        }
+
+        /// <summary>
+        /// direction of environmentally dependent player gravity. cannot be manually set.
+        /// </summary>
+        public Vector2 lateralDirection
+        {
+            get => _pLateralDir;
         }
 
 
@@ -110,7 +141,18 @@ namespace Platformer.Mechanics
         /// <param name="value"></param>
         public void Bounce(float value)
         {
-            velocity.y = value;
+            velocity = GetLateralComponent(velocity);
+            velocity += value * (-personalGravityDirection);
+        }
+
+        /// <summary>
+        /// Bounce the object's vertical velocity away from a point
+        /// </summary>
+        /// <param name="value"></param>
+        public void Bounce(float value, Vector3 origin)
+        {
+            velocity = GetLateralComponent(velocity);
+            velocity += value * personalGravityDirection * Mathf.Sign(Vector2.Dot(personalGravity, transform.position - origin));
         }
 
         /// <summary>
@@ -162,8 +204,6 @@ namespace Platformer.Mechanics
         protected virtual void Update()
         {
             drewVelThisFrame = false;
-            targetVelocity = Vector2.zero;
-            ComputeVelocity();
         }
 
         protected virtual void ComputeVelocity()
@@ -177,7 +217,7 @@ namespace Platformer.Mechanics
             {
                 riddenPlatform = goParent;
             }
-            else
+            else if(riddenPlatform != goParent)
             {
                 potentialParents.Add(goParent);
             }
@@ -195,6 +235,7 @@ namespace Platformer.Mechanics
                 else
                 {
                     riddenPlatform = null;
+                    bLeftPlatform = true;
                 }
             }
             else
@@ -203,17 +244,38 @@ namespace Platformer.Mechanics
             }
         }
 
+        protected Vector2 GetVerticalComponent(in Vector2 vec)
+        {
+            return Vector2.Dot(personalGravityDirection, vec) * personalGravityDirection;
+        }
+
+        protected Vector2 GetLateralComponent(in Vector2 vec)
+        {
+            return Vector2.Dot(lateralDirection, vec) * lateralDirection;
+        }
+
         protected virtual void FixedUpdate()
         {
+            targetVelocity = Vector2.zero;
+            ComputeVelocity();
+
             velocity += gravityModifier * personalGravity * Time.deltaTime;
 
-            velocity.x = targetVelocity.x;
+            //velocity.x = targetVelocity.x;
+            velocity = GetVerticalComponent(velocity);
+            velocity += GetLateralComponent(targetVelocity);
+
+            if(bLeftPlatform)
+            {
+                if(riddenPlatform == null) velocity += platformVelocity;
+                bLeftPlatform = false;
+            }
 
             IsGrounded = false;
 
             var moveAlongGravity = (personalGravityDirection * Vector2.Dot(personalGravityDirection, velocity)) * Time.deltaTime;
 
-            var moveAlongGround = (Vector2.Perpendicular(personalGravityDirection) * Vector2.Dot(Vector2.Perpendicular(personalGravityDirection), velocity)) * Time.deltaTime;
+            var moveAlongGround = (lateralDirection * Vector2.Dot(lateralDirection, velocity)) * Time.deltaTime;
             Vector2 nominalMovement = velocity * Time.deltaTime;
 
             bool snapped = snapAction.IsPressed();
@@ -243,10 +305,13 @@ namespace Platformer.Mechanics
         }
 
         //parenting the player to 
-        public void PlatformRideMovement(Vector2 move, GameObject source)
+        public void PlatformRideMovement(Vector2 move, GameObject source, bool force = false)
         {
-            if (source != riddenPlatform) return;
-            body.position = body.position + move;
+            if (force || source == riddenPlatform)
+            {
+                body.position = body.position + move;
+                platformVelocity = move / Time.deltaTime;
+            }
         }
 
         void PerformMovement(Vector2 move, bool yMovement) //true is movement on the axis of gravity, false is movement perpendicular to gravity
@@ -314,7 +379,7 @@ namespace Platformer.Mechanics
                     }
 
                     MovingPlatformOnTrack Platform = MaybePlatform.GetComponent<MovingPlatformOnTrack>();
-                    if (Platform)
+                    if (Platform && Platform.gameObject != riddenPlatform)
                     {
                         Platform.HandleKOContactMidUpdate(this);
                     }
@@ -327,8 +392,7 @@ namespace Platformer.Mechanics
                 }
                 if(bHitATopOrBottom)
                 {
-                    Vector2 lateral = Vector2.Perpendicular(personalGravityDirection);
-                    velocity = lateral * Vector2.Dot(lateral, velocity);
+                    velocity = lateralDirection * Vector2.Dot(lateralDirection, velocity);
                 }
             }
 

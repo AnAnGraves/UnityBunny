@@ -1,11 +1,11 @@
 {
     "activeFile": "Prefabs/TheRing.tmx",
     "expandedProjectPaths": [
-        ".",
-        "Prefabs/MovingPlatforms",
         "Prefabs",
+        ".",
+        "Maps",
         "Tilesets",
-        "Maps"
+        "Prefabs/MovingPlatforms"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -35,7 +35,7 @@
         },
         "Maps/TestMap.tmx": {
             "scale": 0.5,
-            "selectedLayer": 6,
+            "selectedLayer": 0,
             "viewCenter": {
                 "x": 3139,
                 "y": 1025
@@ -66,11 +66,11 @@
             }
         },
         "Prefabs/TheRing.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 1,
+            "scale": 0.33,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 2019,
-                "y": 2263
+                "x": 1359.0909090909095,
+                "y": 2734.848484848485
             }
         },
         "TestMap.tmx": {
@@ -82,11 +82,11 @@
             }
         },
         "Tilesets/DirectionTiles.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Tilesets/GrasslandTiles.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Tilesets/RailTiles.tsx": {

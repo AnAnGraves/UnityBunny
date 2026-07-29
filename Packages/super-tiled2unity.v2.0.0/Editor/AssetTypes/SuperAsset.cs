@@ -9,7 +9,7 @@ namespace SuperTiled2Unity.Editor
     public class SuperAsset : ScriptableObject
     {
         [SerializeField]
-        private List<string> m_AssetDependencies = new List<string>();
+        private List<string> m_AssetDependencies = new();
 
         public List<string> AssetDependencies => m_AssetDependencies;
 

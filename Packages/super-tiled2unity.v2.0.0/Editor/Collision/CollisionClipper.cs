@@ -11,8 +11,8 @@ namespace SuperTiled2Unity.Editor
         private const float Multiplier = 1024.0f;
         private const float InvMultiplier = 1.0f / Multiplier;
 
-        private Clipper m_Clipper = new Clipper();
-        private List<Vector2[]> m_RawOpenPaths = new List<Vector2[]>();
+        private Clipper m_Clipper = new();
+        private List<Vector2[]> m_RawOpenPaths = new();
 
         // Once the clipper is executed we have our list of processed closed and open paths
         public List<Vector2[]> ClosedPaths { get; private set; }
@@ -32,7 +32,7 @@ namespace SuperTiled2Unity.Editor
 
         public void Execute()
         {
-            PolyTree solution = new PolyTree();
+            PolyTree solution = new();
             m_Clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftNonZero, PolyFillType.pftEvenOdd);
 
             AddConvexPolygonsFromSolution(solution);
@@ -41,14 +41,14 @@ namespace SuperTiled2Unity.Editor
 
         private void AddConvexPolygonsFromSolution(PolyTree solution)
         {
-            ClosedPaths = new List<Vector2[]>();
+            ClosedPaths = new();
 
             // Triangulate the solution
-            var triangulator = new Triangulator();
+            Triangulator triangulator = new();
             var triangles = triangulator.TriangulateClipperSolution(solution);
 
             // Gather triangles into a collection of convex polygons
-            var composition = new ComposeConvexPolygons();
+            ComposeConvexPolygons composition = new();
             var convexPolygons = composition.Compose(triangles);
 
             foreach (var poly in convexPolygons)
@@ -62,7 +62,7 @@ namespace SuperTiled2Unity.Editor
         {
             OpenPaths = new List<Vector2[]>();
 
-            var reduction = new PolylineReduction();
+            PolylineReduction reduction = new();
 
             foreach (var line in m_RawOpenPaths)
             {

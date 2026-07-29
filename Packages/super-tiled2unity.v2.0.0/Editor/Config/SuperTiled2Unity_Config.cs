@@ -37,7 +37,7 @@ namespace SuperTiled2Unity.Editor
         public static void ExportSuperAsset()
         {
             var path = AssetDatabase.GetAssetPath(Selection.activeObject);
-            var tracker = new RecursiveAssetDependencyTracker(path);
+            RecursiveAssetDependencyTracker tracker = new(path);
             SuperPackageExport.ShowWindow(Path.GetFileNameWithoutExtension(path), tracker.Dependencies);
         }
 
@@ -45,7 +45,7 @@ namespace SuperTiled2Unity.Editor
         public static void ReimportWithDefaults()
         {
             UnityEngine.Object[] selectedAsset = Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.DeepAssets);
-            HashSet<TiledAssetImporter> tiledImporters = new HashSet<TiledAssetImporter>();
+            HashSet<TiledAssetImporter> tiledImporters = new();
 
             foreach (var obj in selectedAsset)
             {

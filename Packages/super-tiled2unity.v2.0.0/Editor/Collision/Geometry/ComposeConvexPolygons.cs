@@ -13,7 +13,7 @@ namespace SuperTiled2Unity.Editor.Geometry
 
         public ComposeConvexPolygons()
         {
-            PolygonEdgeGroup = new PolygonEdgeGroup();
+            PolygonEdgeGroup = new();
         }
 
         public List<Vector2[]> Compose(List<Vector2[]> triangles)
@@ -26,7 +26,7 @@ namespace SuperTiled2Unity.Editor.Geometry
         private void CombinePolygons()
         {
             // Before we start merging polygons keep a list of all the ones we have
-            List<CompositionPolygon> convexPolygons = new List<CompositionPolygon>();
+            List<CompositionPolygon> convexPolygons = new();
             foreach (var edge in PolygonEdgeGroup.PolygonEdges)
             {
                 if (edge.MajorPartner != null)

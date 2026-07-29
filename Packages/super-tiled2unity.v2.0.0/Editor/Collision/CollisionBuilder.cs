@@ -40,7 +40,7 @@ namespace SuperTiled2Unity.Editor
                     if (!m_CollisionClippers.TryGetValue(key, out clipper))
                     {
                         // Add a new clipper for the layer
-                        clipper = new CollisionClipper();
+                        clipper = new();
                         m_CollisionClippers.Add(key, clipper);
                     }
 
@@ -83,7 +83,7 @@ namespace SuperTiled2Unity.Editor
                     }
 
                     var layerName = LayerMask.LayerToName(layerId);
-                    var goCollider = new GameObject("Collision_" + layerName);
+                    GameObject goCollider = new("Collision_" + layerName);
                     goCollider.layer = layerId;
                     m_TilemapGameObject.AddChildWithUniqueName(goCollider);
 
@@ -103,7 +103,7 @@ namespace SuperTiled2Unity.Editor
                     // Add polygon colliders
                     foreach (var path in clipper.ClosedPaths)
                     {
-                        var goPolygon = new GameObject("Polygon");
+                        GameObject goPolygon = new("Polygon");
                         goPolygon.layer = layerId;
                         goCollider.AddChildWithUniqueName(goPolygon);
 
@@ -118,7 +118,7 @@ namespace SuperTiled2Unity.Editor
                     // Add Edge colliders
                     foreach (var path in clipper.OpenPaths)
                     {
-                        var goPolyline = new GameObject("Polyline");
+                        GameObject goPolyline = new("Polyline");
                         goPolyline.layer = layerId;
                         goCollider.AddChildWithUniqueName(goPolyline);
 
@@ -139,7 +139,7 @@ namespace SuperTiled2Unity.Editor
             }
 
             // If we're here then we don't have a polygon collection for this tile yet
-            polygons = new TilePolygonCollection(tile, tileId, m_ImportContext, m_MapComponent);
+            polygons = new(tile, tileId, m_ImportContext, m_MapComponent);
             m_TilePolygonDatabase.Add(tileId.ImportedlTileId, polygons);
             return polygons;
         }

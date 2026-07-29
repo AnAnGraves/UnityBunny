@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Platformer.Gameplay;
+using Platformer.Model;
 using UnityEngine;
 using static Platformer.Core.Simulation;
 
@@ -33,8 +34,8 @@ namespace Platformer.Mechanics
 
         void OnCollisionEnter2D(Collision2D collision)
         {
-            var player = collision.gameObject.GetComponent<PlayerController>();
-            if (player != null)
+            PlayerController player = GetModel<PlatformerModel>().player;
+            if(collision.collider.transform.IsChildOf(player.transform))
             {
                 var ev = Schedule<PlayerEnemyCollision>();
                 ev.player = player;

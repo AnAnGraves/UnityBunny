@@ -27,12 +27,12 @@ namespace Platformer.UI
         public GameController gameController;
 
         bool showMainCanvas = false;
-        private InputAction m_MenuAction;
+        private InputAction m_PauseAction;
 
         void OnEnable()
         {
             _ToggleMainMenu(showMainCanvas);
-            m_MenuAction = InputSystem.actions.FindAction("Player/Menu");
+            m_PauseAction = InputSystem.actions.FindAction("Player/Pause");
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace Platformer.UI
 
         void Update()
         {
-            if (m_MenuAction.WasPressedThisFrame())
+            if (m_PauseAction.WasPressedThisFrame())
             {
-                ToggleMainMenu(show: !showMainCanvas);
+                //ToggleMainMenu(show: !showMainCanvas);
             }
         }
 

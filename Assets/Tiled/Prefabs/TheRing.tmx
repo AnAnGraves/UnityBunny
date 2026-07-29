@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="33" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="6" nextobjectid="1">
  <tileset firstgid="1" source="../Tilesets/RailTiles.tsx"/>
  <tileset firstgid="13" source="../Tilesets/GrasslandTiles.tsx"/>
  <tileset firstgid="94" source="../Tilesets/DirectionTiles.tsx"/>
- <layer id="4" name="Gravity" class="GravityLayer" width="32" height="32" opacity="0.08">
+ <layer id="4" name="Gravity" class="GravityLayer" width="33" height="32" opacity="0.1">
   <data encoding="base64" compression="zlib">
-   eJzt1DkOwzAMRFHdVF7i+18hKUTAELjMkGoCiMB0id9v7Nb27bPvHmPuGltlZ/1KQ9Ze0aDZn98OYE+xwbJlkS3LNES21/AoYxpQm/GZBtRmfa1Bu3MssjO+NPSxyO9kQ2S/n4v6UQPqa8/1/G6M8U9lVX+e9l9v/+5fzX6H72kV//272UR9rYX1PZvxpYHxGRttiHzve1315eTd9XykgfFn2/KZBtRnbLTBu6odNSBXtb0G5iq21nAQW2HPDRl/X3xfTB2xfw==
+   eJzt1QsKwzAMA9DctEk/97/CNqghCMeWE1MoTCAYI1SP0m6l/PPGHHcj2e9m7s8aVh2z+1kObf/8thK9Ehyjfam3L511ePuW41LKOg747O1HDKwDDd5+1KA5cF977q39GUPv2O5a+3Iu4vD2m2Jo8L1m8BysAbf6+4D3SHJ25/pGDE2pZahQ2dAcG1xDom0yBi9PGEbP5E7sP2HQHHsZ/84cUMbAvhe4yxo0D177l9F7Iees/YhBHJrBckT2WcfIII5a7P/+VYNE3nsMGhhHxID7mgE9jIM1RPdZh5WMfc/BJGPfckSyur/qyNpHRw00c79PxPCWfAB4Z7vm
   </data>
  </layer>
- <layer id="1" name="Regular Degular" class="TerrainLayer" width="32" height="32">
+ <layer id="5" name="Background" class="VisualOnlyLayer" width="33" height="32" tintcolor="#7f7f7f">
+  <properties>
+   <property name="RenderOrder" type="int" value="1"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJztlkEOgCAMBHmHZz3oJ3yI/v8dwoGkByWlTAMmbNKjzoRQ1xBmZsbOGmepmB1mb3HOijkgB8m+lM/ckIOFTTm0sFsdCLbVgWRbHGj2m0MpeX88onl3b346J/rsa/ie+QM/7R/ZHbX83vdvBD7VnTLyu1oK1Z1fbM1ukw7WPiEcWrusxYHqUYsD3eHSQfPv69Hh2UE7Xh02w+cBFyImSw==
+   eJztzrEJADAIAEF3cgD33yoprWxFuIPvPwIAuCp/1fKw9wAAzB4SYQLR
   </data>
  </layer>
- <layer id="2" name="Foreground" class="VisualOnlyLayer" width="32" height="32">
+ <layer id="1" name="Regular Degular" class="TerrainLayer" width="33" height="32">
   <data encoding="base64" compression="zlib">
-   eJzt0rENACAMA8EsgggwCPtvhYvMgIv8Sa6/cQQAAF631rU/tGnsp7Ya97d2jH33/9x9AMA/D/oGAvw=
+   eJztlsENgDAMAzsHb3jAEgxC95+DfpAq4bRN6vQVS35Sn4QsJ6VQyK69eFP4dMg/im+FLyJHnf8MfpOJHJZ8JsdMPoODkT/DwczXcNS9Y+cjDpSPuuUh6W2p9ysZcvrns/9Dj2GlgqHNgPaQvXk9BtQL1GFPBtSL1d1EHMzt/1RvQE/M7Uf5cYPYFDeIzDFy13vfIKP22t6Qj14yDy0I
+  </data>
+ </layer>
+ <layer id="2" name="Foreground" class="VisualOnlyLayer" width="33" height="32">
+  <data encoding="base64" compression="zlib">
+   eJzt07sNACAMA9EsgvgNkv23wgUT0MQS9yT31zgCAIB3efd7Q9N6ccPQJg0WDUvbxQ0Ov3BoAAD4OGOaAz0=
   </data>
  </layer>
 </map>

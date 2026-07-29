@@ -193,7 +193,7 @@ namespace SuperMovingPlatform
 
         private Vector2 ClosestPointOnLineSegment(Vector2 P, Vector2 A, Vector2 B)
         {
-            var P2 = new Vector2(B.x - A.x, B.y - A.y);
+            Vector2 P2 = new(B.x - A.x, B.y - A.y);
             var dot = P2.x * P2.x + P2.y * P2.y;
             var u = ((P.x - A.x) * P2.x + (P.y - A.y) * P2.y) / dot;
 
@@ -233,10 +233,10 @@ namespace SuperMovingPlatform
             Vector2 delta = (Vector2)(transform.position) - startPos;
             lastVelocity = delta / Time.deltaTime;
 
-            List<KinematicObject> toRemove = new List<KinematicObject>(); //can't modify list while iterating
+            List<KinematicObject> toRemove = new(); //can't modify list while iterating
             foreach(var pair in carriedKOs)
             {
-                pair.Key.PlatformRideMovement(delta, gameObject);
+                pair.Key.PlatformRideMovement(delta, gameObject, pair.Value == 0);
 
                 //remove zero count KOs added mid-update
                 if(pair.Value < 1)
@@ -365,6 +365,7 @@ namespace SuperMovingPlatform
                         if (count < 1)
                         {
                             carriedKOs.Remove(kine);
+                            kine.RemoveFromPlatform(this.gameObject);
                         }
                         else
                         {

@@ -15,7 +15,7 @@ namespace SuperTiled2Unity.Editor
         private readonly TileIdMath m_TileId;
         private readonly Matrix4x4 m_Transform;
 
-        private List<TilePolygon> m_Polygons = new List<TilePolygon>();
+        private List<TilePolygon> m_Polygons = new();
 
         private SuperImportContext m_ImportContext;
 
@@ -39,7 +39,7 @@ namespace SuperTiled2Unity.Editor
             {
                 foreach (var collision in m_Tile.m_CollisionObjects)
                 {
-                    var tilePoly = new TilePolygon();
+                    TilePolygon tilePoly = new();
                     tilePoly.IsClosed = collision.IsClosed;
                     tilePoly.ColliderLayerName = collision.m_PhysicsLayer;
                     tilePoly.ColliderLayerId = LayerMask.NameToLayer(collision.m_PhysicsLayer);

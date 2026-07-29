@@ -13,7 +13,7 @@ namespace SuperTiled2Unity.Editor
         public AnimationBuilder(float fps)
         {
             m_Fps = fps;
-            Sprites = new List<Sprite>();
+            Sprites = new();
         }
 
         public List<Sprite> Sprites { get; private set; }

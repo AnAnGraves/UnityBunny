@@ -11,7 +11,7 @@ namespace Platformer
         public void OnSceneGUI()
         {
             var path = target as PatrolPath;
-            using (var cc = new EditorGUI.ChangeCheckScope())
+            using (EditorGUI.ChangeCheckScope cc = new())
             {
                 var sp = path.transform.InverseTransformPoint(Handles.PositionHandle(path.transform.TransformPoint(path.startPosition), path.transform.rotation));
                 var ep = path.transform.InverseTransformPoint(Handles.PositionHandle(path.transform.TransformPoint(path.endPosition), path.transform.rotation));
