@@ -45,9 +45,15 @@ class UtilityFunctions
 
         foreach (Collider2D col in hitColliders)
         {
-            if (col.isTrigger && col.gameObject && col.gameObject.transform.parent && col.gameObject.transform.parent.parent && col.gameObject.transform.parent.parent.gameObject)
+            Transform MaybeTilemap = col.transform;
+            while(MaybeTilemap && !MaybeTilemap.gameObject.GetComponent<SuperTileLayer>())
             {
-                Tilemap asTileMap = col.gameObject.transform.parent.parent.gameObject.GetComponent<Tilemap>();
+                MaybeTilemap = MaybeTilemap.parent;
+            }
+
+            if (MaybeTilemap)
+            {
+                Tilemap asTileMap = MaybeTilemap.gameObject.GetComponent<Tilemap>();
                 if(asTileMap)
                 {
                     overlappingTilemaps.Add(asTileMap);

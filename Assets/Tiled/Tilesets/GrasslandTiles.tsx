@@ -149,7 +149,11 @@
  <tile id="45"/>
  <tile id="46"/>
  <tile id="47"/>
- <tile id="80"/>
+ <tile id="3">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="128" height="128"/>
+  </objectgroup>
+ </tile>
  <tile id="55"/>
  <tile id="54"/>
  <tile id="52"/>
@@ -225,11 +229,7 @@
    <object id="1" x="0" y="0" width="128" height="128"/>
   </objectgroup>
  </tile>
- <tile id="3">
-  <objectgroup draworder="index" id="2">
-   <object id="1" x="0" y="0" width="128" height="128"/>
-  </objectgroup>
- </tile>
+ <tile id="80"/>
  <tile id="10">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="128" height="128"/>

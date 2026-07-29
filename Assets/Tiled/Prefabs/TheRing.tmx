@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/RailTiles.tsx"/>
+ <tileset firstgid="13" source="../Tilesets/GrasslandTiles.tsx"/>
+ <tileset firstgid="94" source="../Tilesets/DirectionTiles.tsx"/>
+ <layer id="4" name="Gravity" class="GravityLayer" width="32" height="32" opacity="0.08">
+  <data encoding="base64" compression="zlib">
+   eJzt1DkOwzAMRFHdVF7i+18hKUTAELjMkGoCiMB0id9v7Nb27bPvHmPuGltlZ/1KQ9Ze0aDZn98OYE+xwbJlkS3LNES21/AoYxpQm/GZBtRmfa1Bu3MssjO+NPSxyO9kQ2S/n4v6UQPqa8/1/G6M8U9lVX+e9l9v/+5fzX6H72kV//272UR9rYX1PZvxpYHxGRttiHzve1315eTd9XykgfFn2/KZBtRnbLTBu6odNSBXtb0G5iq21nAQW2HPDRl/X3xfTB2xfw==
+  </data>
+ </layer>
+ <layer id="1" name="Regular Degular" class="TerrainLayer" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztlkEOgCAMBHmHZz3oJ3yI/v8dwoGkByWlTAMmbNKjzoRQ1xBmZsbOGmepmB1mb3HOijkgB8m+lM/ckIOFTTm0sFsdCLbVgWRbHGj2m0MpeX88onl3b346J/rsa/ie+QM/7R/ZHbX83vdvBD7VnTLyu1oK1Z1fbM1ukw7WPiEcWrusxYHqUYsD3eHSQfPv69Hh2UE7Xh02w+cBFyImSw==
+  </data>
+ </layer>
+ <layer id="2" name="Foreground" class="VisualOnlyLayer" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJzt0rENACAMA8EsgggwCPtvhYvMgIv8Sa6/cQQAAF631rU/tGnsp7Ya97d2jH33/9x9AMA/D/oGAvw=
+  </data>
+ </layer>
+</map>
