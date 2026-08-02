@@ -20,7 +20,7 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
-            var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
+            var willHurtEnemy = player.AttackMode || player.Bounds.center.y >= enemy.Bounds.max.y;
 
             if (willHurtEnemy)
             {
@@ -46,7 +46,7 @@ namespace Platformer.Gameplay
             }
             else
             {
-                Schedule<PlayerDeath>();
+                if(!player.IsInvincible) Schedule<PlayerDeath>(); //obviously don't die to attacks an invincible state
             }
         }
     }

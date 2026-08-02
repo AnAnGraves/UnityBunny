@@ -90,8 +90,11 @@ MonoBehaviour:
   maxChargeStage: 3
   StickSpeedThreshold: 2
   StickTime: 0.5
+  AimSnapIncrement: 45
+  MoveSnapIncrement: 45
   RunAnimThreshold: 0.1
-  m_DebugText: {fileID: 0}
+  SpriteRotationSpeedHz: 4
+  m_state: 0
   m_health: {fileID: 0}
   m_controlEnabled: 1
   chargeLevelColors:
@@ -378,7 +381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.16470589}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

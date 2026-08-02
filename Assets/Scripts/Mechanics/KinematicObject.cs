@@ -30,11 +30,6 @@ namespace Platformer.Mechanics
         protected Vector2 lastSurfacePoint = Vector2.zero;
 
         /// <summary>
-        /// A custom gravity coefficient applied to this entity.
-        /// </summary>
-        protected Vector2 lastSurfaceNormal = Vector2.up;
-
-        /// <summary>
         /// How much moving up a slope should hamper speed, where 1.0f is the base behavior and 0.0f is no penalty
         /// </summary>
         public float slopeEffect = 1.0f;
@@ -112,6 +107,18 @@ namespace Platformer.Mechanics
             get => _pLateralDir;
         }
 
+        protected Vector2 AlongGround = new(1f, 0f); //default to +X
+        protected Vector2 _groundNormal;
+        public Vector2 GroundNormal
+        {
+            get => _groundNormal;
+            set
+            {
+                _groundNormal = value;
+                AlongGround = Vector2.Perpendicular(-_groundNormal); //Perpendicular is a 90 degree CCW rotation, but we expect the RIGHT vector which is CCW from the ANTI-normal
+            }
+        }
+
 
         /// <summary>
         /// The current velocity of the entity.
@@ -122,10 +129,9 @@ namespace Platformer.Mechanics
         /// Is the entity currently sitting on a surface?
         /// </summary>
         /// <value></value>
-        public bool IsGrounded { get; private set; }
+        public bool IsGrounded { get; protected set; }
 
         protected Vector2 targetVelocity;
-        protected Vector2 groundNormal;
         protected Rigidbody2D body;
         protected ContactFilter2D contactFilter;
         protected RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
@@ -254,28 +260,33 @@ namespace Platformer.Mechanics
             return Vector2.Dot(lateralDirection, vec) * lateralDirection;
         }
 
+        protected Vector2 GetAlongGroundComponent(in Vector2 vec)
+        {
+            return Vector2.Dot(AlongGround, vec) * AlongGround;
+        }
+
         protected virtual void FixedUpdate()
         {
             targetVelocity = Vector2.zero;
             ComputeVelocity();
 
-            velocity += gravityModifier * personalGravity * Time.deltaTime;
-
             //velocity.x = targetVelocity.x;
-            velocity = GetVerticalComponent(velocity);
-            velocity += GetLateralComponent(targetVelocity);
+            velocity = (IsGrounded ? velocity - GetAlongGroundComponent(velocity) : GetVerticalComponent(velocity));
+            Vector2 lateralVel = IsGrounded ? GetAlongGroundComponent(targetVelocity) : GetLateralComponent(targetVelocity);
+            velocity += lateralVel;
 
-            if(bLeftPlatform)
+            //gravity
+            velocity += gravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(personalGravity, personalGravityDirection)) : personalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
+
+            if (bLeftPlatform)
             {
                 if(riddenPlatform == null) velocity += platformVelocity;
                 bLeftPlatform = false;
             }
 
-            IsGrounded = false;
-
-            var moveAlongGravity = (personalGravityDirection * Vector2.Dot(personalGravityDirection, velocity)) * Time.deltaTime;
-
-            var moveAlongGround = (lateralDirection * Vector2.Dot(lateralDirection, velocity)) * Time.deltaTime;
+            Vector2 velAlongGround = (IsGrounded ? GetAlongGroundComponent(velocity) : lateralVel);
+            var moveAlongGround = velAlongGround * Time.deltaTime;
+            var moveAlongGravity = (velocity - velAlongGround) * Time.deltaTime;
             Vector2 nominalMovement = velocity * Time.deltaTime;
 
             bool snapped = snapAction.IsPressed();
@@ -297,6 +308,8 @@ namespace Platformer.Mechanics
                 Debug.DrawLine(origin, corner, Color.green, 1f);    // origin -> top right
                 drewVelThisFrame = true;
             }
+
+            IsGrounded = false;
 
             PerformMovement(moveAlongGround, false);
 
@@ -329,21 +342,18 @@ namespace Platformer.Mechanics
                 for (var i = 0; i < count; i++)
                 {
                     var currentNormal = hitBuffer[i].normal;
+
                     float modifiedDistance = hitBuffer[i].distance - (shellRadius);
                     Vector2 modifiedSlopeMovement = Vector2.zero; //if we hit something before the slope we always want to cancel the slope move
 
                     float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
 
                     //is this surface flat enough to land on?
-                    if (groundedness > minFloorSurfaceness)
-                    {
-                        IsGrounded = true;
-                        groundNormal = currentNormal;
-                    }
+                    bool hitGround = groundedness > minFloorSurfaceness;
                     
                     if(!yMovement)
                     {
-                        if(IsGrounded) //hit some kind of slope
+                        if(hitGround) //hit some kind of slope
                         {
                             //uphill direction vector
                             Vector2 uphillSlope = Vector2.Reflect(-1f * currentNormal, direction).normalized;
@@ -366,8 +376,12 @@ namespace Platformer.Mechanics
                     {
                         distance = modifiedDistance;
                         slopeMovement = modifiedSlopeMovement;
-                        lastSurfacePoint = hitBuffer[i].point;
-                        lastSurfaceNormal = hitBuffer[i].normal;
+                        if (hitGround)
+                        {
+                            IsGrounded = hitGround;
+                            lastSurfacePoint = hitBuffer[i].point;
+                            GroundNormal = currentNormal;
+                        }
                     }
 
                     //if we touch a moving platform not carrying us, let it know so that it doesn't move away without noticing
@@ -392,7 +406,7 @@ namespace Platformer.Mechanics
                 }
                 if(bHitATopOrBottom)
                 {
-                    velocity = lateralDirection * Vector2.Dot(lateralDirection, velocity);
+                    velocity = GetAlongGroundComponent(velocity);
                 }
             }
 
@@ -417,7 +431,7 @@ namespace Platformer.Mechanics
             {
                 var currentNormal = hitBuffer[i].normal;
 
-                //make sure this isn't a slight variation in slope or minor overlap
+                //make sure this isn't actually part of the slope
                 if(Mathf.Abs(Vector2.Dot(direction, currentNormal)) > 0.9f)
                 {
                     continue;
@@ -428,14 +442,16 @@ namespace Platformer.Mechanics
                 //remove shellDistance from actual move distance.
                 if (modifiedDistance < distance)
                 {
+                    //collisions on an up-slope move must necessarily be against walls (rel. to gravity) so we can never land on/slide up them in this move
                     distance = modifiedDistance;
-                    lastSurfacePoint = hitBuffer[i].point;
-                    lastSurfaceNormal = hitBuffer[i].normal;
+                    //lastSurfacePoint = hitBuffer[i].point;
+                    //GroundNormal = hitBuffer[i].normal;
                     bHitAWall = true;
                 }
             }
 
             body.position += direction * distance;
+            lastSurfacePoint += direction * distance; //alsp update where we're standing
             if (bHitAWall)
             {
                 velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);

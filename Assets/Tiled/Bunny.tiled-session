@@ -1,11 +1,10 @@
 {
-    "activeFile": "Prefabs/TheRing.tmx",
+    "activeFile": "Maps/MetricsWorld.tmx",
     "expandedProjectPaths": [
-        "Prefabs",
-        ".",
         "Maps",
-        "Tilesets",
-        "Prefabs/MovingPlatforms"
+        ".",
+        "Prefabs",
+        "Tilesets"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -33,12 +32,20 @@
             "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
-        "Maps/TestMap.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 0,
+        "Maps/MetricsWorld.tmx": {
+            "scale": 0.125,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 3139,
-                "y": 1025
+                "x": -3300,
+                "y": -1020
+            }
+        },
+        "Maps/TestMap.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 3204,
+                "y": 1022
             }
         },
         "Prefabs/FloatingIsland1.tmx": {
@@ -66,11 +73,11 @@
             }
         },
         "Prefabs/TheRing.tmx": {
-            "scale": 0.33,
+            "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1359.0909090909095,
-                "y": 2734.848484848485
+                "x": 2114,
+                "y": 2050
             }
         },
         "TestMap.tmx": {
@@ -87,6 +94,10 @@
         },
         "Tilesets/GrasslandTiles.tsx": {
             "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Tilesets/MetricsTiles.tsx": {
+            "scaleInDock": 0.5,
             "scaleInEditor": 1
         },
         "Tilesets/RailTiles.tsx": {
@@ -106,7 +117,7 @@
     "last.imagePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/Tilesets",
     "last.objectTemplatePath": "F:/UNITY/PROJ/Bunny/Assets/Tiled",
     "last.objectTypesPath": "F:/UNITY/PROJ/Bunny/Assets/Tiled/propertytypes.xml",
-    "map.fixedSize": true,
+    "map.fixedSize": false,
     "map.height": 24,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
@@ -114,28 +125,30 @@
     "map.tileWidth": 128,
     "map.width": 24,
     "openFiles": [
+        "Maps/TestMap.tmx",
+        "Maps/MetricsWorld.tmx",
         "Tilesets/DirectionTiles.tsx",
         "Tilesets/GrasslandTiles.tsx",
         "Tilesets/RailTiles.tsx",
-        "Maps/TestMap.tmx",
         "Prefabs/FloatingIsland1.tmx",
-        "Prefabs/TheRing.tmx"
+        "Prefabs/TheRing.tmx",
+        "Tilesets/MetricsTiles.tsx"
     ],
     "project": "Bunny.tiled-project",
     "property.type": "SpecialTileType",
     "recentFiles": [
-        "Tilesets/DirectionTiles.tsx",
-        "Tilesets/GrasslandTiles.tsx",
-        "Tilesets/RailTiles.tsx",
         "Maps/TestMap.tmx",
-        "Prefabs/FloatingIsland1.tmx",
+        "Tilesets/MetricsTiles.tsx",
         "Prefabs/TheRing.tmx",
+        "Prefabs/FloatingIsland1.tmx",
+        "Tilesets/RailTiles.tsx",
+        "Tilesets/GrasslandTiles.tsx",
+        "Tilesets/DirectionTiles.tsx",
+        "Maps/MetricsWorld.tmx",
         "Tilesets/UtilityTiles.tsx",
         "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
         "Tilesets/omega.tsx",
-        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/tracks.tsx",
-        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/MovingPlatformMap.tmx",
-        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/omega.tsx"
+        "F:/UNITY/PROJ/SuperMovingPlatform/SuperMovingPlatform/Assets/ExampleFiles/Tiled/tracks.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.spacing": 10,

@@ -106,7 +106,11 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Is the player traveling in a straight line (no air-control, no gravity, until collision or state ends)
         /// </summary>
-        private bool m_isPreBallistic = false;
+        private bool m_bIsPreBallistic = false;
+        public bool AttackMode
+        {
+            get => m_bIsPreBallistic;
+        }
 
         /// <summary>
         /// Countdown to going ballistic
@@ -137,7 +141,13 @@ namespace Platformer.Mechanics
         /// degree increments from 0 to snap aim to
         /// for obvious reasons should be a factor of 360
         /// </summary>
-        public int SnapIncrement = 45;
+        public int AimSnapIncrement = 45;
+
+        /// <summary>
+        /// degree increments from 0 to snap movement to
+        /// for obvious reasons should be a factor of 360
+        /// </summary>
+        public int MoveSnapIncrement = 45;
 
         /// <summary>
         /// countdown to unsticking
@@ -169,6 +179,12 @@ namespace Platformer.Mechanics
             }
         }
 
+        //PlayerDownDirection is used when calculating sprite rotation and aim angle bounds
+        protected Vector2 PlayerDownDirection = new(0f,-1f);
+
+        //How fast the sprite rotates to match the physical orientation of the character
+        public float SpriteRotationSpeedHz = 4.0f;
+
         //******* DEBUG *******
 
         Vector2 LastEffectiveVelocity;
@@ -177,11 +193,11 @@ namespace Platformer.Mechanics
         Vector2 LastMousePosition;
         Vector2 LastLaunchComponents;
 
-        /* internal new */ public TextMeshProUGUI m_DebugText;
+        protected TextMeshProUGUI m_DebugText;
 
         //***** END DEBUG *****
 
-        internal JumpState m_state = JumpState.Grounded;
+        public JumpState m_state = JumpState.Grounded;
         private bool m_doLaunch;
         internal Collider2D m_collider2d;
         internal AudioSource m_audioSource;
@@ -270,15 +286,22 @@ namespace Platformer.Mechanics
 
             //speeds and move inputs are displayed in player character space to make them more intelligible as movement
             //gravity is in world space because it SHOULD be (0,-1) always in player character space
-            float lateralMove = Vector2.Dot(m_move, lateralDirection);
-            float verticalMove = Vector2.Dot(m_move, -personalGravityDirection); //dot with UP vector for readability
-            float lateralVel = Vector2.Dot(velocity, lateralDirection);
-            float verticalVel = Vector2.Dot(velocity, -personalGravityDirection);
+            float lateralMove = Vector2.Dot(m_move, IsGrounded ? AlongGround : lateralDirection);
+            float verticalMove = Vector2.Dot(m_move, IsGrounded ? GroundNormal : -personalGravityDirection); //dot with UP vector for readability
+            float lateralVel = Vector2.Dot(velocity, IsGrounded ? AlongGround : lateralDirection);
+            float verticalVel = Vector2.Dot(velocity, IsGrounded ? GroundNormal : -personalGravityDirection);
 
-            m_DebugText.SetText(String.Format("POSITION: {0:F2}, {1:F2} \nMOVE: {2:F2}, {3:F2} \nVELOCITY: {4:F2}, {5:F2} \nGRAVITY: {6:F2}, {7:F2} \nAIM {8:F2}, {9:F2}",
-                LastScreenPosition.x, LastScreenPosition.y, lateralMove, verticalMove, lateralVel, verticalVel, personalGravity.x, personalGravity.y, m_aim.x, m_aim.y));
+            m_DebugText.SetText(String.Format("IS GROUNDED: {0}\n{1}", IsGrounded, String.Format("POSITION: {0:F2}, {1:F2} \nMOVE: {2:F2}, {3:F2} \nVELOCITY: {4:F2}, {5:F2} \nGRAVITY: {6:F2}, {7:F2} \nAIM {8:F2}, {9:F2}",
+                transform.position.x, transform.position.y, lateralMove, verticalMove, lateralVel, verticalVel, personalGravity.x, personalGravity.y, m_aim.x, m_aim.y)));
 
             m_DebugText.ForceMeshUpdate();
+        }
+
+        protected override void FixedUpdate()
+        {
+            UpdateGravity();
+            UpdateJumpState();
+            base.FixedUpdate();
         }
 
         protected override void Update()
@@ -287,12 +310,12 @@ namespace Platformer.Mechanics
             m_reflectedThisFrame = false;
 
             //update whether the player is pre-ballistic
-            if(m_isPreBallistic)
+            if(m_bIsPreBallistic)
             {
                 m_preBallisticTimeRemaining = Mathf.Max(m_preBallisticTimeRemaining - Time.deltaTime, 0.0f);
                 if(m_preBallisticTimeRemaining == 0.0f)
                 {
-                    m_isPreBallistic = false; 
+                    m_bIsPreBallistic = false; 
                     Schedule<PlayerStopJump>().player = this;
                 }
             }
@@ -301,8 +324,9 @@ namespace Platformer.Mechanics
 
             if (m_bIsPaused) return; //halt update immediately
 
-            UpdateGravity();
-            UpdateJumpState();
+            //THESE GO IN FIXED UPDATE WHY WAS IT LIKE THIS
+            //UpdateGravity();
+            //UpdateJumpState();
 
             LastScreenPosition = Camera.main.WorldToScreenPoint(m_collider2d.bounds.center);
             LastMousePosition = Mouse.current.position.value;
@@ -351,20 +375,29 @@ namespace Platformer.Mechanics
 
             if (m_bIsPaused) return; //halt update immediately
 
+            //get move inputs
+            m_move = m_MoveAction.ReadValue<Vector2>();
+
+            //snap move inputs
+            float moveAngle = Vector2.SignedAngle(Vector2.up, m_move);
+            moveAngle /= MoveSnapIncrement;
+            moveAngle = Mathf.Floor(moveAngle + 0.5f);
+            m_move = Quaternion.AngleAxis(moveAngle * MoveSnapIncrement, Vector3.forward) * Vector2.up * m_move.magnitude;
+
             if (m_controlEnabled)
             {
                 //ground movement or air control
-                if (m_state == JumpState.Grounded || (!m_isPreBallistic && m_state == JumpState.InFlight) || m_state == JumpState.Falling)
-                {
-                    m_move = GetLateralComponent(m_MoveAction.ReadValue<Vector2>());
-                }
+                //if (m_state == JumpState.Grounded || (!m_bIsPreBallistic && m_state == JumpState.InFlight) || m_state == JumpState.Falling)
+                //{
+                //    m_move = m_state == JumpState.Grounded ? GetAlongGroundComponent(m_MoveAction.ReadValue<Vector2>()) : GetLateralComponent(m_MoveAction.ReadValue<Vector2>());
+                //}
 
                 if (m_state == JumpState.Grounded && m_JumpAction.WasPressedThisFrame())
                 {
                     //begin charging
                     m_state = JumpState.PrepareToJump;
                 }
-                else if (m_state == JumpState.Grounded && m_HopAction.IsPressed()) //Changed from WasPressedThisFrame bc bunnies can do this
+                else if (m_state == JumpState.Grounded && m_HopAction.WasPressedThisFrame()) //Unchanged bc there's something fucky with velocity when jumping on landing //IsPressed()) //Changed from WasPressedThisFrame bc bunnies can do this
                 {
                     //got to Prepare but skip charging
                     m_state = JumpState.PrepareToJump;
@@ -372,7 +405,7 @@ namespace Platformer.Mechanics
                 }
                 else if (m_state == JumpState.Stick)
                 {
-                    m_move = GetVerticalComponent(m_move);
+                    //m_move = GetVerticalComponent(m_move);
                     if (m_JumpAction.WasPressedThisFrame())
                     {
                         //begin charging
@@ -381,8 +414,8 @@ namespace Platformer.Mechanics
                 }
                 else if ((m_state == JumpState.Charging || m_state == JumpState.PrepareToJump || m_state == JumpState.StickCharge))
                 {
-                    m_move = GetVerticalComponent(m_move);
-                    m_move += m_state == JumpState.PrepareToJump ? GetLateralComponent(m_move) : Vector2.zero; //when in charge anim, no move inputs
+                    //m_move = GetVerticalComponent(m_move);
+                    //m_move = m_state == JumpState.PrepareToJump ? GetAlongGroundComponent(m_move) : Vector2.zero; //when in charge anim, no move inputs
                     if (!m_JumpAction.IsPressed()) //changed from WasReleasedThisFrame just in case
                     {
                         //end charge and either b-hop or launch
@@ -413,8 +446,8 @@ namespace Platformer.Mechanics
                 }
 
                 //kill horizontal momentum
-                m_move = GetVerticalComponent(m_move);
-                targetVelocity = GetVerticalComponent(targetVelocity);
+                m_move = Vector2.zero; //GetVerticalComponent(m_move);
+                targetVelocity = Vector2.zero; // GetVerticalComponent(targetVelocity);
             }
 
             //update aim vector
@@ -425,10 +458,10 @@ namespace Platformer.Mechanics
             Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(this.body.position);
             m_aim = useStick ? m_aim.normalized : (Mouse.current.position.value - new Vector2(playerScreenPos.x, playerScreenPos.y)).normalized;
 
-            float angle = Vector2.SignedAngle(Vector2.up, m_aim);
-            angle /= SnapIncrement;
-            angle = Mathf.Floor(angle + 0.5f);
-            m_aim = Quaternion.AngleAxis(angle * SnapIncrement, Vector3.forward) * Vector2.up;            
+            float aimAngle = Vector2.SignedAngle(Vector2.up, m_aim);
+            aimAngle /= AimSnapIncrement;
+            aimAngle = Mathf.Floor(aimAngle + 0.5f);
+            m_aim = Quaternion.AngleAxis(aimAngle * AimSnapIncrement, Vector3.forward) * Vector2.up;            
         }
 
         private void UpdateGravity()
@@ -485,7 +518,7 @@ namespace Platformer.Mechanics
             }
 
             var spriteTx = m_spriteRenderer.transform;
-            Vector2 downVector = IsStateOnGround() ? -lastSurfaceNormal : personalGravityDirection;
+            Vector2 downVector = IsStateOnGround() ? -GroundNormal : personalGravityDirection;
             float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
             angle += 90.0f; //otherwise faces down in normal gravity
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
@@ -636,7 +669,7 @@ namespace Platformer.Mechanics
                 m_LastFrameVelocity = m_LastFrameVelocity.normalized * Mathf.Clamp(m_LastFrameVelocity.magnitude, -maxSpeed, maxSpeed);
                 velocity = m_LastFrameVelocity;
 
-                m_isPreBallistic = false;
+                m_bIsPreBallistic = false;
                 return;
             }
 
@@ -645,14 +678,15 @@ namespace Platformer.Mechanics
             {
                 velocity = Vector2.zero;
                 m_state = JumpState.Stick;
-                m_isPreBallistic = false;
+                m_bIsPreBallistic = false;
                 m_timeUntilFall = StickTime;
+                PlayerDownDirection = antiNormal;
             }
             else
             {
-                if (m_isPreBallistic)
+                if (m_bIsPreBallistic)
                 {
-                    m_isPreBallistic = false;
+                    m_bIsPreBallistic = false;
                 }
 
                 //remove all velocity towards collision point
@@ -687,11 +721,6 @@ namespace Platformer.Mechanics
             m_LastLaunchVelocity = m_LastFrameVelocity; //otherwise this will stomp the reflection
         }
 
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-        }
-
         int CalculateChargeStage()
         {
             for( int i = maxChargeStage; i >= 0; --i)
@@ -709,6 +738,12 @@ namespace Platformer.Mechanics
 
         void UpdateJumpState()
         {
+            //before anything, if we're in 'Grounded' state but the last movement update made took us off a ledge, become airborne
+            if(m_state == JumpState.Grounded && !IsGrounded)
+            {
+                m_state = JumpState.InFlight;
+            }
+
             switch (m_state)
             {
                 case JumpState.PrepareToJump:
@@ -761,7 +796,8 @@ namespace Platformer.Mechanics
                     }
                     else
                     {
-                        body.position = body.position + lastSurfaceNormal * 0.01f;
+                        //if we're supposed to be launching but didn't, bump the player up to unstick them
+                        body.position = body.position + GroundNormal * 0.005f;
                     }
                     break;
 
@@ -771,10 +807,10 @@ namespace Platformer.Mechanics
                         Schedule<PlayerLanded>().player = this;
                         m_state = JumpState.Landed;
                         m_preBallisticTimeRemaining = 0.0f;
-                        m_isPreBallistic = false;
+                        m_bIsPreBallistic = false;
                         velocity = GetLateralComponent(velocity);
                     }
-                    else if(!m_isPreBallistic)
+                    else if(!m_bIsPreBallistic)
                     {
                         m_chargeParticles.Stop();
                     }
@@ -816,7 +852,7 @@ namespace Platformer.Mechanics
                         Schedule<PlayerLanded>().player = this;
                         m_state = JumpState.Landed;
                         m_preBallisticTimeRemaining = 0.0f;
-                        m_isPreBallistic = false;
+                        m_bIsPreBallistic = false;
                         velocity = GetLateralComponent(velocity);
                     }
                     break;
@@ -831,7 +867,7 @@ namespace Platformer.Mechanics
         protected override void ComputeVelocity()
         {
             m_LastFrameVelocity = velocity;
-            float lateralMove = Vector2.Dot(m_move, lateralDirection);
+            float lateralMove = Vector2.Dot(m_move, IsGrounded ? AlongGround : lateralDirection);
             if (!IsGrounded)
             {
                 switch(m_state)
@@ -840,12 +876,12 @@ namespace Platformer.Mechanics
                     case JumpState.Falling:
                     case JumpState.StickLaunch:
 
-                        if (!m_isPreBallistic)
+                        if (!m_bIsPreBallistic)
                         {
                             //decompose and get the signed magnitude of the lateral component with lateralDir being positive
                             Vector2 verticalVel = GetVerticalComponent(velocity);
-                            Vector2 lateralVel = GetLateralComponent(velocity);
-                            float lateralSpeed = lateralVel.magnitude * Mathf.Sign(Vector2.Dot(velocity, lateralDirection));
+                            float lateralSpeed = Vector2.Dot(lateralDirection, velocity);
+                            Vector2 lateralVel = lateralSpeed * lateralDirection;
 
                             // apply air control and drag
                             lateralSpeed += lateralMove * airControlLateral * Time.deltaTime;
@@ -870,17 +906,18 @@ namespace Platformer.Mechanics
                             }
 
                             //recompose
-                            velocity = lateralVel + verticalVel;
+                            targetVelocity = lateralVel + verticalVel;
                         }
                         else
                         {
-                            velocity = m_LastLaunchVelocity;
+                            targetVelocity = m_LastLaunchVelocity;
                         }
 
                         break;
 
                     case JumpState.Stick:
                         velocity = Vector2.zero;
+                        targetVelocity = Vector2.zero;
                         break;
 
                     case JumpState.StickCharge:
@@ -893,7 +930,7 @@ namespace Platformer.Mechanics
                                 m_preBallisticTimeRemaining = preBallisticTimes[m_chargeStage];
                                 if (m_preBallisticTimeRemaining > 0.0f)
                                 {
-                                    m_isPreBallistic = true;
+                                    m_bIsPreBallistic = true;
                                 }
 
                                 LastLaunchComponents = m_aim;
@@ -916,6 +953,7 @@ namespace Platformer.Mechanics
                         else 
                         {
                             velocity = Vector2.zero;
+                            targetVelocity = Vector2.zero;
                         }
                         break;
 
@@ -929,17 +967,31 @@ namespace Platformer.Mechanics
                 //b-hop
                 if (m_chargeStage < 0)
                 {
-                    velocity = GetLateralComponent(m_move) * maxSpeed; //GetLateralComponent(velocity);
+                    const float jumpMoveFactor = math.SQRT2 / 2f;
+                    
+                    //allow players to jump with a certain amount of lateral velocity even from a stand-still, but if the current velocity is better use that
+                    Vector2 coldStartVelocity = GetLateralComponent(GetAlongGroundComponent(m_move) * maxSpeed * jumpMoveFactor); //GetLateralComponent(velocity);
+                    velocity = GetLateralComponent(velocity);
+                    float currentSpeed = Vector2.Dot(velocity, lateralDirection);
+                    float coldStartSpeed = Vector2.Dot(coldStartVelocity, lateralDirection);
+                    if(Mathf.Sign(currentSpeed) != Mathf.Sign(coldStartSpeed) || Mathf.Abs(coldStartSpeed) > Mathf.Abs(currentSpeed))
+                    {
+                        velocity = coldStartVelocity;
+                    }
+
+                    targetVelocity = velocity;
                     velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-personalGravityDirection);
+                    IsGrounded = false;
                 }
                 else
                 {
                     velocity.x = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.x;
                     velocity.y = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.y;
+                    targetVelocity = velocity;
                     m_preBallisticTimeRemaining = preBallisticTimes[m_chargeStage];
                     if (m_preBallisticTimeRemaining > 0.0f)
                     {
-                        m_isPreBallistic = true;
+                        m_bIsPreBallistic = true;
                     }
 
                     LastLaunchComponents = m_aim;
@@ -952,28 +1004,30 @@ namespace Platformer.Mechanics
             }
             else if(m_state == JumpState.Charging)
             {
-                velocity = GetVerticalComponent(velocity);
+                //slide to a stop
+                velocity = GetAlongGroundComponent(velocity);
+                targetVelocity = Vector2.zero;
             }
             else
             {
                 //ground movement w/ accel
-                Vector2 verticalVel = GetVerticalComponent(velocity);
-                Vector2 lateralVel = GetLateralComponent(velocity);
-                float lateralSpeed = Vector2.Dot(velocity, lateralDirection);
+                Vector2 verticalVel = Vector2.zero;// GetVerticalComponent(velocity);
+                float lateralSpeed = Vector2.Dot(velocity, AlongGround); //magnitude won't give us the sign
+                Vector2 lateralVel = lateralSpeed * AlongGround;
 
                 float targetXVelocity = lateralMove * maxSpeed;
                 if(targetXVelocity > lateralSpeed)
                 {
                     float accel = Math.Sign(lateralSpeed) == 1 ? groundAccel : groundBraking;
-                    lateralVel = Mathf.Min(targetXVelocity, lateralSpeed + (accel * Time.deltaTime)) * lateralDirection;
+                    lateralVel = Mathf.Min(targetXVelocity, lateralSpeed + (accel * Time.deltaTime)) * AlongGround;
                 }
                 else if (targetXVelocity < lateralSpeed)
                 {
                     float accel = Math.Sign(lateralSpeed) == -1 ? groundAccel : groundBraking;
-                    lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * lateralDirection; 
+                    lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * AlongGround; 
                 }
 
-                velocity = lateralVel + verticalVel;
+                targetVelocity = lateralVel;// + verticalVel;
             }
 
             if (lateralMove > 0.01f)
@@ -984,9 +1038,9 @@ namespace Platformer.Mechanics
             m_animator.SetBool("grounded", IsStateOnGround());
             m_animator.SetFloat("velocityX", (Mathf.Abs(lateralMove) > RunAnimThreshold ? Mathf.Abs(lateralMove) : 0.0f) / maxSpeed);
 
-            gravityModifier = (m_isPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0 : 1;
+            gravityModifier = (m_bIsPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0 : 1;
 
-            targetVelocity = velocity;
+            //targetVelocity = velocity;
         }
 
         public void GrantInvincibility(float duration)

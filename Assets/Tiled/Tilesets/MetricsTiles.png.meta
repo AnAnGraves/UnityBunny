@@ -1,0 +1,1742 @@
+fileFormatVersion: 2
+guid: a6c95ec357e6b154e9bc662aa44aa214
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5300703408705071706
+    second: MetricsTiles_0
+  - first:
+      213: -567774347617648419
+    second: MetricsTiles_1
+  - first:
+      213: -2025036243774508130
+    second: MetricsTiles_2
+  - first:
+      213: 7123374450714779182
+    second: MetricsTiles_3
+  - first:
+      213: -2521265457374124914
+    second: MetricsTiles_4
+  - first:
+      213: -3826528355671856320
+    second: MetricsTiles_5
+  - first:
+      213: 4468497824548358549
+    second: MetricsTiles_6
+  - first:
+      213: 7792371059565077525
+    second: MetricsTiles_7
+  - first:
+      213: -8952049153277163922
+    second: MetricsTiles_8
+  - first:
+      213: -7927171205581025479
+    second: MetricsTiles_9
+  - first:
+      213: -3454592352018464173
+    second: MetricsTiles_10
+  - first:
+      213: 5256921066044248665
+    second: MetricsTiles_11
+  - first:
+      213: -1268921122124596909
+    second: MetricsTiles_12
+  - first:
+      213: 7171240134012649057
+    second: MetricsTiles_13
+  - first:
+      213: -5568884076299286403
+    second: MetricsTiles_14
+  - first:
+      213: 6165600059096002200
+    second: MetricsTiles_15
+  - first:
+      213: 3808859608687058960
+    second: MetricsTiles_16
+  - first:
+      213: 3700809796338379618
+    second: MetricsTiles_17
+  - first:
+      213: 3389046682508860197
+    second: MetricsTiles_18
+  - first:
+      213: -5000940894270276727
+    second: MetricsTiles_19
+  - first:
+      213: 7063487498915097820
+    second: MetricsTiles_20
+  - first:
+      213: -2509330717128921312
+    second: MetricsTiles_21
+  - first:
+      213: -4252219673066726539
+    second: MetricsTiles_22
+  - first:
+      213: -5711213517807110078
+    second: MetricsTiles_23
+  - first:
+      213: -6769612613799059136
+    second: MetricsTiles_24
+  - first:
+      213: 238148398078068687
+    second: MetricsTiles_25
+  - first:
+      213: 7996279405993315315
+    second: MetricsTiles_26
+  - first:
+      213: 9171814557837320671
+    second: MetricsTiles_27
+  - first:
+      213: 1655756602541814251
+    second: MetricsTiles_28
+  - first:
+      213: -4612957435797802007
+    second: MetricsTiles_29
+  - first:
+      213: 4755701656004365582
+    second: MetricsTiles_30
+  - first:
+      213: 3650410341541173633
+    second: MetricsTiles_31
+  - first:
+      213: 2007634252651875209
+    second: MetricsTiles_32
+  - first:
+      213: 9012776517787820602
+    second: MetricsTiles_33
+  - first:
+      213: 3079888002874643258
+    second: MetricsTiles_34
+  - first:
+      213: -2842740437298474422
+    second: MetricsTiles_35
+  - first:
+      213: -1014085610593870866
+    second: MetricsTiles_36
+  - first:
+      213: -3058797719230661503
+    second: MetricsTiles_37
+  - first:
+      213: 2821441272057885362
+    second: MetricsTiles_38
+  - first:
+      213: 2898599217479124480
+    second: MetricsTiles_39
+  - first:
+      213: -7760541575800756517
+    second: MetricsTiles_40
+  - first:
+      213: 1116523249108556400
+    second: MetricsTiles_41
+  - first:
+      213: -3132026854554877070
+    second: MetricsTiles_42
+  - first:
+      213: -7667600771291751091
+    second: MetricsTiles_43
+  - first:
+      213: 5096571412989198457
+    second: MetricsTiles_44
+  - first:
+      213: -3530251340730321905
+    second: MetricsTiles_45
+  - first:
+      213: 1366443624490556301
+    second: MetricsTiles_46
+  - first:
+      213: -1252797442177146051
+    second: MetricsTiles_47
+  - first:
+      213: -3949829617814047287
+    second: MetricsTiles_48
+  - first:
+      213: -3577030557506755645
+    second: MetricsTiles_49
+  - first:
+      213: 6704063414604305749
+    second: MetricsTiles_50
+  - first:
+      213: 4707506119216342783
+    second: MetricsTiles_51
+  - first:
+      213: 2189592876026403105
+    second: MetricsTiles_52
+  - first:
+      213: -1012427543649670362
+    second: MetricsTiles_53
+  - first:
+      213: 8999338678987660654
+    second: MetricsTiles_54
+  - first:
+      213: 5120084740765556735
+    second: MetricsTiles_55
+  - first:
+      213: -242259786523522274
+    second: MetricsTiles_56
+  - first:
+      213: 5283907538855939204
+    second: MetricsTiles_57
+  - first:
+      213: -972524809019020959
+    second: MetricsTiles_58
+  - first:
+      213: -1058483251145765615
+    second: MetricsTiles_59
+  - first:
+      213: 3355836755435195826
+    second: MetricsTiles_60
+  - first:
+      213: 8372233386949929814
+    second: MetricsTiles_61
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MetricsTiles_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1113
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a59e68855e1076b0800000000000000
+      internalID: -5300703408705071706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_1
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 1145
+        width: 98
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd0cba13d3cde18f0800000000000000
+      internalID: -567774347617648419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_2
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 1145
+        width: 130
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e937780f340a5e3e0800000000000000
+      internalID: -2025036243774508130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_3
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 1145
+        width: 98
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2e92f8525f4bd260800000000000000
+      internalID: 7123374450714779182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_4
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 1113
+        width: 130
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e84a0ccbc6aa20dd0800000000000000
+      internalID: -2521265457374124914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_5
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1113
+        width: 130
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04b283dfbb075eac0800000000000000
+      internalID: -3826528355671856320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 975
+        width: 129
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5998fc7a81b430e30800000000000000
+      internalID: 4468497824548358549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_7
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 975
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51429636130142c60800000000000000
+      internalID: 7792371059565077525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_8
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 975
+        width: 98
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e66041f99bee3c380800000000000000
+      internalID: -8952049153277163922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_9
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 991
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93f43a9d9c70df190800000000000000
+      internalID: -7927171205581025479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_10
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 975
+        width: 98
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352882e1f82de00d0800000000000000
+      internalID: -3454592352018464173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_11
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 975
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 952d5d17bd554f840800000000000000
+      internalID: 5256921066044248665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_12
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 975
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 359f5c366f2e36ee0800000000000000
+      internalID: -1268921122124596909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 837
+        width: 129
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16e39d238ec558360800000000000000
+      internalID: 7171240134012649057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_14
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 837
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d780ad4107957b2b0800000000000000
+      internalID: -5568884076299286403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_15
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 837
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89e6b85469c909550800000000000000
+      internalID: 6165600059096002200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_16
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 837
+        width: 130
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 010202742a9cbd430800000000000000
+      internalID: 3808859608687058960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_17
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 837
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26be80ce6eaeb5330800000000000000
+      internalID: 3700809796338379618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_18
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 837
+        width: 98
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52b18267000580f20800000000000000
+      internalID: 3389046682508860197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_19
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 853
+        width: 130
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98bbb46b0c6199ab0800000000000000
+      internalID: -5000940894270276727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_20
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 699
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdc2f30d47c860260800000000000000
+      internalID: 7063487498915097820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_21
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 699
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02fed8df1011d2dd0800000000000000
+      internalID: -2509330717128921312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_22
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 763
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57b1eef8cb41df4c0800000000000000
+      internalID: -4252219673066726539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_23
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 763
+        width: 130
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 248b2ba9091bdb0b0800000000000000
+      internalID: -5711213517807110078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_24
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 763
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 041e087d1318d02a0800000000000000
+      internalID: -6769612613799059136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_25
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 699
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc7854fc4b21e4300800000000000000
+      internalID: 238148398078068687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_26
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 699
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fbc00fe0cd78fe60800000000000000
+      internalID: 7996279405993315315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_27
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 593
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd166a9feb4d84f70800000000000000
+      internalID: 9171814557837320671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_28
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 593
+        width: 98
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be133018bdd6af610800000000000000
+      internalID: 1655756602541814251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_29
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 561
+        width: 66
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e3764317ab7bffb0800000000000000
+      internalID: -4612957435797802007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_30
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 593
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0d80e79575aff140800000000000000
+      internalID: 4755701656004365582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_31
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 561
+        width: 66
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18959fb6ddcd8a230800000000000000
+      internalID: 3650410341541173633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_32
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 561
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98bc83447bc8cdb10800000000000000
+      internalID: 2007634252651875209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_33
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 561
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a32a9bebd70d31d70800000000000000
+      internalID: 9012776517787820602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_34
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 423
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a33945712d5fdba20800000000000000
+      internalID: 3079888002874643258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_35
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 423
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a429f2e32ae8c88d0800000000000000
+      internalID: -2842740437298474422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_36
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 423
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeb97b0928e3de1f0800000000000000
+      internalID: -1014085610593870866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_37
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 423
+        width: 130
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18c3b793ea7fc85d0800000000000000
+      internalID: -3058797719230661503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_38
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 423
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b2f2a763e5c72720800000000000000
+      internalID: 2821441272057885362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_39
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 423
+        width: 66
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006811081a4e93820800000000000000
+      internalID: 2898599217479124480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_40
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 455
+        width: 130
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd6eebdcd840d4490800000000000000
+      internalID: -7760541575800756517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_41
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 349
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a949ebaffae7f00800000000000000
+      internalID: 1116523249108556400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_42
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 349
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 273c5438b2ec884d0800000000000000
+      internalID: -3132026854554877070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_43
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 381
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4dd4a329b5379590800000000000000
+      internalID: -7667600771291751091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_44
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 381
+        width: 130
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 970c1a382b8aab640800000000000000
+      internalID: 5096571412989198457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_45
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 381
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f043ce31c17020fc0800000000000000
+      internalID: -3530251340730321905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_46
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 285
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8b5b5b9c3596f210800000000000000
+      internalID: 1366443624490556301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_47
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 285
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d33638b2d5b2d9ee0800000000000000
+      internalID: -1252797442177146051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_48
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 147
+        width: 34
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c570e2c3e26f29c0800000000000000
+      internalID: -3949829617814047287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_49
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 195
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c3a71de8a5db5ec0800000000000000
+      internalID: -3577030557506755645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_50
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 147
+        width: 34
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5559e2be72e990d50800000000000000
+      internalID: 6704063414604305749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_51
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 147
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff62eddbfdb645140800000000000000
+      internalID: 4707506119216342783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_52
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 147
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 129974aae1ff26e10800000000000000
+      internalID: 2189592876026403105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_53
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 147
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62ba0fb538223f1f0800000000000000
+      internalID: -1012427543649670362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_54
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 147
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6d1e7619d214ec70800000000000000
+      internalID: 8999338678987660654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_55
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 105
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fff9a31c1f13e0740800000000000000
+      internalID: 5120084740765556735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_56
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 105
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1b47e8f10253acf0800000000000000
+      internalID: -242259786523522274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_57
+      rect:
+        serializedVersion: 2
+        x: 737
+        y: 9
+        width: 34
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48c448749e5345940800000000000000
+      internalID: 5283907538855939204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_58
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 57
+        width: 130
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 169aa2fb6d5e082f0800000000000000
+      internalID: -972524809019020959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_59
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 9
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11d81c657138f41f0800000000000000
+      internalID: -1058483251145765615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_60
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 9
+        width: 130
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bd0ae3cfb3529e20800000000000000
+      internalID: 3355836755435195826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MetricsTiles_61
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 9
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65be0dd48e5203470800000000000000
+      internalID: 8372233386949929814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MetricsTiles_0: -5300703408705071706
+      MetricsTiles_1: -567774347617648419
+      MetricsTiles_10: -3454592352018464173
+      MetricsTiles_11: 5256921066044248665
+      MetricsTiles_12: -1268921122124596909
+      MetricsTiles_13: 7171240134012649057
+      MetricsTiles_14: -5568884076299286403
+      MetricsTiles_15: 6165600059096002200
+      MetricsTiles_16: 3808859608687058960
+      MetricsTiles_17: 3700809796338379618
+      MetricsTiles_18: 3389046682508860197
+      MetricsTiles_19: -5000940894270276727
+      MetricsTiles_2: -2025036243774508130
+      MetricsTiles_20: 7063487498915097820
+      MetricsTiles_21: -2509330717128921312
+      MetricsTiles_22: -4252219673066726539
+      MetricsTiles_23: -5711213517807110078
+      MetricsTiles_24: -6769612613799059136
+      MetricsTiles_25: 238148398078068687
+      MetricsTiles_26: 7996279405993315315
+      MetricsTiles_27: 9171814557837320671
+      MetricsTiles_28: 1655756602541814251
+      MetricsTiles_29: -4612957435797802007
+      MetricsTiles_3: 7123374450714779182
+      MetricsTiles_30: 4755701656004365582
+      MetricsTiles_31: 3650410341541173633
+      MetricsTiles_32: 2007634252651875209
+      MetricsTiles_33: 9012776517787820602
+      MetricsTiles_34: 3079888002874643258
+      MetricsTiles_35: -2842740437298474422
+      MetricsTiles_36: -1014085610593870866
+      MetricsTiles_37: -3058797719230661503
+      MetricsTiles_38: 2821441272057885362
+      MetricsTiles_39: 2898599217479124480
+      MetricsTiles_4: -2521265457374124914
+      MetricsTiles_40: -7760541575800756517
+      MetricsTiles_41: 1116523249108556400
+      MetricsTiles_42: -3132026854554877070
+      MetricsTiles_43: -7667600771291751091
+      MetricsTiles_44: 5096571412989198457
+      MetricsTiles_45: -3530251340730321905
+      MetricsTiles_46: 1366443624490556301
+      MetricsTiles_47: -1252797442177146051
+      MetricsTiles_48: -3949829617814047287
+      MetricsTiles_49: -3577030557506755645
+      MetricsTiles_5: -3826528355671856320
+      MetricsTiles_50: 6704063414604305749
+      MetricsTiles_51: 4707506119216342783
+      MetricsTiles_52: 2189592876026403105
+      MetricsTiles_53: -1012427543649670362
+      MetricsTiles_54: 8999338678987660654
+      MetricsTiles_55: 5120084740765556735
+      MetricsTiles_56: -242259786523522274
+      MetricsTiles_57: 5283907538855939204
+      MetricsTiles_58: -972524809019020959
+      MetricsTiles_59: -1058483251145765615
+      MetricsTiles_6: 4468497824548358549
+      MetricsTiles_60: 3355836755435195826
+      MetricsTiles_61: 8372233386949929814
+      MetricsTiles_7: 7792371059565077525
+      MetricsTiles_8: -8952049153277163922
+      MetricsTiles_9: -7927171205581025479
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
