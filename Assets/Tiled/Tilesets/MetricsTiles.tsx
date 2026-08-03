@@ -39,16 +39,14 @@
  </tile>
  <tile id="7">
   <objectgroup draworder="index" id="2">
-   <object id="3" template="../Triangle.tx" x="0" y="128" rotation="0">
-    <polygon points="0,0 128,-128 128,0 0,0"/>
+   <object id="3" template="../Triangle.tx" gid="0" x="0" y="128" rotation="0">
+    <polygon points="0,0 128,-128 128,0"/>
    </object>
   </objectgroup>
  </tile>
  <tile id="8">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="../Triangle.tx" x="128" y="128" rotation="0">
-    <polygon points="0,0 -128,-128 -128,0 0,0"/>
-   </object>
+   <object id="1" template="../Triangle.tx" x="128" y="128" rotation="180"/>
   </objectgroup>
  </tile>
  <tile id="9">
@@ -87,8 +85,8 @@
  </tile>
  <tile id="15">
   <objectgroup draworder="index" id="2">
-   <object id="1" template="../Triangle.tx" x="128" y="0" rotation="0">
-    <polygon points="0,0 -128,128 -128,0 0,0"/>
+   <object id="1" template="../Triangle.tx" gid="0" x="128" y="0" rotation="0">
+    <polygon points="0,0 -128,128 -128,0"/>
    </object>
   </objectgroup>
  </tile>

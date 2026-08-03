@@ -1,0 +1,20 @@
+{
+    "maps": [
+        {
+            "fileName": "../Maps/MetricsMap.tmx",
+            "height": 12288,
+            "width": 12288,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "../Maps/MetricsMapMirror.tmx",
+            "height": 12288,
+            "width": 12288,
+            "x": 12288,
+            "y": 0
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}
