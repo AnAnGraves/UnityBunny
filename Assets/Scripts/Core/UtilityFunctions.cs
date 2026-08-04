@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 class UtilityFunctions
 {
     //modified from code shared by Michael Borgwardt on Stack Overflow
-    public static bool NearlyEqual(in float a, in float b)
+    public static bool NearlyEqual(in float a, in float b, float epsilon = float.Epsilon)
     {
         float absA = Mathf.Abs(a);
         float absB = Mathf.Abs(b);
@@ -23,17 +23,17 @@ class UtilityFunctions
         {
             // a or b is zero or both are extremely close to it
             // relative error is less meaningful here
-            return diff < (float.Epsilon);
+            return diff < (epsilon);
         }
         else
         { // use relative error
-            return diff / (absA + absB) < float.Epsilon;
+            return diff / (absA + absB) < epsilon;
         }
     }
 
-    public static bool NearlyEqual(in Vector2 a, in Vector2 b)
+    public static bool NearlyEqual(in Vector2 a, in Vector2 b, float epsilon = float.Epsilon)
     {
-        return NearlyEqual(a.x, b.x) && NearlyEqual(a.y, b.y);
+        return NearlyEqual(a.x, b.x, epsilon) && NearlyEqual(a.y, b.y, epsilon);
     }
 
     public static List<SuperTile> FindTriggerTilesAtPoint(Vector2 point)
@@ -72,6 +72,26 @@ class UtilityFunctions
         }
 
         return outTiles;
+    }
+
+    public static Transform FindDeepChild(Transform root, string name)
+    {
+        Transform outTx = root.Find(name);
+        if (outTx)
+        { 
+            return outTx; 
+        }
+
+        foreach (Transform child in root)
+        {
+            outTx = FindDeepChild(child, name);
+            if (outTx)
+            {
+                break;
+            }
+        }
+
+        return outTx;
     }
 
     //returns shortest edge-to-edge distance if bounds do not touch or overlap, or zero if they do

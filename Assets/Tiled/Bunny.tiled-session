@@ -1,11 +1,11 @@
 {
-    "activeFile": "Tilesets/MetricsTiles.tsx",
+    "activeFile": "Maps/MetricsMapMirror.tmx",
     "expandedProjectPaths": [
-        "Tilesets",
-        "Worlds",
-        "Maps",
         "Prefabs",
-        "."
+        "Maps",
+        "Worlds",
+        ".",
+        "Tilesets"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -43,10 +43,10 @@
         },
         "Maps/MetricsMapMirror.tmx": {
             "scale": 0.125,
-            "selectedLayer": -1,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": -3428,
-                "y": 6892
+                "x": -884,
+                "y": 10148
             }
         },
         "Maps/MetricsWorld.tmx": {
@@ -154,7 +154,8 @@
         "Prefabs/FloatingIsland1.tmx",
         "Prefabs/TheRing.tmx",
         "Tilesets/MetricsTiles.tsx",
-        "Maps/MetricsMap.tmx"
+        "Maps/MetricsMap.tmx",
+        "Maps/MetricsMapMirror.tmx"
     ],
     "project": "Bunny.tiled-project",
     "property.type": "SpecialTileType",
@@ -165,12 +166,12 @@
         "Tilesets/RailTiles.tsx",
         "Prefabs/FloatingIsland1.tmx",
         "Prefabs/TheRing.tmx",
-        "Maps/MetricsMap.tmx",
         "Tilesets/MetricsTiles.tsx",
+        "Maps/MetricsMap.tmx",
+        "Maps/MetricsMapMirror.tmx",
         "Maps/MetricsWorld.tmx",
         "Tilesets/UtilityTiles.tsx",
-        "Prefabs/MovingPlatforms/TestMovingPlatform.tmx",
-        "Tilesets/omega.tsx"
+        "Prefabs/MovingPlatforms/TestMovingPlatform.tmx"
     ],
     "resizeMap.removeObjects": false,
     "tileset.lastUsedFormat": "tsx",
