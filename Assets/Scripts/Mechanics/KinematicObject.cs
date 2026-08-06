@@ -79,7 +79,7 @@ namespace Platformer.Mechanics
         /// <summary>
         /// environmentally dependent player gravity. automatically sets the gravity and lateral directions when updated
         /// </summary>
-        public Vector2 personalGravity
+        public Vector2 PersonalGravity
         {
             get => _pGrav;
 
@@ -94,7 +94,7 @@ namespace Platformer.Mechanics
         /// <summary>
         /// direction of environmentally dependent player gravity. cannot be manually set.
         /// </summary>
-        public Vector2 personalGravityDirection
+        public Vector2 PersonalGravityDirection
         {
             get => _pGravDir;
         }
@@ -125,11 +125,27 @@ namespace Platformer.Mechanics
         /// </summary>
         public Vector2 velocity;
 
+        bool _wasGrounded = false;
+        bool _isGrounded = false;
+
         /// <summary>
         /// Is the entity currently sitting on a surface?
         /// </summary>
         /// <value></value>
-        public bool IsGrounded { get; protected set; }
+        public bool IsGrounded 
+        {
+            get => _isGrounded;
+            protected set
+            {
+                _wasGrounded = _isGrounded;
+                _isGrounded = value;
+            }
+        }
+
+        public bool WasGrounded
+        {
+            get => _wasGrounded;
+        }
 
         protected Vector2 targetVelocity;
         protected Rigidbody2D body;
@@ -148,7 +164,7 @@ namespace Platformer.Mechanics
         public void Bounce(float value)
         {
             velocity = GetLateralComponent(velocity);
-            velocity += value * (-personalGravityDirection);
+            velocity += value * (-PersonalGravityDirection);
         }
 
         /// <summary>
@@ -158,7 +174,7 @@ namespace Platformer.Mechanics
         public void Bounce(float value, Vector3 origin)
         {
             velocity = GetLateralComponent(velocity);
-            velocity += value * personalGravityDirection * Mathf.Sign(Vector2.Dot(personalGravity, transform.position - origin));
+            velocity += value * PersonalGravityDirection * Mathf.Sign(Vector2.Dot(PersonalGravity, transform.position - origin));
         }
 
         /// <summary>
@@ -197,7 +213,7 @@ namespace Platformer.Mechanics
 
         protected virtual void Start()
         {
-            personalGravity = Physics2D.gravity;
+            PersonalGravity = Physics2D.gravity;
             contactFilter.useTriggers = false;
             contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
             contactFilter.useLayerMask = true;
@@ -252,7 +268,7 @@ namespace Platformer.Mechanics
 
         protected Vector2 GetVerticalComponent(in Vector2 vec)
         {
-            return Vector2.Dot(personalGravityDirection, vec) * personalGravityDirection;
+            return Vector2.Dot(PersonalGravityDirection, vec) * PersonalGravityDirection;
         }
 
         protected Vector2 GetLateralComponent(in Vector2 vec)
@@ -276,7 +292,7 @@ namespace Platformer.Mechanics
             velocity += lateralVel;
 
             //gravity
-            velocity += gravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(personalGravity, personalGravityDirection)) : personalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
+            velocity += gravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(PersonalGravity, PersonalGravityDirection)) : PersonalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
 
             if (bLeftPlatform)
             {
@@ -346,7 +362,7 @@ namespace Platformer.Mechanics
                     float modifiedDistance = hitBuffer[i].distance - (shellRadius);
                     Vector2 modifiedSlopeMovement = Vector2.zero; //if we hit something before the slope we always want to cancel the slope move
 
-                    float groundedness = Vector2.Dot(currentNormal, -(personalGravityDirection));
+                    float groundedness = Vector2.Dot(currentNormal, -(PersonalGravityDirection));
 
                     //is this surface flat enough to land on?
                     bool hitGround = groundedness > minFloorSurfaceness;
@@ -402,7 +418,7 @@ namespace Platformer.Mechanics
 
                 if (bHitAWall)
                 {
-                    velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
+                    velocity = PersonalGravityDirection * Mathf.Max(Vector2.Dot(PersonalGravityDirection, velocity), 0.0f);
                 }
                 if(bHitATopOrBottom)
                 {
@@ -454,7 +470,7 @@ namespace Platformer.Mechanics
             lastSurfacePoint += direction * distance; //alsp update where we're standing
             if (bHitAWall)
             {
-                velocity = personalGravityDirection * Mathf.Max(Vector2.Dot(personalGravityDirection, velocity), 0.0f);
+                velocity = PersonalGravityDirection * Mathf.Max(Vector2.Dot(PersonalGravityDirection, velocity), 0.0f);
             }
         }
 

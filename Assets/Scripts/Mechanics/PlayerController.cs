@@ -226,12 +226,108 @@ namespace Platformer.Mechanics
         private InputAction m_PauseAction;
 
         public Bounds Bounds => m_collider2d.bounds;
+        public float CapsuleHeight
+        {
+            get => Bounds.size.y;
+        }
+        public float CapsuleHalfWidth
+        {
+            get => Bounds.extents.x;
+        }
+
+        Vector3[] _BoundsCorners = new Vector3[4];
+        Vector3[] _TxBoundsCorners = new Vector3[4];
+        protected Vector3[] BoundsCorners
+        {
+            get => _BoundsCorners;
+        }
+
+        protected Vector3[] TransformedBoundsCorners
+        {
+            get
+            {
+                Quaternion rotate = Quaternion.AngleAxis(body.rotation, Vector3.forward);
+                for (int i = 0; i < 4; ++i)
+                {
+                    _TxBoundsCorners[i] = (rotate * BoundsCorners[i]) + (Vector3)body.position;
+                }
+                return _TxBoundsCorners;
+            }
+        }
+
+        protected Vector2 CapsuleUpVector
+        {
+            get
+            {
+                Vector3[] txPoints = TransformedBoundsCorners;
+                return (txPoints[0] - txPoints[1]).normalized; //top left minus bottom left
+            }
+        }
+
+        protected void RotateCapsule(Vector2 downVector)
+        {
+            float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
+            angle += 90.0f; //otherwise faces down in normal gravity
+            body.rotation = angle;
+        }
+
+        //rotates
+        protected void RotateCapsuleWithoutClippingGround(Vector2 downVector, float extraPush = 0f)
+        {
+            float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
+            angle += 90.0f; //otherwise faces down in normal gravity
+
+            Vector2 oldUp = CapsuleUpVector;
+            body.rotation = angle;
+            Physics2D.SyncTransforms();
+            Vector2 newUp = CapsuleUpVector;
+            float delta = Mathf.Abs(Vector2.SignedAngle(oldUp, newUp));
+
+            //if(delta > 50f) //really 45 but since it's 45 degree increments may as well leave room
+            {
+                //calculate furthest distance a corner is "below" position based on old Up and move that far 
+                Vector3[] corners = TransformedBoundsCorners;
+                float maxDist = 0f;
+                foreach(Vector2 corner in corners)
+                {
+                    float dist = Vector2.Dot((body.position - corner), oldUp);
+                    if(dist > maxDist)
+                    {
+                        maxDist = dist;
+                    }
+                }
+
+                maxDist += extraPush;
+                if(maxDist > 0.01f)
+                {
+                    Vector2 move = maxDist * oldUp;
+                    body.position = body.position + move;
+                    Physics2D.SyncTransforms();
+                }
+            }
+        }
+
+        protected void SnapToSurfaceUnderPoint(Vector2 point, Vector2 antinormal)
+        {
+            RaycastHit2D surfaceHit = Physics2D.Raycast(point, antinormal, 0.2f, LayerMask.GetMask("Terrain"));
+
+            if(surfaceHit)
+            {
+                Debug.DrawLine(point, surfaceHit.point, Color.red, 2.0f);
+                body.position = surfaceHit.point;
+            }
+            else
+            {
+                Debug.DrawLine(point, point + (0.2f * antinormal), Color.blue, 2.0f);
+                body.position = point;
+            }
+        }
 
         void Awake()
         {
             m_health = GetComponent<Health>();
-            m_audioSource = GetComponent<AudioSource>();
-            m_collider2d = GetComponent<Collider2D>();
+            m_audioSource = GetComponentInChildren<AudioSource>();
+            m_collider2d = GetComponentInChildren<Collider2D>();
             m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             m_animator = GetComponentInChildren<Animator>();
             m_DebugText = GetComponentInChildren<TextMeshProUGUI>();
@@ -255,6 +351,11 @@ namespace Platformer.Mechanics
             m_HopAction.Enable();
             m_StickAimAction.Enable();
             m_PauseAction.Enable();
+
+            _BoundsCorners[0] = new( CapsuleHalfWidth,  CapsuleHeight, 0f);
+            _BoundsCorners[1] = new( CapsuleHalfWidth,  0            , 0f);
+            _BoundsCorners[3] = new(-CapsuleHalfWidth,  0            , 0f);
+            _BoundsCorners[2] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f);
         }
 
         protected override void OnDisable()
@@ -287,12 +388,12 @@ namespace Platformer.Mechanics
             //speeds and move inputs are displayed in player character space to make them more intelligible as movement
             //gravity is in world space because it SHOULD be (0,-1) always in player character space
             float lateralMove = Vector2.Dot(m_move, IsGrounded ? AlongGround : lateralDirection);
-            float verticalMove = Vector2.Dot(m_move, IsGrounded ? GroundNormal : -personalGravityDirection); //dot with UP vector for readability
+            float verticalMove = Vector2.Dot(m_move, IsGrounded ? GroundNormal : -PersonalGravityDirection); //dot with UP vector for readability
             float lateralVel = Vector2.Dot(velocity, IsGrounded ? AlongGround : lateralDirection);
-            float verticalVel = Vector2.Dot(velocity, IsGrounded ? GroundNormal : -personalGravityDirection);
+            float verticalVel = Vector2.Dot(velocity, IsGrounded ? GroundNormal : -PersonalGravityDirection);
 
             m_DebugText.SetText(String.Format("IS GROUNDED: {0}\n{1}", IsGrounded, String.Format("POSITION: {0:F2}, {1:F2} \nMOVE: {2:F2}, {3:F2} \nVELOCITY: {4:F2}, {5:F2} \nGRAVITY: {6:F2}, {7:F2} \nAIM {8:F2}, {9:F2}",
-                transform.position.x, transform.position.y, lateralMove, verticalMove, lateralVel, verticalVel, personalGravity.x, personalGravity.y, m_aim.x, m_aim.y)));
+                transform.position.x, transform.position.y, lateralMove, verticalMove, lateralVel, verticalVel, PersonalGravity.x, PersonalGravity.y, m_aim.x, m_aim.y)));
 
             m_DebugText.ForceMeshUpdate();
         }
@@ -469,9 +570,10 @@ namespace Platformer.Mechanics
             float gravMagnitude = Physics2D.gravity.magnitude;
 
             //if we don't find any gravity tile, we should have gravity down
-            personalGravity = gravMagnitude * Vector2.down;
+            Vector2 oldDir = PersonalGravityDirection;
+            PersonalGravity = gravMagnitude * Vector2.down;
 
-            List<SuperTile> triggerTiles = FindTriggerTilesAtPoint(Bounds.center);
+            List<SuperTile> triggerTiles = FindTriggerTilesAtPoint(body.position + (CapsuleUpVector * 0.05f));
             bool found = false;
             foreach(SuperTile tile in triggerTiles)
             {
@@ -483,46 +585,55 @@ namespace Platformer.Mechanics
                     case GravityDirection.INVALID:
                         continue;
                     case GravityDirection.D:
-                        personalGravity = gravMagnitude * Vector2.down;
+                        PersonalGravity = gravMagnitude * Vector2.down;
                         found = true;
                         break;
                     case GravityDirection.DL:
-                        personalGravity = gravMagnitude * (Vector2.down + Vector2.left) / math.SQRT2; //we know this is the magnitude already and can skip the sqrt call
+                        PersonalGravity = gravMagnitude * (Vector2.down + Vector2.left) / math.SQRT2; //we know this is the magnitude already and can skip the sqrt call
                         found = true;
                         break;
                     case GravityDirection.L:
-                        personalGravity = gravMagnitude * Vector2.left;
+                        PersonalGravity = gravMagnitude * Vector2.left;
                         found = true;
                         break;
                     case GravityDirection.UL:
-                        personalGravity = gravMagnitude * (Vector2.up + Vector2.left) / math.SQRT2;
+                        PersonalGravity = gravMagnitude * (Vector2.up + Vector2.left) / math.SQRT2;
                         found = true;
                         break;
                     case GravityDirection.U:
-                        personalGravity = gravMagnitude * Vector2.up;
+                        PersonalGravity = gravMagnitude * Vector2.up;
                         found = true;
                         break;
                     case GravityDirection.UR:
-                        personalGravity = gravMagnitude * (Vector2.up + Vector2.right) / math.SQRT2;
+                        PersonalGravity = gravMagnitude * (Vector2.up + Vector2.right) / math.SQRT2;
                         found = true;
                         break;
                     case GravityDirection.R:
-                        personalGravity = gravMagnitude * Vector2.right;
+                        PersonalGravity = gravMagnitude * Vector2.right;
                         found = true;
                         break;
                     case GravityDirection.DR:
-                        personalGravity = gravMagnitude * (Vector2.down + Vector2.right) / math.SQRT2;
+                        PersonalGravity = gravMagnitude * (Vector2.down + Vector2.right) / math.SQRT2;
                         found = true;
                         break;
                 }
             }
 
-            var spriteTx = m_spriteRenderer.transform;
-            Vector2 downVector = IsStateOnGround() ? -GroundNormal : personalGravityDirection;
-            float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
-            angle += 90.0f; //otherwise faces down in normal gravity
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
-            spriteTx.rotation = targetRotation;
+            //var spriteTx = m_spriteRenderer.transform;
+            float sameness = Vector2.Dot(oldDir, PersonalGravityDirection);
+            Vector2 downVector = IsStateSticking() ? PlayerDownDirection : (IsStateOnGround() ? -GroundNormal : PersonalGravityDirection);
+            
+            if(!IsStateSticking()) //don't ever try to rotate the player while they're sticking to a surface!
+            {
+                if (IsStateOnGround() && sameness < 0.1f)
+                {
+                    RotateCapsuleWithoutClippingGround(PersonalGravityDirection);
+                }
+                else
+                {
+                    RotateCapsule(downVector);
+                }
+            }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -611,7 +722,7 @@ namespace Platformer.Mechanics
                     return;
                 }
 
-                float surfaceness = Vector2.Dot(-personalGravityDirection, collision.contacts[0].normal);
+                float surfaceness = Vector2.Dot(-PersonalGravityDirection, collision.contacts[0].normal);
 
                 //attempt to knock player out of weird edge cases with... edges...
                 //check whether you are moving roughly parallel to the surface AND the surface is not (currently) a valid walkable surface
@@ -647,20 +758,26 @@ namespace Platformer.Mechanics
             ContactPoint2D[] contactPoints = new ContactPoint2D[collision.contactCount];
             collision.GetContacts(contactPoints);
             Vector2 antiNormal = Vector2.zero;
+            Vector2 centroid = Vector2.zero;
 
             foreach (ContactPoint2D point in contactPoints)
             {
                 antiNormal += point.normal;
+                centroid += point.point;
             }
 
             antiNormal.Normalize();
             antiNormal *= -1;
+            centroid /= collision.contactCount;
 
 
-            if (Vector2.Dot(personalGravityDirection, antiNormal) > minFloorSurfaceness)
+            if (Vector2.Dot(PersonalGravityDirection, antiNormal) > minFloorSurfaceness)
             {
                 //grounded - don't need to stick
-                
+                PlayerDownDirection = antiNormal;
+                SnapToSurfaceUnderPoint(centroid, antiNormal);
+                RotateCapsule(antiNormal);
+
                 //cancel out component of velocity into the ground
                 Vector2 velocityIntoGround = Vector2.Dot(m_LastFrameVelocity, antiNormal) * antiNormal;
                 m_LastFrameVelocity -= velocityIntoGround;
@@ -681,6 +798,8 @@ namespace Platformer.Mechanics
                 m_bIsPreBallistic = false;
                 m_timeUntilFall = StickTime;
                 PlayerDownDirection = antiNormal;
+                SnapToSurfaceUnderPoint(centroid, antiNormal);
+                RotateCapsule(antiNormal);
             }
             else
             {
@@ -821,6 +940,8 @@ namespace Platformer.Mechanics
                     if(m_timeUntilFall == 0.0f)
                     {
                         m_state = JumpState.Falling;
+                        PlayerDownDirection = PersonalGravityDirection;
+                        RotateCapsuleWithoutClippingGround(PersonalGravityDirection, 0.075f);
                     }
                     break;
 
@@ -844,6 +965,8 @@ namespace Platformer.Mechanics
                 case JumpState.StickLaunch:
                     Schedule<PlayerJumped>().player = this;
                     m_state = JumpState.Falling;
+                    PlayerDownDirection = PersonalGravityDirection;
+                    RotateCapsuleWithoutClippingGround(PersonalGravityDirection, 0.075f);
                     break;
 
                 case JumpState.Falling: //this is basically the same as InFlight but you can't stick again
@@ -911,6 +1034,7 @@ namespace Platformer.Mechanics
                         else
                         {
                             targetVelocity = m_LastLaunchVelocity;
+                            velocity = targetVelocity;
                         }
 
                         break;
@@ -980,7 +1104,7 @@ namespace Platformer.Mechanics
                     }
 
                     targetVelocity = velocity;
-                    velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-personalGravityDirection);
+                    velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-PersonalGravityDirection);
                     IsGrounded = false;
                 }
                 else
@@ -1058,7 +1182,12 @@ namespace Platformer.Mechanics
         //for use in animation to prevent flickering
         protected bool IsStateOnGround()
         {
-            return !( m_state == JumpState.InFlight || m_state == JumpState.Falling || m_state == JumpState.Launch || m_state == JumpState.StickLaunch );
+            return !(m_state == JumpState.InFlight || m_state == JumpState.Falling || m_state == JumpState.Launch || m_state == JumpState.StickLaunch);
+        }
+
+        protected bool IsStateSticking()
+        {
+            return (m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch);
         }
 
         public enum JumpState
