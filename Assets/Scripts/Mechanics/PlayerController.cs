@@ -264,11 +264,47 @@ namespace Platformer.Mechanics
             }
         }
 
+        protected bool ThreePointSlopeTest(out Vector2 newDownVector)
+        {
+            float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
+            Vector2 castOffset = castOffsetDist * -PersonalGravityDirection; //actual offset vector
+            float dist = 0.2f + castOffsetDist; //raycast distance, which is extended by the offset
+            RaycastHit2D leftHit = Physics2D.Raycast(body.position + castOffset + (Vector2)(CapsuleHalfWidth * -transform.right), PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+            RaycastHit2D rightHit = Physics2D.Raycast(body.position + castOffset + (Vector2)(CapsuleHalfWidth * transform.right), PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+            RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+
+            if(leftHit)
+            {
+                if((!rightHit || rightHit.normal == leftHit.normal) && (!midHit || midHit.normal == leftHit.normal))
+                {
+                    newDownVector = -leftHit.normal;
+                    return true;
+                }
+            }
+            else if(rightHit)
+            {
+                if(!midHit || midHit.normal == rightHit.normal)
+                {
+                    newDownVector = -rightHit.normal;
+                    return true;
+                }
+            }
+            else if(midHit)
+            {
+                newDownVector = -midHit.normal;
+                return true;
+            }
+
+            newDownVector = Vector2.zero;
+            return false;
+        }
+
         protected void RotateCapsule(Vector2 downVector)
         {
             float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
             angle += 90.0f; //otherwise faces down in normal gravity
             body.rotation = angle;
+            Physics2D.SyncTransforms();
         }
 
         //rotates
@@ -625,13 +661,36 @@ namespace Platformer.Mechanics
             
             if(!IsStateSticking()) //don't ever try to rotate the player while they're sticking to a surface!
             {
-                if (IsStateOnGround() && sameness < 0.1f)
+                if (IsStateOnGround() && sameness < 0.1f) //when gravity inverts while on a surface
                 {
                     RotateCapsuleWithoutClippingGround(PersonalGravityDirection);
                 }
+                else if (!IsStateOnGround() && !IsGrounded)
+                {
+                    //see if we're likely to hit an angled surface soon
+                    Vector2 originalUp = CapsuleUpVector;
+                    RaycastHit2D velCastHit = Physics2D.Raycast(body.position, velocity.normalized, CapsuleHeight * 1.25f, LayerMask.GetMask("Terrain"));
+                    if (velCastHit)
+                    {
+                        if (Vector2.Dot(originalUp, velCastHit.normal) < 0.9f)
+                        {
+                            RotateCapsule(-velCastHit.normal);
+                        }
+                    }
+                    else if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
+                    {
+                        RotateCapsule(PersonalGravityDirection);
+                    }
+                }
                 else
                 {
-                    RotateCapsule(downVector);
+                    Vector2 originalUp = CapsuleUpVector;
+                    Vector2 newDown;
+                    if(ThreePointSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
+                    {
+                        RotateCapsule(newDown);
+                        SnapToSurfaceUnderPoint(body.position, newDown);
+                    }
                 }
             }
         }

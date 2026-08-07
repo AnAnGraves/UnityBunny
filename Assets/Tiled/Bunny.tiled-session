@@ -34,19 +34,19 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.125,
-            "selectedLayer": -1,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 5996,
-                "y": 6124
+                "x": 4946,
+                "y": 2335.333333333333
             }
         },
         "Maps/MetricsMapMirror.tmx": {
-            "scale": 0.125,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": -884,
-                "y": 10148
+                "x": 7048.666666666666,
+                "y": 2007.3333333333333
             }
         },
         "Maps/MetricsWorld.tmx": {
