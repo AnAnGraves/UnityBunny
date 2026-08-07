@@ -218,12 +218,14 @@ namespace Platformer.Mechanics
         internal Animator m_animator;
         readonly PlatformerModel m_model = Simulation.GetModel<PlatformerModel>();
         bool m_bIsPaused = false;
+        bool m_bFrameAdvance = false;
 
         private InputAction m_MoveAction;
         private InputAction m_JumpAction;
         private InputAction m_HopAction;
         private InputAction m_StickAimAction;
         private InputAction m_PauseAction;
+        private InputAction m_FrameAdvanceAction;
 
         public Bounds Bounds => m_collider2d.bounds;
         public float CapsuleHeight
@@ -233,6 +235,11 @@ namespace Platformer.Mechanics
         public float CapsuleHalfWidth
         {
             get => Bounds.extents.x;
+        }
+
+        public Vector2 CapsuleCenter
+        {
+            get => Bounds.center;
         }
 
         Vector3[] _BoundsCorners = new Vector3[4];
@@ -381,17 +388,24 @@ namespace Platformer.Mechanics
             m_HopAction = InputSystem.actions.FindAction("Player/Hop");
             m_StickAimAction = InputSystem.actions.FindAction("Player/StickAim");
             m_PauseAction = InputSystem.actions.FindAction("Player/Pause");
+            m_FrameAdvanceAction = InputSystem.actions.FindAction("Player/FrameAdvance");
 
             m_MoveAction.Enable();
             m_JumpAction.Enable();
             m_HopAction.Enable();
             m_StickAimAction.Enable();
             m_PauseAction.Enable();
+            m_FrameAdvanceAction.Enable();
 
             _BoundsCorners[0] = new( CapsuleHalfWidth,  CapsuleHeight, 0f);
             _BoundsCorners[1] = new( CapsuleHalfWidth,  0            , 0f);
             _BoundsCorners[3] = new(-CapsuleHalfWidth,  0            , 0f);
             _BoundsCorners[2] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f);
+        }
+
+        protected void UpdateGravityModifier()
+        {
+            gravityModifier = (m_bIsPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0f : 1f;
         }
 
         protected override void OnDisable()
@@ -414,12 +428,6 @@ namespace Platformer.Mechanics
 
             //reported velocity debug UI
             //Debug.DrawLine(collider2d.bounds.center, (Vector2)(collider2d.bounds.center) + LastFrameVelocity.normalized * 2.0f, Color.cyan);
-
-            //chargiing debug UI
-            //if (m_chargeStage >= 0 && (m_state == JumpState.Charging || m_state == JumpState.StickCharge))
-            //{
-            //   Debug.DrawLine(m_collider2d.bounds.center, (Vector2)(m_collider2d.bounds.center) + ((m_chargeStage + 1) * 0.75f * m_aim), chargeLevelColors[m_chargeStage]);
-            //}
 
             //speeds and move inputs are displayed in player character space to make them more intelligible as movement
             //gravity is in world space because it SHOULD be (0,-1) always in player character space
@@ -444,7 +452,7 @@ namespace Platformer.Mechanics
         protected override void Update()
         {
 
-            m_reflectedThisFrame = false;
+            m_reflectedThisFrame = false; //this arguably belongs in FixedUpdate? not sure it will ever matter and technically it's a LITTLE faster to only do it here
 
             //update whether the player is pre-ballistic
             if(m_bIsPreBallistic)
@@ -459,7 +467,7 @@ namespace Platformer.Mechanics
 
             UpdateInputs();
 
-            if (m_bIsPaused) return; //halt update immediately
+            if (m_bIsPaused && !m_bFrameAdvance) return; //halt update immediately
 
             //THESE GO IN FIXED UPDATE WHY WAS IT LIKE THIS
             //UpdateGravity();
@@ -478,7 +486,7 @@ namespace Platformer.Mechanics
         {
             //TODO: the UI should be in its own script but for now....
             //update aim arrow
-            if (m_chargeStage >= 0 && (m_state == JumpState.Charging || m_state == JumpState.StickCharge))
+            if (m_chargeStage >= 0 && IsStateCharging())
             {
                 m_AimArrowSprite.size = new(1f, 2f * (m_chargeStage + 1f));
                 m_AimArrowSprite.color = chargeLevelColors[m_chargeStage];
@@ -496,21 +504,22 @@ namespace Platformer.Mechanics
 
         private void UpdateInputs()
         {
-            if(m_PauseAction.WasPerformedThisFrame())
+            m_bFrameAdvance = m_FrameAdvanceAction.WasPerformedThisFrame();
+
+            if (m_PauseAction.WasPerformedThisFrame())
             {
-                if(!m_bIsPaused)
-                {
-                    m_bIsPaused = true;
-                    Time.timeScale = 0.0f;
-                }
-                else
-                {
-                    m_bIsPaused = false;
-                    Time.timeScale = 1.0f;
-                }
+                m_bIsPaused = !m_bIsPaused;
             }
 
-            if (m_bIsPaused) return; //halt update immediately
+            if (m_bIsPaused && !m_bFrameAdvance)
+            {
+                Time.timeScale = 0.0f;
+                return; //halt update immediately
+            }
+            else
+            {
+                Time.timeScale = 1.0f;
+            }
 
             //get move inputs
             m_move = m_MoveAction.ReadValue<Vector2>();
@@ -601,9 +610,52 @@ namespace Platformer.Mechanics
             m_aim = Quaternion.AngleAxis(aimAngle * AimSnapIncrement, Vector3.forward) * Vector2.up;            
         }
 
+        protected GravityDirection GetOppositeGravity(int nominalDir)
+        {
+            return GetOppositeGravity((GravityDirection)nominalDir);
+        }
+
+        protected GravityDirection GetOppositeGravity(GravityDirection nominalDir)
+        {
+            GravityDirection outGrav = nominalDir;
+
+            switch(outGrav)
+            {
+                case GravityDirection.INVALID:
+                    break;
+                case GravityDirection.D:
+                    outGrav = GravityDirection.U;
+                    break;
+                case GravityDirection.DL:
+                    outGrav = GravityDirection.UR;
+                    break;
+                case GravityDirection.L:
+                    outGrav = GravityDirection.R;
+                    break;
+                case GravityDirection.UL:
+                    outGrav = GravityDirection.DR;
+                    break;
+                case GravityDirection.U:
+                    outGrav = GravityDirection.D;
+                    break;
+                case GravityDirection.UR:
+                    outGrav = GravityDirection.DL;
+                    break;
+                case GravityDirection.R:
+                    outGrav = GravityDirection.L;
+                    break;
+                case GravityDirection.DR:
+                    outGrav = GravityDirection.UL;
+                    break;
+            }
+
+            return outGrav;
+        }
+
         private void UpdateGravity()
         {
             float gravMagnitude = Physics2D.gravity.magnitude;
+            UpdateGravityModifier();
 
             //if we don't find any gravity tile, we should have gravity down
             Vector2 oldDir = PersonalGravityDirection;
@@ -616,7 +668,7 @@ namespace Platformer.Mechanics
                 //we should only ever find one gravity tile, so break if we hit one
                 if (found) break;
 
-                switch((SuperTiled2Unity.GravityDirection)(tile.GetPropertyValueAsInt("Gravity")))
+                switch((GravityDirection)(tile.GetPropertyValueAsInt("Gravity")))
                 {
                     case GravityDirection.INVALID:
                         continue;
@@ -655,6 +707,7 @@ namespace Platformer.Mechanics
                 }
             }
 
+            
             //var spriteTx = m_spriteRenderer.transform;
             float sameness = Vector2.Dot(oldDir, PersonalGravityDirection);
             Vector2 downVector = IsStateSticking() ? PlayerDownDirection : (IsStateOnGround() ? -GroundNormal : PersonalGravityDirection);
@@ -669,7 +722,7 @@ namespace Platformer.Mechanics
                 {
                     //see if we're likely to hit an angled surface soon
                     Vector2 originalUp = CapsuleUpVector;
-                    RaycastHit2D velCastHit = Physics2D.Raycast(body.position, velocity.normalized, CapsuleHeight * 1.25f, LayerMask.GetMask("Terrain"));
+                    RaycastHit2D velCastHit = Physics2D.Raycast(CapsuleCenter, velocity.normalized, CapsuleHeight * 0.75f, LayerMask.GetMask("Terrain"));
                     if (velCastHit)
                     {
                         if (Vector2.Dot(originalUp, velCastHit.normal) < 0.9f)
@@ -1123,6 +1176,7 @@ namespace Platformer.Mechanics
                                 m_chargeStage = -1;
                                 m_doLaunch = false;
                                 m_state = JumpState.StickLaunch;
+
                             }
                             else
                             {
@@ -1164,6 +1218,8 @@ namespace Platformer.Mechanics
 
                     targetVelocity = velocity;
                     velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-PersonalGravityDirection);
+                    body.position += velocity * Time.deltaTime;
+                    Physics2D.SyncTransforms();
                     IsGrounded = false;
                 }
                 else
@@ -1221,8 +1277,6 @@ namespace Platformer.Mechanics
             m_animator.SetBool("grounded", IsStateOnGround());
             m_animator.SetFloat("velocityX", (Mathf.Abs(lateralMove) > RunAnimThreshold ? Mathf.Abs(lateralMove) : 0.0f) / maxSpeed);
 
-            gravityModifier = (m_bIsPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0 : 1;
-
             //targetVelocity = velocity;
         }
 
@@ -1247,6 +1301,16 @@ namespace Platformer.Mechanics
         protected bool IsStateSticking()
         {
             return (m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch);
+        }
+
+        protected bool IsStateCharging()
+        {
+            return (m_state == JumpState.Charging || m_state == JumpState.StickCharge);
+        }   
+        
+        protected bool IsStateFlippable()
+        {
+            return m_state == JumpState.Grounded || m_state == JumpState.Landed;
         }
 
         public enum JumpState

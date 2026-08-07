@@ -59,6 +59,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "FrameAdvance",
+                    "type": "Button",
+                    "id": "c61bac5f-8cdd-47e2-9081-780592f57fff",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -301,6 +310,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse;Gamepad;Touch;XR;Joystick",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5ee507b8-5dda-4e67-b9e4-2fb44e096fdd",
+                    "path": "<Keyboard>/period",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Gamepad",
+                    "action": "FrameAdvance",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
