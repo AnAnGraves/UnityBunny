@@ -271,6 +271,26 @@ namespace Platformer.Mechanics
             }
         }
 
+        //tests only at the middle, used when detecting you've run off a ledge for determining if there's a slope below you you should be following
+        protected bool OnePointSlopeTest(out Vector2 newDownVector)
+        {
+            float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
+            Vector2 castOffset = castOffsetDist * -PersonalGravityDirection; //actual offset vector
+            float dist = (CapsuleHeight) + castOffsetDist; //raycast distance, which is extended by the offset
+            RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+            Debug.DrawLine(body.position + castOffset, body.position + castOffset + (PersonalGravityDirection * dist), Color.blue, 2.0f);
+
+            if (midHit)
+            {
+                Debug.DrawLine(midHit.point, midHit.point + (midHit.normal * dist), Color.red, 2.0f);
+                newDownVector = -midHit.normal;
+                return true;
+            }
+
+            newDownVector = Vector2.zero;
+            return false;
+        }
+
         protected bool ThreePointSlopeTest(out Vector2 newDownVector)
         {
             float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
@@ -306,25 +326,39 @@ namespace Platformer.Mechanics
             return false;
         }
 
-        protected void RotateCapsule(Vector2 downVector)
+        //returns the signed angle of change
+        protected float RotateCapsule(Vector2 downVector)
         {
             float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
             angle += 90.0f; //otherwise faces down in normal gravity
+
+            //get the signed angled from old to new
+            float delta = angle - body.rotation;
+            delta = Mod((delta + 180f), 360f) - 180f;
+
+            //rotate and sync
             body.rotation = angle;
             Physics2D.SyncTransforms();
+
+            //return the change
+            return delta;
         }
 
         //rotates
-        protected void RotateCapsuleWithoutClippingGround(Vector2 downVector, float extraPush = 0f)
+        protected float RotateCapsuleWithoutClippingGround(Vector2 downVector, float extraPush = 0f)
         {
             float angle = Mathf.Atan2(downVector.y, downVector.x) * Mathf.Rad2Deg;
             angle += 90.0f; //otherwise faces down in normal gravity
+
+            //get the signed angled from old to new
+            float delta = angle - body.rotation;
+            delta = Mod((delta + 180f), 360f) - 180f;
 
             Vector2 oldUp = CapsuleUpVector;
             body.rotation = angle;
             Physics2D.SyncTransforms();
-            Vector2 newUp = CapsuleUpVector;
-            float delta = Mathf.Abs(Vector2.SignedAngle(oldUp, newUp));
+            //Vector2 newUp = CapsuleUpVector;
+            //float delta = Mathf.Abs(Vector2.SignedAngle(oldUp, newUp));
 
             //if(delta > 50f) //really 45 but since it's 45 degree increments may as well leave room
             {
@@ -348,6 +382,15 @@ namespace Platformer.Mechanics
                     Physics2D.SyncTransforms();
                 }
             }
+
+            return delta;
+        }
+
+        protected void RotateVelocity(float angle)
+        {
+            Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
+            velocity = rot * velocity;
+            m_LastFrameVelocity = rot * m_LastFrameVelocity;
         }
 
         protected void SnapToSurfaceUnderPoint(Vector2 point, Vector2 antinormal)
@@ -357,12 +400,12 @@ namespace Platformer.Mechanics
             if(surfaceHit)
             {
                 Debug.DrawLine(point, surfaceHit.point, Color.red, 2.0f);
-                body.position = surfaceHit.point;
+                body.position = surfaceHit.point - (0.02f * antinormal);
             }
             else
             {
                 Debug.DrawLine(point, point + (0.2f * antinormal), Color.blue, 2.0f);
-                body.position = point;
+                body.position = point - (0.02f * antinormal);
             }
         }
 
@@ -529,6 +572,13 @@ namespace Platformer.Mechanics
             moveAngle /= MoveSnapIncrement;
             moveAngle = Mathf.Floor(moveAngle + 0.5f);
             m_move = Quaternion.AngleAxis(moveAngle * MoveSnapIncrement, Vector3.forward) * Vector2.up * m_move.magnitude;
+
+            //make diagonals also count as fully in the right direction
+            float alignment = Vector2.Dot(m_move, AlongGround);
+            if (Mathf.Abs(alignment) > 0.5f)
+            {
+                m_move = AlongGround * m_move.magnitude * Mathf.Sign(alignment);
+            }
 
             if (m_controlEnabled)
             {
@@ -727,12 +777,12 @@ namespace Platformer.Mechanics
                     {
                         if (Vector2.Dot(originalUp, velCastHit.normal) < 0.9f)
                         {
-                            RotateCapsule(-velCastHit.normal);
+                            RotateCapsuleWithoutClippingGround(-velCastHit.normal);
                         }
                     }
                     else if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
                     {
-                        RotateCapsule(PersonalGravityDirection);
+                        RotateCapsuleWithoutClippingGround(PersonalGravityDirection);
                     }
                 }
                 else
@@ -741,8 +791,10 @@ namespace Platformer.Mechanics
                     Vector2 newDown;
                     if(ThreePointSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
                     {
-                        RotateCapsule(newDown);
+                        float angle = RotateCapsule(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
+                        GroundNormal = -newDown;
+                        RotateVelocity(angle);
                     }
                 }
             }
@@ -969,10 +1021,29 @@ namespace Platformer.Mechanics
 
         void UpdateJumpState()
         {
-            //before anything, if we're in 'Grounded' state but the last movement update made took us off a ledge, become airborne
+            //before anything, if we're in 'Grounded' state but the last movement update made took us off a ledge, become airborne IF there isn't a walkable surface we should follow below us
             if(m_state == JumpState.Grounded && !IsGrounded)
             {
-                m_state = JumpState.InFlight;
+                Vector2 originalUp = CapsuleUpVector;
+                Vector2 newDown;
+                bool snapped = false;
+                if (OnePointSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
+                {
+                    if(Vector2.Dot(newDown, PersonalGravityDirection) > 0.5f)
+                    {
+                        float angle = RotateCapsule(newDown);
+                        SnapToSurfaceUnderPoint(body.position, newDown);
+                        RotateVelocity(angle);
+                        GroundNormal = -newDown;
+                        IsGrounded = true;
+                        snapped = true;
+                    }
+                }
+
+                if (!snapped)
+                {
+                    m_state = JumpState.InFlight;
+                }
             }
 
             switch (m_state)

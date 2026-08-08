@@ -106,4 +106,11 @@ class UtilityFunctions
         // Combine the axis distances into a 3D Euclidean distance
         return (distX * distX) + (distY * distY) + (distZ * distZ);
     }
+
+    //modulo that keeps repeating the same series if you go below zero rather than inverting, e.g. Mod(-1,3) = 2, while -1 % 3 = -1
+    public static float Mod(float a, float b)
+    {
+        float res = a % b;
+        return res < 0 ? res + b : res;
+    }
 }

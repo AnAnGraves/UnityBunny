@@ -34,11 +34,11 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.75,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 4946,
-                "y": 2335.333333333333
+                "x": 4468.181818181818,
+                "y": 1477.2727272727275
             }
         },
         "Maps/MetricsMapMirror.tmx": {
