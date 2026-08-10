@@ -1,11 +1,11 @@
 {
     "activeFile": "Maps/MetricsMapMirror.tmx",
     "expandedProjectPaths": [
-        "Prefabs",
-        "Maps",
-        "Worlds",
         ".",
-        "Tilesets"
+        "Worlds",
+        "Tilesets",
+        "Prefabs",
+        "Maps"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -34,19 +34,19 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.33,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 4468.181818181818,
-                "y": 1477.2727272727275
+                "x": 7649,
+                "y": 9259
             }
         },
         "Maps/MetricsMapMirror.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 2,
+            "scale": 0.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 7048.666666666666,
-                "y": 2007.3333333333333
+                "x": 4895,
+                "y": 9841
             }
         },
         "Maps/MetricsWorld.tmx": {

@@ -227,6 +227,8 @@ namespace Platformer.Mechanics
         private InputAction m_PauseAction;
         private InputAction m_FrameAdvanceAction;
 
+        private ContactFilter2D m_terrainFilter;
+
         public Bounds Bounds => m_collider2d.bounds;
         public float CapsuleHeight
         {
@@ -271,14 +273,16 @@ namespace Platformer.Mechanics
             }
         }
 
+        /*
         //tests only at the middle, used when detecting you've run off a ledge for determining if there's a slope below you you should be following
         protected bool OnePointSlopeTest(out Vector2 newDownVector)
         {
+            Vector2 downVec = -body.transform.up;
             float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
-            Vector2 castOffset = castOffsetDist * -PersonalGravityDirection; //actual offset vector
+            Vector2 castOffset = castOffsetDist * -downVec; //actual offset vector
             float dist = (CapsuleHeight) + castOffsetDist; //raycast distance, which is extended by the offset
-            RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
-            Debug.DrawLine(body.position + castOffset, body.position + castOffset + (PersonalGravityDirection * dist), Color.blue, 2.0f);
+            RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, downVec, dist, LayerMask.GetMask("Terrain"));
+            Debug.DrawLine(body.position + castOffset, body.position + castOffset + (downVec * dist), Color.blue, 2.0f);
 
             if (midHit)
             {
@@ -290,12 +294,46 @@ namespace Platformer.Mechanics
             newDownVector = Vector2.zero;
             return false;
         }
+        */
+
+        //tests three points from leading edge to trailing, but returns at the first hit rather than checking they all match
+        protected bool SlidingSlopeTest(out Vector2 newDownVector)
+        {
+            const int maxTests = 5;
+            Vector2 downVec = -GroundNormal; //player can rotate due to gravity in air before this check, but GroundNormal should be unchanged
+            float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
+            Vector2 castOffset = castOffsetDist * -downVec; //actual offset vector
+            float dist = CapsuleHeight + castOffsetDist; //raycast distance, which is extended by the offset
+            float dir = Mathf.Sign(Vector2.Dot(velocity, AlongGround)); //direction of travel in local space, + is right - is left
+            Vector2 startOffset = dir * ((Vector2)(CapsuleHalfWidth * transform.right)); 
+            Vector2 startingPoint = body.position + startOffset; //starting point to test, which should be the leading edge
+            Vector2 step = -2f * (startOffset / (maxTests - 1)); //with this, the last test will be the other bottom corner
+            RaycastHit2D hit = new();
+            Vector2 castPoint = Vector2.zero;
+
+            for (int i = 0; i < maxTests; ++i)
+            {
+                castPoint = startingPoint + (i * step) + castOffset;
+                hit = Physics2D.Raycast(castPoint, downVec, dist, LayerMask.GetMask("Terrain"));
+                Debug.DrawLine(castPoint, castPoint + (dist * downVec), Color.blue, 2.0f);
+                if (hit)
+                {
+                    Debug.DrawLine(hit.point, hit.point + (dist * hit.normal), Color.red, 2.0f);
+                    newDownVector = -hit.normal;
+                    return true;
+                }
+            }
+
+            //no point hit, return false
+            newDownVector = Vector2.zero;
+            return false;
+        }
 
         protected bool ThreePointSlopeTest(out Vector2 newDownVector)
         {
             float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
             Vector2 castOffset = castOffsetDist * -PersonalGravityDirection; //actual offset vector
-            float dist = 0.2f + castOffsetDist; //raycast distance, which is extended by the offset
+            float dist = CapsuleHeight + castOffsetDist; //raycast distance, which is extended by the offset
             RaycastHit2D leftHit = Physics2D.Raycast(body.position + castOffset + (Vector2)(CapsuleHalfWidth * -transform.right), PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
             RaycastHit2D rightHit = Physics2D.Raycast(body.position + castOffset + (Vector2)(CapsuleHalfWidth * transform.right), PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
             RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
@@ -324,6 +362,43 @@ namespace Platformer.Mechanics
 
             newDownVector = Vector2.zero;
             return false;
+        }
+
+        //zero vector is not const and can't be a default argument, so make a convenience function
+        protected void ResolveCollisions()
+        {
+            ResolveCollisions(Vector2.zero);
+        }
+
+
+        protected void ResolveCollisions(Vector2 bump)
+        {
+            List<Collider2D> overlaps = new();
+            Physics2D.OverlapCollider(m_collider2d, m_terrainFilter, overlaps);
+
+            foreach(Collider2D col in overlaps)
+            {
+                ColliderDistance2D dist = m_collider2d.Distance(col);
+                if(dist.distance < 0)
+                {
+                    body.transform.position += (Vector3)(1.1f * dist.normal * dist.distance);
+                    Physics2D.SyncTransforms();
+                }
+            }
+        }
+
+        protected float RotateCapsuleAndUnstick(Vector2 downVector, bool bump = false)
+        {
+            float res = RotateCapsule(downVector);
+            ResolveCollisions();
+
+            if(bump)
+            {
+                float dir = Mathf.Sign(Vector2.Dot(velocity, AlongGround));
+                body.transform.position += (Vector3)(dir * 0.05f * AlongGround);
+            }
+
+            return res;
         }
 
         //returns the signed angle of change
@@ -386,11 +461,14 @@ namespace Platformer.Mechanics
             return delta;
         }
 
-        protected void RotateVelocity(float angle)
+        protected void AlignVelocityToGround()
         {
-            Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
-            velocity = rot * velocity;
-            m_LastFrameVelocity = rot * m_LastFrameVelocity;
+            float dir = Mathf.Sign(Vector2.Dot(velocity, AlongGround)); //we shouldn't be snapping more than 90 degrees so this should still work
+            velocity = dir * velocity.magnitude * AlongGround;
+
+            //Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
+            //velocity = rot * velocity;
+            //m_LastFrameVelocity = rot * m_LastFrameVelocity;
         }
 
         protected void SnapToSurfaceUnderPoint(Vector2 point, Vector2 antinormal)
@@ -421,6 +499,10 @@ namespace Platformer.Mechanics
             m_chargePFX = m_chargeParticles.main;
 
             m_chargeParticles.Stop();
+
+            m_terrainFilter.ClearDepth();
+            m_terrainFilter.ClearNormalAngle();
+            m_terrainFilter.SetLayerMask(LayerMask.GetMask("Terrain"));
 
             //UI
             m_UICanvas = GetComponentInChildren<Canvas>();
@@ -596,7 +678,7 @@ namespace Platformer.Mechanics
                 else if (m_state == JumpState.Grounded && m_HopAction.WasPressedThisFrame()) //Unchanged bc there's something fucky with velocity when jumping on landing //IsPressed()) //Changed from WasPressedThisFrame bc bunnies can do this
                 {
                     //got to Prepare but skip charging
-                    m_state = JumpState.PrepareToJump;
+                    m_state = JumpState.StartHop;
                     m_doLaunch = true;
                 }
                 else if (m_state == JumpState.Stick)
@@ -785,16 +867,25 @@ namespace Platformer.Mechanics
                         RotateCapsuleWithoutClippingGround(PersonalGravityDirection);
                     }
                 }
-                else
+                else if(IsStateOnGround() && !IsGrounded)
                 {
-                    Vector2 originalUp = CapsuleUpVector;
                     Vector2 newDown;
-                    if(ThreePointSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
+                    if(SlidingSlopeTest(out newDown) && (Vector2.Dot(downVector, newDown) < 0.9f)) 
                     {
-                        float angle = RotateCapsule(newDown);
+                        float angle = RotateCapsuleAndUnstick(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
                         GroundNormal = -newDown;
-                        RotateVelocity(angle);
+                        AlignVelocityToGround();
+                        IsGrounded = true;
+                    }
+                }
+                else if(IsStateOnGround())
+                {
+                    Vector2 newDown;
+                    if (ThreePointSlopeTest(out newDown) && (Vector2.Dot(-CapsuleUpVector, newDown) < 0.9f))
+                    {
+                        RotateCapsule(newDown);
+                        SnapToSurfaceUnderPoint(body.position, newDown);
                     }
                 }
             }
@@ -1024,17 +1115,18 @@ namespace Platformer.Mechanics
             //before anything, if we're in 'Grounded' state but the last movement update made took us off a ledge, become airborne IF there isn't a walkable surface we should follow below us
             if(m_state == JumpState.Grounded && !IsGrounded)
             {
-                Vector2 originalUp = CapsuleUpVector;
+                Vector2 originalUp = GroundNormal;
                 Vector2 newDown;
                 bool snapped = false;
-                if (OnePointSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
+                if (SlidingSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
                 {
                     if(Vector2.Dot(newDown, PersonalGravityDirection) > 0.5f)
                     {
                         float angle = RotateCapsule(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
-                        RotateVelocity(angle);
-                        GroundNormal = -newDown;
+                        velocity = GetLateralComponent(velocity); // remove vertical component
+                        GroundNormal = -newDown; // set new ground alignment
+                        AlignVelocityToGround(); //align previous lateral component to ground
                         IsGrounded = true;
                         snapped = true;
                     }
@@ -1070,6 +1162,10 @@ namespace Platformer.Mechanics
                     {
                         m_state = JumpState.Launch;
                     }
+                    break;
+
+                case JumpState.StartHop:
+                    m_state = JumpState.Launch;
                     break;
 
                 case JumpState.Charging:
@@ -1366,7 +1462,7 @@ namespace Platformer.Mechanics
         //for use in animation to prevent flickering
         protected bool IsStateOnGround()
         {
-            return !(m_state == JumpState.InFlight || m_state == JumpState.Falling || m_state == JumpState.Launch || m_state == JumpState.StickLaunch);
+            return !(m_state == JumpState.InFlight || m_state == JumpState.Falling || m_state == JumpState.Launch || m_state == JumpState.StickLaunch || m_state == JumpState.StartHop);
         }
 
         protected bool IsStateSticking()
@@ -1388,6 +1484,7 @@ namespace Platformer.Mechanics
         {
             Grounded,
             PrepareToJump,
+            StartHop,
             Charging,
             Launch,
             InFlight,

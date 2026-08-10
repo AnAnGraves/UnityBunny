@@ -375,7 +375,7 @@ namespace Platformer.Mechanics
                             Vector2 uphillSlope = Vector2.Reflect(-1f * currentNormal, direction).normalized;
 
                             //project movement onto slope
-                            modifiedSlopeMovement = uphillSlope * (Vector2.Dot(uphillSlope, direction) * distance);
+                            modifiedSlopeMovement = uphillSlope * (Mathf.Sign(Vector2.Dot(uphillSlope, direction)) * distance);
                         }
                         else //hit a surface we couldn't land on in while airborne
                         {
