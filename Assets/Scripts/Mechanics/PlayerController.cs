@@ -26,17 +26,42 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Max horizontal speed of the player. (u/s)
         /// </summary>
-        public float maxSpeed = 3;
+        public float maxSpeed = 3f;
+
+        /// <summary>
+        /// Max horizontal speed of the player. (u/s)
+        /// </summary>
+        public float slideSpeedModifier = 1.5f;
 
         /// <summary>
         /// Max horizontal acceleration of the player on the ground (u/s^2).
         /// </summary>
-        public float groundAccel = 14;
+        public float groundAccel = 14f;
 
         /// <summary>
         /// increased acceleration force when lowering speed.
         /// </summary>
-        public float groundBraking = 28;
+        public float groundBraking = 28f;
+
+        /// <summary>
+        /// reduced braking force when in slide across flat ground
+        /// </summary>
+        public float slideDownhillAccelModifier = 1.5f;
+
+        /// <summary>
+        /// reduced braking force when in slide across flat ground
+        /// </summary>
+        public float slideFlatDecelModifier = 0.5f;
+
+        /// <summary>
+        /// reduced braking force when in slide across flat ground
+        /// </summary>
+        public float slideUphillDecelModifier = 2.0f;
+
+        /// <summary>
+        /// running start needed to enter slide
+        /// </summary>
+        public float minSlideSpeed = 1.0f;
 
         /// <summary>
         /// Max horizontal acceleration per second in air when allowed
@@ -46,12 +71,12 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Max drag from overspeed
         /// </summary>
-        public float maxDragLateral = 9;
+        public float maxDragLateral = 9f;
 
         /// <summary>
         /// Amount by which speed exceeds max speed before hitting max drag
         /// </summary>
-        public float maxDragThreshold = 10;
+        public float maxDragThreshold = 10f;
 
         /// <summary>
         /// Initial jump velocity at the start of a b-hop.
@@ -61,7 +86,7 @@ namespace Platformer.Mechanics
         /// <summary>
         /// How long the player charged this jump
         /// </summary>
-        private float jumpChargeTime = 0;
+        private float jumpChargeTime = 0f;
 
         /// <summary>
         /// Initial jump velocity at the start of a launch, based on charge level.
@@ -226,6 +251,7 @@ namespace Platformer.Mechanics
         private InputAction m_StickAimAction;
         private InputAction m_PauseAction;
         private InputAction m_FrameAdvanceAction;
+        private InputAction m_SlideAction;
 
         private ContactFilter2D m_terrainFilter;
 
@@ -273,30 +299,54 @@ namespace Platformer.Mechanics
             }
         }
 
-        /*
-        //tests only at the middle, used when detecting you've run off a ledge for determining if there's a slope below you you should be following
-        protected bool OnePointSlopeTest(out Vector2 newDownVector)
-        {
-            Vector2 downVec = -body.transform.up;
-            float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
-            Vector2 castOffset = castOffsetDist * -downVec; //actual offset vector
-            float dist = (CapsuleHeight) + castOffsetDist; //raycast distance, which is extended by the offset
-            RaycastHit2D midHit = Physics2D.Raycast(body.position + castOffset, downVec, dist, LayerMask.GetMask("Terrain"));
-            Debug.DrawLine(body.position + castOffset, body.position + castOffset + (downVec * dist), Color.blue, 2.0f);
+        bool m_bIsSliding = false;
 
-            if (midHit)
-            {
-                Debug.DrawLine(midHit.point, midHit.point + (midHit.normal * dist), Color.red, 2.0f);
-                newDownVector = -midHit.normal;
-                return true;
-            }
-
-            newDownVector = Vector2.zero;
-            return false;
+        protected float CurrentMaxSpeed {
+            get => maxSpeed * (m_bIsSliding && IsStateOnGround() ? slideSpeedModifier : 1.0f);
         }
-        */
 
-        //tests three points from leading edge to trailing, but returns at the first hit rather than checking they all match
+        //when accessing this it is assumed you've already determined you are decelerating against the direction of velocity
+        protected float BrakingRate
+        {
+            get
+            {
+                if(!IsStateOnGround())
+                {
+                    return groundAccel;
+                }
+                else if(!m_bIsSliding)
+                {
+                    return groundBraking;
+                }
+                else
+                {
+                    if(Vector2.Dot(velocity, PersonalGravityDirection) < -0.1f)
+                    {
+                        return groundAccel * slideUphillDecelModifier;
+                    }
+
+                    return groundAccel * slideFlatDecelModifier;
+                }
+            }
+        }
+
+        //when accessing this it is assumed you've already determined you are accelerating in the direction of velocity
+        protected float AccelRate
+        {
+            get
+            {
+                if (!IsStateOnGround() || !m_bIsSliding)
+                {
+                    return groundAccel;
+                }
+                else
+                {
+                    return groundAccel * slideDownhillAccelModifier;
+                }
+            }
+        }
+        
+        //tests points from leading edge to trailing, but returns at the first hit rather than checking they all match
         protected bool SlidingSlopeTest(out Vector2 newDownVector)
         {
             const int maxTests = 5;
@@ -461,16 +511,6 @@ namespace Platformer.Mechanics
             return delta;
         }
 
-        protected void AlignVelocityToGround()
-        {
-            float dir = Mathf.Sign(Vector2.Dot(velocity, AlongGround)); //we shouldn't be snapping more than 90 degrees so this should still work
-            velocity = dir * velocity.magnitude * AlongGround;
-
-            //Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
-            //velocity = rot * velocity;
-            //m_LastFrameVelocity = rot * m_LastFrameVelocity;
-        }
-
         protected void SnapToSurfaceUnderPoint(Vector2 point, Vector2 antinormal)
         {
             RaycastHit2D surfaceHit = Physics2D.Raycast(point, antinormal, 0.2f, LayerMask.GetMask("Terrain"));
@@ -514,6 +554,7 @@ namespace Platformer.Mechanics
             m_StickAimAction = InputSystem.actions.FindAction("Player/StickAim");
             m_PauseAction = InputSystem.actions.FindAction("Player/Pause");
             m_FrameAdvanceAction = InputSystem.actions.FindAction("Player/FrameAdvance");
+            m_SlideAction = InputSystem.actions.FindAction("Player/Slide");
 
             m_MoveAction.Enable();
             m_JumpAction.Enable();
@@ -521,6 +562,7 @@ namespace Platformer.Mechanics
             m_StickAimAction.Enable();
             m_PauseAction.Enable();
             m_FrameAdvanceAction.Enable();
+            m_SlideAction.Enable();
 
             _BoundsCorners[0] = new( CapsuleHalfWidth,  CapsuleHeight, 0f);
             _BoundsCorners[1] = new( CapsuleHalfWidth,  0            , 0f);
@@ -646,20 +688,47 @@ namespace Platformer.Mechanics
                 Time.timeScale = 1.0f;
             }
 
-            //get move inputs
-            m_move = m_MoveAction.ReadValue<Vector2>();
-
-            //snap move inputs
-            float moveAngle = Vector2.SignedAngle(Vector2.up, m_move);
-            moveAngle /= MoveSnapIncrement;
-            moveAngle = Mathf.Floor(moveAngle + 0.5f);
-            m_move = Quaternion.AngleAxis(moveAngle * MoveSnapIncrement, Vector3.forward) * Vector2.up * m_move.magnitude;
-
-            //make diagonals also count as fully in the right direction
-            float alignment = Vector2.Dot(m_move, AlongGround);
-            if (Mathf.Abs(alignment) > 0.5f)
+            bool wasSliding = m_bIsSliding;
+            m_bIsSliding = false;
+            //check slide state
+            if((IsGrounded || IsStateOnGround()) && m_SlideAction.IsPressed())
             {
-                m_move = AlongGround * m_move.magnitude * Mathf.Sign(alignment);
+                if(velocity.magnitude > minSlideSpeed) //with enough speed you can always slide
+                {
+                    if (wasSliding || !WasGrounded || m_SlideAction.WasPressedThisFrame()) //can slide by holding if you either were sliding already or were airborne
+                    {
+                        m_bIsSliding = true;
+                    }
+                }
+                else if(wasSliding && Mathf.Abs(Vector2.Dot(AlongGround, PersonalGravityDirection)) > 0.05f) //if you were sliding and you're on a slope, keep sliding even if your velocity is passing 0
+                {
+                    m_bIsSliding = true;
+                }
+            }
+
+            if(!m_bIsSliding)
+            {
+                //get move inputs
+                m_move = m_MoveAction.ReadValue<Vector2>();
+
+                //snap move inputs
+                float moveAngle = Vector2.SignedAngle(Vector2.up, m_move);
+                moveAngle /= MoveSnapIncrement;
+                moveAngle = Mathf.Floor(moveAngle + 0.5f);
+                m_move = Quaternion.AngleAxis(moveAngle * MoveSnapIncrement, Vector3.forward) * Vector2.up * m_move.magnitude;
+
+                //make diagonals also count as fully in the right direction
+                float alignment = Vector2.Dot(m_move, AlongGround);
+                if (Mathf.Abs(alignment) > 0.5f)
+                {
+                    m_move = m_move.magnitude * Mathf.Sign(alignment) * AlongGround;
+                }
+            }
+            else
+            {
+                //in essence, all sliding actually is is automatically setting your move input and applying some speed/accel modifiers
+                float slope = Vector2.Dot(AlongGround, PersonalGravityDirection);
+                m_move = Mathf.Abs(slope) > 0.05f ? AlongGround * Mathf.Sign(slope) : Vector2.zero;
             }
 
             if (m_controlEnabled)
@@ -859,12 +928,12 @@ namespace Platformer.Mechanics
                     {
                         if (Vector2.Dot(originalUp, velCastHit.normal) < 0.9f)
                         {
-                            RotateCapsuleWithoutClippingGround(-velCastHit.normal);
+                            RotateCapsuleAndUnstick(-velCastHit.normal);
                         }
                     }
                     else if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
                     {
-                        RotateCapsuleWithoutClippingGround(PersonalGravityDirection);
+                        RotateCapsuleAndUnstick(PersonalGravityDirection);
                     }
                 }
                 else if(IsStateOnGround() && !IsGrounded)
@@ -1124,7 +1193,7 @@ namespace Platformer.Mechanics
                     {
                         float angle = RotateCapsule(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
-                        velocity = GetLateralComponent(velocity); // remove vertical component
+                        //velocity = GetLateralComponent(velocity); // remove vertical component
                         GroundNormal = -newDown; // set new ground alignment
                         AlignVelocityToGround(); //align previous lateral component to ground
                         IsGrounded = true;
@@ -1206,7 +1275,7 @@ namespace Platformer.Mechanics
                         m_state = JumpState.Landed;
                         m_preBallisticTimeRemaining = 0.0f;
                         m_bIsPreBallistic = false;
-                        velocity = GetLateralComponent(velocity);
+                        //velocity = GetLateralComponent(velocity);
                     }
                     else if(!m_bIsPreBallistic)
                     {
@@ -1414,10 +1483,32 @@ namespace Platformer.Mechanics
                 velocity = GetAlongGroundComponent(velocity);
                 targetVelocity = Vector2.zero;
             }
+            else if(m_bIsSliding)
+            {
+                //ground slide
+                float lateralSpeed = Vector2.Dot(velocity, AlongGround); //magnitude won't give us the sign
+                Vector2 lateralVel = lateralSpeed * AlongGround;
+
+                float slope = Vector2.Dot(AlongGround, PersonalGravityDirection);
+                slope = Mathf.Abs(slope) > 0.05f ? Mathf.Sign(slope) : 0f;
+
+                float targetXVelocity = slideSpeedModifier * maxSpeed * lateralMove;
+                if (targetXVelocity > lateralSpeed)
+                {
+                    float accel = Math.Sign(lateralSpeed) == 1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
+                    lateralVel = Mathf.Min(targetXVelocity, lateralSpeed + (accel * Time.deltaTime)) * AlongGround;
+                }
+                else if (targetXVelocity < lateralSpeed)
+                {
+                    float accel = Math.Sign(lateralSpeed) == -1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
+                    lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * AlongGround;
+                }
+
+                targetVelocity = lateralVel;
+            }
             else
             {
                 //ground movement w/ accel
-                Vector2 verticalVel = Vector2.zero;// GetVerticalComponent(velocity);
                 float lateralSpeed = Vector2.Dot(velocity, AlongGround); //magnitude won't give us the sign
                 Vector2 lateralVel = lateralSpeed * AlongGround;
 
@@ -1433,7 +1524,7 @@ namespace Platformer.Mechanics
                     lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * AlongGround; 
                 }
 
-                targetVelocity = lateralVel;// + verticalVel;
+                targetVelocity = lateralVel;
             }
 
             if (lateralMove > 0.01f)
@@ -1442,6 +1533,7 @@ namespace Platformer.Mechanics
                 m_spriteRenderer.flipX = true;
 
             m_animator.SetBool("grounded", IsStateOnGround());
+            m_animator.SetBool("sliding", m_bIsSliding);
             m_animator.SetFloat("velocityX", (Mathf.Abs(lateralMove) > RunAnimThreshold ? Mathf.Abs(lateralMove) : 0.0f) / maxSpeed);
 
             //targetVelocity = velocity;

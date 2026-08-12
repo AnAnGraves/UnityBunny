@@ -1,10 +1,10 @@
 {
-    "activeFile": "Maps/MetricsMapMirror.tmx",
+    "activeFile": "Maps/MetricsMap.tmx",
     "expandedProjectPaths": [
-        ".",
         "Worlds",
-        "Tilesets",
         "Prefabs",
+        "Tilesets",
+        ".",
         "Maps"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -34,19 +34,19 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.75,
+            "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 5451.333333333333,
-                "y": 2779.333333333333
+                "x": 11658,
+                "y": 3358
             }
         },
         "Maps/MetricsMapMirror.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 1,
+            "scale": 0.25,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 8123,
-                "y": 2731
+                "x": 830,
+                "y": 2610
             }
         },
         "Maps/MetricsWorld.tmx": {
@@ -167,8 +167,8 @@
         "Prefabs/FloatingIsland1.tmx",
         "Prefabs/TheRing.tmx",
         "Tilesets/MetricsTiles.tsx",
-        "Maps/MetricsMap.tmx",
         "Maps/MetricsMapMirror.tmx",
+        "Maps/MetricsMap.tmx",
         "Maps/MetricsWorld.tmx",
         "Tilesets/UtilityTiles.tsx",
         "Prefabs/MovingPlatforms/TestMovingPlatform.tmx"

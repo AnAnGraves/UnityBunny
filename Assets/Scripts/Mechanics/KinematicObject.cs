@@ -30,11 +30,6 @@ namespace Platformer.Mechanics
         protected Vector2 lastSurfacePoint = Vector2.zero;
 
         /// <summary>
-        /// How much moving up a slope should hamper speed, where 1.0f is the base behavior and 0.0f is no penalty
-        /// </summary>
-        public float slopeEffect = 1.0f;
-
-        /// <summary>
         /// backs parametere personalGravity
         /// </summary>
         private Vector2 _pGrav = Vector2.down;
@@ -60,7 +55,7 @@ namespace Platformer.Mechanics
         private bool bIsPlayer = false;
 
         /// <summary>
-        /// this is the only platform allowed to freely upda
+        /// this is the only platform allowed to freely update our position
         /// </summary>
         GameObject riddenPlatform = null;
 
@@ -137,7 +132,7 @@ namespace Platformer.Mechanics
             get => _isGrounded;
             protected set
             {
-                _wasGrounded = _isGrounded;
+                //_wasGrounded = _isGrounded;
                 _isGrounded = value;
             }
         }
@@ -145,6 +140,10 @@ namespace Platformer.Mechanics
         public bool WasGrounded
         {
             get => _wasGrounded;
+            set
+            {
+                _wasGrounded = value;
+            }
         }
 
         protected Vector2 targetVelocity;
@@ -196,6 +195,12 @@ namespace Platformer.Mechanics
             body.position = position;
             velocity *= 0;
             body.linearVelocity *= 0;
+        }
+
+        protected void AlignVelocityToGround()
+        {
+            float dir = Mathf.Sign(Vector2.Dot(velocity, AlongGround)); //we shouldn't be snapping more than 90 degrees so this should still work
+            velocity = dir * velocity.magnitude * AlongGround;
         }
 
         protected virtual void OnEnable()
@@ -290,7 +295,7 @@ namespace Platformer.Mechanics
             velocity = (IsGrounded ? velocity - GetAlongGroundComponent(velocity) : GetVerticalComponent(velocity));
             Vector2 lateralVel = IsGrounded ? GetAlongGroundComponent(targetVelocity) : GetLateralComponent(targetVelocity);
             velocity += lateralVel;
-
+            
             //gravity
             velocity += gravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(PersonalGravity, PersonalGravityDirection)) : PersonalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
 
@@ -325,6 +330,7 @@ namespace Platformer.Mechanics
                 drewVelThisFrame = true;
             }
 
+            WasGrounded = IsGrounded;
             IsGrounded = false;
 
             PerformMovement(moveAlongGround, false);
@@ -348,6 +354,7 @@ namespace Platformer.Mechanics
             Vector2 slopeMovement = Vector2.zero;
             Vector2 direction = move.normalized;
             var distance = move.magnitude;
+            Vector2 originalGroundNormal = GroundNormal;
 
             if (distance > minMoveDistance)
             {
@@ -374,10 +381,10 @@ namespace Platformer.Mechanics
                             //uphill direction vector
                             Vector2 uphillSlope = Vector2.Reflect(-1f * currentNormal, direction).normalized;
 
-                            //project movement onto slope
+                            //move full distance up slope
                             modifiedSlopeMovement = uphillSlope * (Mathf.Sign(Vector2.Dot(uphillSlope, direction)) * distance);
                         }
-                        else //hit a surface we couldn't land on in while airborne
+                        else //hit a surface we couldn't land on while airborne
                         {
                             bHitAWall = true;
                         }
@@ -416,12 +423,18 @@ namespace Platformer.Mechanics
 
                 }
 
+                if (IsGrounded && WasGrounded && (originalGroundNormal != GroundNormal)) //if we were already on the ground, this is just a surface change and we should keep our speed along the new surface
+                {
+                    AlignVelocityToGround();
+                }
+
                 if (bHitAWall)
                 {
                     velocity = PersonalGravityDirection * Mathf.Max(Vector2.Dot(PersonalGravityDirection, velocity), 0.0f);
                 }
                 if(bHitATopOrBottom)
                 {
+                    
                     velocity = GetAlongGroundComponent(velocity);
                 }
             }
@@ -467,7 +480,7 @@ namespace Platformer.Mechanics
             }
 
             body.position += direction * distance;
-            lastSurfacePoint += direction * distance; //alsp update where we're standing
+            lastSurfacePoint += direction * distance; //also update where we're standing
             if (bHitAWall)
             {
                 velocity = PersonalGravityDirection * Mathf.Max(Vector2.Dot(PersonalGravityDirection, velocity), 0.0f);
