@@ -305,22 +305,25 @@ namespace Platformer.Mechanics
                 bLeftPlatform = false;
             }
 
-            Vector2 velAlongGround = (IsGrounded ? GetAlongGroundComponent(velocity) : lateralVel);
-            var moveAlongGround = velAlongGround * Time.deltaTime;
-            var moveAlongGravity = (velocity - velAlongGround) * Time.deltaTime;
-            Vector2 nominalMovement = velocity * Time.deltaTime;
+            Vector2 pseudoXVel = (IsGrounded ? GetAlongGroundComponent(velocity) : lateralVel);
+            var pseudoXMove = pseudoXVel * Time.deltaTime;
+            var pseudoYMove = (velocity - pseudoXVel) * Time.deltaTime;
+
+            Vector2 groundVel = GetAlongGroundComponent(velocity);
+            bool canLandOnX = groundVel.magnitude > (velocity - groundVel).magnitude;
 
             bool snapped = snapAction.IsPressed();
             if (!drewVelThisFrame && snapped)
             {
                 //draw what should be a box with a diagonal if all is working
-                float drawVelocityScale = 30.0f;
+                const float drawVelocityScale = 30.0f;
 
                 Collider2D collider2d = gameObject.GetComponent<Collider2D>();
                 Vector2 origin = collider2d ? collider2d.bounds.center : transform.position;
-                
-                Vector2 vertical = origin + (moveAlongGravity * drawVelocityScale);
-                Vector2 horizontal = origin + (moveAlongGround * drawVelocityScale);
+
+                Vector2 nominalMovement = velocity * Time.deltaTime;
+                Vector2 vertical = origin + (pseudoYMove * drawVelocityScale);
+                Vector2 horizontal = origin + (pseudoXMove * drawVelocityScale);
                 Vector2 corner = (Vector2)(transform.position) + (nominalMovement * drawVelocityScale);
                 Debug.DrawLine(origin, vertical, Color.blue, 1f);  // origin -> top left
                 Debug.DrawLine(vertical, corner, Color.cyan, 1f);// top left -> top right 
@@ -333,9 +336,9 @@ namespace Platformer.Mechanics
             WasGrounded = IsGrounded;
             IsGrounded = false;
 
-            PerformMovement(moveAlongGround, false);
+            PerformMovement(pseudoXMove, false, canLandOnX);
 
-            PerformMovement(moveAlongGravity, true);
+            PerformMovement(pseudoYMove, true, true);
 
         }
 
@@ -349,7 +352,12 @@ namespace Platformer.Mechanics
             }
         }
 
-        void PerformMovement(Vector2 move, bool yMovement) //true is movement on the axis of gravity, false is movement perpendicular to gravity
+        protected virtual void HandleLanding()
+        {
+            velocity = GetAlongGroundComponent(velocity);
+        }
+
+        void PerformMovement(Vector2 move, bool yMovement, bool canHitGround) //true is movement on the axis of gravity, false is movement perpendicular to gravity
         {
             Vector2 slopeMovement = Vector2.zero;
             Vector2 direction = move.normalized;
@@ -399,7 +407,7 @@ namespace Platformer.Mechanics
                     {
                         distance = modifiedDistance;
                         slopeMovement = modifiedSlopeMovement;
-                        if (hitGround)
+                        if (hitGround && yMovement)
                         {
                             IsGrounded = hitGround;
                             lastSurfacePoint = hitBuffer[i].point;
@@ -434,8 +442,7 @@ namespace Platformer.Mechanics
                 }
                 if(bHitATopOrBottom)
                 {
-                    
-                    velocity = GetAlongGroundComponent(velocity);
+                    HandleLanding();
                 }
             }
 

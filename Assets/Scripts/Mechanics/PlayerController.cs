@@ -121,7 +121,7 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Current charge state
         /// </summary>
-        private int m_chargeStage = 0;
+        private int m_chargeStage = -1;
 
         /// <summary>
         /// Last calculated charge state, for identifying changes
@@ -693,14 +693,18 @@ namespace Platformer.Mechanics
             //check slide state
             if((IsGrounded || IsStateOnGround()) && m_SlideAction.IsPressed())
             {
-                if(velocity.magnitude > minSlideSpeed) //with enough speed you can always slide
+                if(!WasGrounded)
                 {
-                    if (wasSliding || !WasGrounded || m_SlideAction.WasPressedThisFrame()) //can slide by holding if you either were sliding already or were airborne
+                    m_bIsSliding = true;
+                }
+                else if(velocity.magnitude > minSlideSpeed) //with enough speed you can always slide
+                {
+                    if (wasSliding || m_SlideAction.WasPressedThisFrame()) //can slide by holding if you either were sliding already or were airborne
                     {
                         m_bIsSliding = true;
                     }
                 }
-                else if(wasSliding && Mathf.Abs(Vector2.Dot(AlongGround, PersonalGravityDirection)) > 0.05f) //if you were sliding and you're on a slope, keep sliding even if your velocity is passing 0
+                else if(wasSliding && (velocity.magnitude > 0.05f || Mathf.Abs(Vector2.Dot(AlongGround, PersonalGravityDirection)) > 0.05f)) //if you were sliding and you're on a slope, keep sliding even if your velocity is passing 0
                 {
                     m_bIsSliding = true;
                 }
@@ -748,7 +752,6 @@ namespace Platformer.Mechanics
                 {
                     //got to Prepare but skip charging
                     m_state = JumpState.StartHop;
-                    m_doLaunch = true;
                 }
                 else if (m_state == JumpState.Stick)
                 {
@@ -921,17 +924,40 @@ namespace Platformer.Mechanics
                 }
                 else if (!IsStateOnGround() && !IsGrounded)
                 {
-                    //see if we're likely to hit an angled surface soon
+                    //see if we're likely to hit a surface and attach to it soon
                     Vector2 originalUp = CapsuleUpVector;
-                    RaycastHit2D velCastHit = Physics2D.Raycast(CapsuleCenter, velocity.normalized, CapsuleHeight * 0.75f, LayerMask.GetMask("Terrain"));
+                    RaycastHit2D velCastHit = Physics2D.Raycast(CapsuleCenter, velocity.normalized, CapsuleHeight, LayerMask.GetMask("Terrain"));
+                    //Debug.DrawLine(CapsuleCenter, CapsuleCenter + (CapsuleHeight * velocity.normalized), Color.yellow, 1.0f);
                     if (velCastHit)
                     {
-                        if (Vector2.Dot(originalUp, velCastHit.normal) < 0.9f)
+                        if (Vector2.Dot(-PersonalGravityDirection, velCastHit.normal) > 0.5f)
                         {
+                            //Debug.DrawLine(velCastHit.point, velCastHit.point + (velCastHit.normal * CapsuleHeight), Color.green, 1.0f);
                             RotateCapsuleAndUnstick(-velCastHit.normal);
+                            return;
                         }
                     }
-                    else if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
+
+                    //check if we're falling and there's a surface below us
+                    Vector2 vertVel = GetVerticalComponent(velocity);
+                    float sign = -Mathf.Sign(Vector2.Dot(vertVel, PersonalGravityDirection)); //negate to get dot with Up
+                    float gravSpeed = sign * vertVel.magnitude;
+                    if (gravSpeed < 0 || gravSpeed < (velocity-vertVel).magnitude) //if we're falling or if lateral velocity is dominant (don't need to Abs gravSpeed bc if it's negative it already passed)
+                    {
+                        RaycastHit2D gravCastHit = Physics2D.Raycast(CapsuleCenter, PersonalGravityDirection, CapsuleHeight * 1.5f, LayerMask.GetMask("Terrain"));
+                        //Debug.DrawLine(CapsuleCenter, CapsuleCenter + (CapsuleHeight * 1.5f * PersonalGravityDirection), Color.darkCyan, 1.0f);
+                        if (gravCastHit)
+                        {
+                            if (Vector2.Dot(-PersonalGravityDirection, gravCastHit.normal) > 0.5f)
+                            {
+                                //Debug.DrawLine(gravCastHit.point, gravCastHit.point + (gravCastHit.normal * CapsuleHeight), Color.darkMagenta, 1.0f);
+                                RotateCapsuleAndUnstick(-gravCastHit.normal);
+                                return;
+                            }
+                        }
+                    }                    
+
+                    if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
                     {
                         RotateCapsuleAndUnstick(PersonalGravityDirection);
                     }
@@ -939,7 +965,7 @@ namespace Platformer.Mechanics
                 else if(IsStateOnGround() && !IsGrounded)
                 {
                     Vector2 newDown;
-                    if(SlidingSlopeTest(out newDown) && (Vector2.Dot(downVector, newDown) < 0.9f)) 
+                    if(SlidingSlopeTest(out newDown))// && (Vector2.Dot(downVector, newDown) < 0.9f)) 
                     {
                         float angle = RotateCapsuleAndUnstick(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
@@ -1020,6 +1046,23 @@ namespace Platformer.Mechanics
 
         }
 
+        //converts your lateral air velocity into velocity along ground multiplied by the move input percentage
+        protected override void HandleLanding()
+        {
+            if (!WasGrounded)
+            {
+                Vector2 groundVel = GetLateralComponent(velocity);
+                float groundSpeed = Mathf.Min(groundVel.magnitude, maxSpeed);
+                float dir = Mathf.Sign(Vector2.Dot(groundVel, AlongGround));
+                float moveFactor = m_SlideAction.IsPressed() ? 1.0f : (Vector2.Dot(groundVel.normalized, m_move) > 0.1f ? m_move.magnitude : 0.0f);
+                velocity = dir * moveFactor * groundSpeed * AlongGround;
+            }
+            else
+            {
+                velocity = GetAlongGroundComponent(velocity);
+            }
+        }
+
         protected void HandleEndTileCollision(in SuperTileLayer tileLayer, in Collision2D collision)
         {
             if(transform.parent == collision.collider.gameObject.transform)
@@ -1094,51 +1137,33 @@ namespace Platformer.Mechanics
             antiNormal *= -1;
             centroid /= collision.contactCount;
 
+            m_bIsPreBallistic = false;
 
+            //if landing, end pre-ballistic and return
             if (Vector2.Dot(PersonalGravityDirection, antiNormal) > minFloorSurfaceness)
             {
-                //grounded - don't need to stick
-                PlayerDownDirection = antiNormal;
-                SnapToSurfaceUnderPoint(centroid, antiNormal);
-                RotateCapsule(antiNormal);
-
-                //cancel out component of velocity into the ground
-                Vector2 velocityIntoGround = Vector2.Dot(m_LastFrameVelocity, antiNormal) * antiNormal;
-                m_LastFrameVelocity -= velocityIntoGround;
-
-                //slow ground velocity if needed
-                m_LastFrameVelocity = m_LastFrameVelocity.normalized * Mathf.Clamp(m_LastFrameVelocity.magnitude, -maxSpeed, maxSpeed);
-                velocity = m_LastFrameVelocity;
-
-                m_bIsPreBallistic = false;
                 return;
             }
 
+            //if hitting any other surface, check if we should stick to it
             float stickVelocity = Vector2.Dot(m_LastFrameVelocity, antiNormal);
             if (m_state == JumpState.InFlight && stickVelocity >= StickSpeedThreshold)
             {
                 velocity = Vector2.zero;
                 m_state = JumpState.Stick;
-                m_bIsPreBallistic = false;
                 m_timeUntilFall = StickTime;
                 PlayerDownDirection = antiNormal;
+                RotateCapsuleAndUnstick(antiNormal);
                 SnapToSurfaceUnderPoint(centroid, antiNormal);
-                RotateCapsule(antiNormal);
             }
             else
             {
-                if (m_bIsPreBallistic)
-                {
-                    m_bIsPreBallistic = false;
-                }
-
                 //remove all velocity towards collision point
-                m_LastFrameVelocity -= (antiNormal * stickVelocity);
-                if (m_LastFrameVelocity.sqrMagnitude > Mathf.Pow(maxSpeed, 2))
+                velocity -= (antiNormal * stickVelocity);
+                if (velocity.sqrMagnitude > maxSpeed*maxSpeed)
                 {
-                    m_LastFrameVelocity = maxSpeed * m_LastFrameVelocity.normalized;
+                    velocity = maxSpeed * velocity.normalized;
                 }
-                velocity = m_LastFrameVelocity;
             }
         }
 
@@ -1232,9 +1257,8 @@ namespace Platformer.Mechanics
                         m_state = JumpState.Launch;
                     }
                     break;
-
                 case JumpState.StartHop:
-                    m_state = JumpState.Launch;
+                    Simulation.Schedule<PlayerJumped>().player = this;
                     break;
 
                 case JumpState.Charging:
@@ -1435,47 +1459,40 @@ namespace Platformer.Mechanics
                 }
 
             }
-            else if (m_doLaunch)
+            else if(m_state == JumpState.StartHop)
             {
-                //b-hop
-                if (m_chargeStage < 0)
-                {
-                    const float jumpMoveFactor = math.SQRT2 / 2f;
-                    
-                    //allow players to jump with a certain amount of lateral velocity even from a stand-still, but if the current velocity is better use that
-                    Vector2 coldStartVelocity = GetLateralComponent(GetAlongGroundComponent(m_move) * maxSpeed * jumpMoveFactor); //GetLateralComponent(velocity);
-                    velocity = GetLateralComponent(velocity);
-                    float currentSpeed = Vector2.Dot(velocity, lateralDirection);
-                    float coldStartSpeed = Vector2.Dot(coldStartVelocity, lateralDirection);
-                    if(Mathf.Sign(currentSpeed) != Mathf.Sign(coldStartSpeed) || Mathf.Abs(coldStartSpeed) > Mathf.Abs(currentSpeed))
-                    {
-                        velocity = coldStartVelocity;
-                    }
+                const float jumpMoveFactor = math.SQRT2 / 2f;
 
-                    targetVelocity = velocity;
-                    velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-PersonalGravityDirection);
-                    body.position += velocity * Time.deltaTime;
-                    Physics2D.SyncTransforms();
-                    IsGrounded = false;
-                }
-                else
+                //allow players to jump with a certain amount of lateral velocity even from a stand-still, but if the current velocity is better use that
+                Vector2 coldStartVelocity = GetLateralComponent(maxSpeed * jumpMoveFactor * m_move); //GetLateralComponent(velocity);
+                velocity = GetLateralComponent(velocity);
+                float currentSpeed = Vector2.Dot(velocity, lateralDirection);
+                float coldStartSpeed = Vector2.Dot(coldStartVelocity, lateralDirection);
+                if (Mathf.Sign(currentSpeed) != Mathf.Sign(coldStartSpeed) || Mathf.Abs(coldStartSpeed) > Mathf.Abs(currentSpeed))
                 {
-                    velocity.x = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.x;
-                    velocity.y = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.y;
-                    targetVelocity = velocity;
-                    m_preBallisticTimeRemaining = preBallisticTimes[m_chargeStage];
-                    if (m_preBallisticTimeRemaining > 0.0f)
-                    {
-                        m_bIsPreBallistic = true;
-                    }
-
-                    LastLaunchComponents = m_aim;
-                    m_LastLaunchVelocity = velocity;
+                    velocity = coldStartVelocity;
                 }
 
-                jumpChargeTime = 0.0f;
-                m_chargeStage = -1;
-                m_doLaunch = false;
+                targetVelocity = velocity;
+                velocity += jumpTakeOffSpeed * m_model.jumpModifier * (-PersonalGravityDirection);
+                body.position += velocity * Time.deltaTime;
+                Physics2D.SyncTransforms();
+                IsGrounded = false;
+                m_state = JumpState.InFlight;
+            }
+            else if (m_doLaunch && m_chargeStage >= 0)
+            {
+                velocity.x = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.x;
+                velocity.y = launchSpeeds[m_chargeStage] * m_model.jumpModifier * m_aim.y;
+                targetVelocity = velocity;
+                m_preBallisticTimeRemaining = preBallisticTimes[m_chargeStage];
+                if (m_preBallisticTimeRemaining > 0.0f)
+                {
+                    m_bIsPreBallistic = true;
+                }
+
+                LastLaunchComponents = m_aim;
+                m_LastLaunchVelocity = velocity;                
             }
             else if(m_state == JumpState.Charging)
             {
@@ -1526,6 +1543,14 @@ namespace Platformer.Mechanics
 
                 targetVelocity = lateralVel;
             }
+
+            //clean up ended charge whether you jumped or not
+            if(m_doLaunch)
+            {
+                jumpChargeTime = 0.0f;
+                m_chargeStage = -1;
+                m_doLaunch = false;
+            }    
 
             if (lateralMove > 0.01f)
                 m_spriteRenderer.flipX = false;

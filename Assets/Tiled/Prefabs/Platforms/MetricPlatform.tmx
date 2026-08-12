@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="6" height="2" tilewidth="128" tileheight="128" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../../Tilesets/MetricsTiles.tsx"/>
+ <layer id="1" name="Regular Degular" class="TerrainLayer" width="6" height="2">
+  <properties>
+   <property name="RenderOrder" type="int" value="16"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYMAOGHFgAACEAAc=
+  </data>
+ </layer>
+</map>

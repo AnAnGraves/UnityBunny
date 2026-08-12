@@ -34,11 +34,11 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.25,
-            "selectedLayer": 2,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 11658,
-                "y": 3358
+                "x": 7784.666666666666,
+                "y": 5403.333333333333
             }
         },
         "Maps/MetricsMapMirror.tmx": {
@@ -79,6 +79,14 @@
             "viewCenter": {
                 "x": 434.848484848485,
                 "y": 31.818181818181984
+            }
+        },
+        "Prefabs/Platforms/MetricPlatform.tmx": {
+            "scale": 2.652083333333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 384.0377062058131,
+                "y": 128.012568735271
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -140,12 +148,12 @@
         "F:/UNITY/PROJ/Bunny/Assets/Tiled/Worlds/MetricsWorld.world"
     ],
     "map.fixedSize": true,
-    "map.height": 96,
+    "map.height": 2,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 128,
     "map.tileWidth": 128,
-    "map.width": 96,
+    "map.width": 6,
     "openFiles": [
         "Maps/TestMap.tmx",
         "Tilesets/DirectionTiles.tsx",
