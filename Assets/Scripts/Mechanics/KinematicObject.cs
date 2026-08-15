@@ -20,9 +20,14 @@ namespace Platformer.Mechanics
         public float minFloorSurfaceness = .65f;
 
         /// <summary>
-        /// A custom gravity coefficient applied to this entity.
+        /// A custom gravity coefficient applied to this entity - DO NOT USE for zero gravity environments, see "zeroGToggle"
         /// </summary>
-        public float gravityModifier = 1f;
+        public float personalGravityModifier = 1f;
+
+        /// <summary>
+        /// A gravity coefficient that should ONLY be used for turning gravity on and off, to preserve the value of the gravity modifier
+        /// </summary>
+        public float zeroGToggle = 1f;
 
         /// <summary>
         /// A custom gravity coefficient applied to this entity.
@@ -297,7 +302,7 @@ namespace Platformer.Mechanics
             velocity += lateralVel;
             
             //gravity
-            velocity += gravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(PersonalGravity, PersonalGravityDirection)) : PersonalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
+            velocity += zeroGToggle * personalGravityModifier * Time.deltaTime * (IsGrounded ? -GroundNormal  * (Vector2.Dot(PersonalGravity, PersonalGravityDirection)) : PersonalGravity); //since we pre-calculate gravity direction every time we set gravity, this dot product is much faster than .magnitude
 
             if (bLeftPlatform)
             {

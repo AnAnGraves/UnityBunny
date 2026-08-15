@@ -34,19 +34,19 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.75,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 7784.666666666666,
-                "y": 5403.333333333333
+                "x": 10440.90909090909,
+                "y": 5219.69696969697
             }
         },
         "Maps/MetricsMapMirror.tmx": {
             "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 830,
-                "y": 2610
+                "x": 6634,
+                "y": 3642
             }
         },
         "Maps/MetricsWorld.tmx": {
@@ -61,8 +61,8 @@
             "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 3204,
-                "y": 1022
+                "x": 4418,
+                "y": 778
             }
         },
         "Prefabs/FloatingIsland1.tmx": {
@@ -82,11 +82,11 @@
             }
         },
         "Prefabs/Platforms/MetricPlatform.tmx": {
-            "scale": 2.652083333333333,
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 384.0377062058131,
-                "y": 128.012568735271
+                "x": 379.75,
+                "y": 231.75
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -115,7 +115,7 @@
         },
         "Tilesets/DirectionTiles.tsx": {
             "scaleInDock": 0.75,
-            "scaleInEditor": 1
+            "scaleInEditor": 0.5
         },
         "Tilesets/GrasslandTiles.tsx": {
             "scaleInDock": 0.75,
@@ -166,10 +166,10 @@
         "Maps/MetricsMapMirror.tmx"
     ],
     "project": "Bunny.tiled-project",
-    "property.type": "SpecialTileType",
+    "property.type": "GravityDirection",
     "recentFiles": [
-        "Maps/TestMap.tmx",
         "Tilesets/DirectionTiles.tsx",
+        "Maps/TestMap.tmx",
         "Tilesets/GrasslandTiles.tsx",
         "Tilesets/RailTiles.tsx",
         "Prefabs/FloatingIsland1.tmx",

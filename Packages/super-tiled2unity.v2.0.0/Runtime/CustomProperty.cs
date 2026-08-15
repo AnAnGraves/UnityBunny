@@ -37,7 +37,9 @@ namespace SuperTiled2Unity
         U       = 5,      
         UR      = 6,      
         R       = 7,      
-        DR      = 8      
+        DR      = 8,
+        ZERO    = 9,
+        KEEP    = 10,
     }
 
     [Serializable]

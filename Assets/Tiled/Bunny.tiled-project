@@ -24,7 +24,9 @@
                 "U",
                 "UR",
                 "R",
-                "DR"
+                "DR",
+                "ZERO",
+                "KEEP"
             ],
             "valuesAsFlags": false
         },

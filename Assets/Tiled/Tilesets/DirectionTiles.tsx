@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.2" name="Directions" tilewidth="128" tileheight="128" spacing="10" tilecount="8" columns="4" backgroundcolor="#757575">
- <image source="Directions.png" width="552" height="276"/>
+<tileset version="1.10" tiledversion="1.12.2" name="Directions" tilewidth="128" tileheight="128" spacing="10" tilecount="12" columns="4" backgroundcolor="#757575">
+ <image source="Directions.png" width="552" height="414"/>
  <tile id="0">
   <properties>
    <property name="Gravity" type="int" propertytype="GravityDirection" value="1"/>
@@ -64,5 +64,18 @@
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="128" height="128"/>
   </objectgroup>
+ </tile>
+ <tile id="8">
+  <properties>
+   <property name="Gravity" type="int" propertytype="GravityDirection" value="9"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="128" height="128"/>
+  </objectgroup>
+ </tile>
+ <tile id="9">
+  <properties>
+   <property name="Gravity" type="int" propertytype="GravityDirection" value="10"/>
+  </properties>
  </tile>
 </tileset>

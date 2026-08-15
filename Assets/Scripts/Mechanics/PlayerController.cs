@@ -570,9 +570,9 @@ namespace Platformer.Mechanics
             _BoundsCorners[2] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f);
         }
 
-        protected void UpdateGravityModifier()
+        protected void UpdatePersonalGravityModifier()
         {
-            gravityModifier = (m_bIsPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0f : 1f;
+            personalGravityModifier = (m_bIsPreBallistic || m_state == JumpState.Stick || m_state == JumpState.StickCharge || m_state == JumpState.StickLaunch) ? 0f : 1f;
         }
 
         protected override void OnDisable()
@@ -859,13 +859,14 @@ namespace Platformer.Mechanics
         private void UpdateGravity()
         {
             float gravMagnitude = Physics2D.gravity.magnitude;
-            UpdateGravityModifier();
+            UpdatePersonalGravityModifier();
 
-            //if we don't find any gravity tile, we should have gravity down
+            //if we don't find any gravity tile use Down
+            Vector2 oldGravity = PersonalGravity;
             Vector2 oldDir = PersonalGravityDirection;
             PersonalGravity = gravMagnitude * Vector2.down;
 
-            List<SuperTile> triggerTiles = FindTriggerTilesAtPoint(body.position + (CapsuleUpVector * 0.05f));
+            List<SuperTile> triggerTiles = FindTriggerTilesAtPoint(body.position + (CapsuleUpVector * 0.02f));
             bool found = false;
             foreach(SuperTile tile in triggerTiles)
             {
@@ -877,35 +878,51 @@ namespace Platformer.Mechanics
                     case GravityDirection.INVALID:
                         continue;
                     case GravityDirection.D:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * Vector2.down;
                         found = true;
                         break;
                     case GravityDirection.DL:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * (Vector2.down + Vector2.left) / math.SQRT2; //we know this is the magnitude already and can skip the sqrt call
                         found = true;
                         break;
                     case GravityDirection.L:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * Vector2.left;
                         found = true;
                         break;
                     case GravityDirection.UL:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * (Vector2.up + Vector2.left) / math.SQRT2;
                         found = true;
                         break;
                     case GravityDirection.U:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * Vector2.up;
                         found = true;
                         break;
                     case GravityDirection.UR:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * (Vector2.up + Vector2.right) / math.SQRT2;
                         found = true;
                         break;
                     case GravityDirection.R:
+                        zeroGToggle = 1f;
                         PersonalGravity = gravMagnitude * Vector2.right;
                         found = true;
                         break;
                     case GravityDirection.DR:
+                        zeroGToggle = 1f; 
                         PersonalGravity = gravMagnitude * (Vector2.down + Vector2.right) / math.SQRT2;
+                        found = true;
+                        break;
+                    case GravityDirection.ZERO:
+                        zeroGToggle = 0f; //don't need to alter direction
+                        found = true;
+                        break;
+                    case GravityDirection.KEEP:
+                        PersonalGravity = oldGravity;
                         found = true;
                         break;
                 }
