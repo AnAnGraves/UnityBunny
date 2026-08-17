@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Mathematics;
+using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static Platformer.Core.Simulation;
 using static UtilityFunctions;
+using static UtilityFunctions.OrderThreeResult;
 
 namespace Platformer.Mechanics
 {
@@ -294,8 +296,15 @@ namespace Platformer.Mechanics
         {
             get
             {
-                Vector3[] txPoints = TransformedBoundsCorners;
-                return (txPoints[0] - txPoints[1]).normalized; //top left minus bottom left
+                return body.transform.up;
+            }
+        }
+
+        protected Vector2 CapsuleRightVector
+        {
+            get
+            {
+                return body.transform.right;
             }
         }
 
@@ -458,8 +467,7 @@ namespace Platformer.Mechanics
             angle += 90.0f; //otherwise faces down in normal gravity
 
             //get the signed angled from old to new
-            float delta = angle - body.rotation;
-            delta = Mod((delta + 180f), 360f) - 180f;
+            float delta = SignedAngleBetweenAngles(body.rotation, angle);
 
             //rotate and sync
             body.rotation = angle;
@@ -564,10 +572,10 @@ namespace Platformer.Mechanics
             m_FrameAdvanceAction.Enable();
             m_SlideAction.Enable();
 
-            _BoundsCorners[0] = new( CapsuleHalfWidth,  CapsuleHeight, 0f);
-            _BoundsCorners[1] = new( CapsuleHalfWidth,  0            , 0f);
-            _BoundsCorners[3] = new(-CapsuleHalfWidth,  0            , 0f);
-            _BoundsCorners[2] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f);
+            _BoundsCorners[2] = new(-CapsuleHalfWidth,  0            , 0f); //bottom left
+            _BoundsCorners[1] = new(CapsuleHalfWidth ,  0            , 0f); //bottom right
+            _BoundsCorners[0] = new(CapsuleHalfWidth ,  CapsuleHeight, 0f); //top right
+            _BoundsCorners[3] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f); //top left
         }
 
         protected void UpdatePersonalGravityModifier()
@@ -928,12 +936,15 @@ namespace Platformer.Mechanics
                 }
             }
 
-            
+            UpdateRotations(oldDir);
+        }
+
+        protected void UpdateRotations(Vector2 LastGravity)
+        {
             //var spriteTx = m_spriteRenderer.transform;
-            float sameness = Vector2.Dot(oldDir, PersonalGravityDirection);
-            Vector2 downVector = IsStateSticking() ? PlayerDownDirection : (IsStateOnGround() ? -GroundNormal : PersonalGravityDirection);
-            
-            if(!IsStateSticking()) //don't ever try to rotate the player while they're sticking to a surface!
+            float sameness = Vector2.Dot(LastGravity, PersonalGravityDirection);
+
+            if (!IsStateSticking()) //don't ever try to rotate the player while they're sticking to a surface!
             {
                 if (IsStateOnGround() && sameness < 0.1f) //when gravity inverts while on a surface
                 {
@@ -959,7 +970,7 @@ namespace Platformer.Mechanics
                     Vector2 vertVel = GetVerticalComponent(velocity);
                     float sign = -Mathf.Sign(Vector2.Dot(vertVel, PersonalGravityDirection)); //negate to get dot with Up
                     float gravSpeed = sign * vertVel.magnitude;
-                    if (gravSpeed < 0 || gravSpeed < (velocity-vertVel).magnitude) //if we're falling or if lateral velocity is dominant (don't need to Abs gravSpeed bc if it's negative it already passed)
+                    if (gravSpeed < 0 || gravSpeed < (velocity - vertVel).magnitude) //if we're falling or if lateral velocity is dominant (don't need to Abs gravSpeed bc if it's negative it already passed)
                     {
                         RaycastHit2D gravCastHit = Physics2D.Raycast(CapsuleCenter, PersonalGravityDirection, CapsuleHeight * 1.5f, LayerMask.GetMask("Terrain"));
                         //Debug.DrawLine(CapsuleCenter, CapsuleCenter + (CapsuleHeight * 1.5f * PersonalGravityDirection), Color.darkCyan, 1.0f);
@@ -972,17 +983,17 @@ namespace Platformer.Mechanics
                                 return;
                             }
                         }
-                    }                    
+                    }
 
-                    if(Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
+                    if (Vector2.Dot(originalUp, -PersonalGravityDirection) < 0.9f)
                     {
                         RotateCapsuleAndUnstick(PersonalGravityDirection);
                     }
                 }
-                else if(IsStateOnGround() && !IsGrounded)
+                else if (IsStateOnGround() && !IsGrounded)
                 {
                     Vector2 newDown;
-                    if(SlidingSlopeTest(out newDown))// && (Vector2.Dot(downVector, newDown) < 0.9f)) 
+                    if (SlidingSlopeTest(out newDown))// && (Vector2.Dot(downVector, newDown) < 0.9f)) 
                     {
                         float angle = RotateCapsuleAndUnstick(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
@@ -991,7 +1002,7 @@ namespace Platformer.Mechanics
                         IsGrounded = true;
                     }
                 }
-                else if(IsStateOnGround())
+                else if (IsStateOnGround())
                 {
                     Vector2 newDown;
                     if (ThreePointSlopeTest(out newDown) && (Vector2.Dot(-CapsuleUpVector, newDown) < 0.9f))
@@ -1001,6 +1012,111 @@ namespace Platformer.Mechanics
                     }
                 }
             }
+
+            UpdateSpriteRotation();
+        }
+
+        //check the distance to ground of the corners and middle and use those distance
+        protected void UpdateSpriteRotation()
+        {
+
+            if(IsStateSticking())
+            {
+                m_spriteRenderer.transform.parent.parent.localPosition = Vector3.zero;
+                m_spriteRenderer.transform.parent.localRotation = Quaternion.identity;
+                return;
+            }
+
+            float castOffsetDist = 0.1f; //amount to raise the cast points to avoid them intersecting the terrain
+            Vector2 castOffset = castOffsetDist * -PersonalGravityDirection; //actual offset vector
+            float dist = CapsuleHeight + castOffsetDist; //raycast distance, which is extended by the offset
+
+            Vector2 leftOrigin = body.position + (Vector2)(CapsuleHalfWidth * -transform.right);
+            Vector2 midOrigin = body.position;
+            Vector2 rightOrigin = body.position + (Vector2)(CapsuleHalfWidth * transform.right);
+
+            RaycastHit2D leftHit =  Physics2D.Raycast(leftOrigin    + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+            RaycastHit2D midHit =   Physics2D.Raycast(body.position + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+            RaycastHit2D rightHit = Physics2D.Raycast(rightOrigin + castOffset, PersonalGravityDirection, dist, LayerMask.GetMask("Terrain"));
+
+            float leftDist = leftHit ? leftHit.distance : -1f;
+            float midDist = midHit ? midHit.distance : -1f;
+            float rightDist = rightHit ? rightHit.distance : -1f;
+
+            Vector2 spriteUp = Vector2.up;
+            float offsetDist = 0f;
+            bool bDoOffset = false;
+
+            int count = (leftHit ? 1 : 0) + (midHit ? 1 : 0) + (rightHit ? 1 : 0);
+            OrderThreeResult ordering = OrderThree(leftDist, midDist, rightDist);
+
+            //since we expect distance >= 0 (or if there's clipping at least > -1) any null hits should come first
+            if(count == 0)
+            {
+                //no surface found, let transform reset
+            }
+            else if(count == 1)
+            {
+                //only _LAST cast hit surface
+                if((ordering & LEFT_LAST) != 0)
+                {
+                    //up vector is normal
+                    spriteUp = leftHit.normal;
+
+                    //make middle level with right corner
+                    offsetDist = Vector2.Dot(leftOrigin - midOrigin, PersonalGravityDirection);
+
+                }
+                else if ((ordering & MIDDLE_LAST) != 0)
+                {
+                    //up vector is normal
+                    spriteUp = midHit.normal;
+                }
+                else
+                {
+                    //up vector is normal
+                    spriteUp = rightHit.normal;
+
+                    //make middle level with right corner
+                    offsetDist = Vector2.Dot(rightOrigin - midOrigin, PersonalGravityDirection);
+                }
+            }
+            else if(count == 2)
+            {
+                //only _FIRST cast did NOT hit surface
+            }
+            else // count == 3
+            {
+                //all casts hit surface
+                Vector2 spriteRight = rightHit.point - leftHit.point;
+                spriteRight.Normalize();
+                spriteUp = Vector2.Perpendicular(spriteRight); //90 degree CCW rotation brings right to up
+
+                //don't offset if the middle cast is shortest
+                bDoOffset = (ordering & MIDDLE_FIRST) == 0;
+            }
+
+            //get signed angle between capsule up and desired sprite up
+            float angle = Mathf.Atan2(spriteUp.y, spriteUp.x) * Mathf.Rad2Deg;
+            angle -= 90.0f; //otherwise faces down in normal gravity
+            float spriteRotAngle = SignedAngleBetweenAngles(body.rotation, angle);
+
+            if (bDoOffset)
+            {
+                //calculate vertical offset caused by rotation about center of base
+                float len = CapsuleHalfWidth; //distance from midpoint to raised corner
+
+                //*
+                Vector2 rotatedRight = midOrigin + (len * Mathf.Cos(spriteRotAngle * Mathf.Deg2Rad) * CapsuleRightVector) + (len * Mathf.Sin(spriteRotAngle * Mathf.Deg2Rad) * CapsuleUpVector);
+                Vector2 unrotatedRight = midOrigin + len * CapsuleRightVector;
+                Vector2 diff = unrotatedRight - rotatedRight;
+                //*/
+                
+                offsetDist = Mathf.Abs(Vector2.Dot(diff, PersonalGravityDirection));
+            }
+
+            m_spriteRenderer.transform.parent.parent.localPosition = PersonalGravityDirection * offsetDist;
+            m_spriteRenderer.transform.parent.localRotation = Quaternion.AngleAxis(spriteRotAngle, Vector3.forward);
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -1110,7 +1226,7 @@ namespace Platformer.Mechanics
 
                 //attempt to knock player out of weird edge cases with... edges...
                 //check whether you are moving roughly parallel to the surface AND the surface is not (currently) a valid walkable surface
-                if (Mathf.Abs(Vector2.Dot(m_LastFrameVelocity.normalized, collision.contacts[0].normal)) < 0.01f && Math.Abs(surfaceness) < minFloorSurfaceness)
+                if (Mathf.Abs(Vector2.Dot(m_LastFrameVelocity.normalized, collision.contacts[0].normal)) < 0.01f && Mathf.Abs(surfaceness) < minFloorSurfaceness)
                 {
                     body.position = body.position + collision.contacts[0].normal * 0.05f;
                 }
@@ -1212,7 +1328,7 @@ namespace Platformer.Mechanics
             {
                 if(jumpChargeTime > chargeTimes[i])
                 {
-                    m_chargePFX.startColor = new(chargeLevelColors[Math.Clamp(i, 0, maxChargeStage)]);
+                    m_chargePFX.startColor = new(chargeLevelColors[Mathf.Clamp(i, 0, maxChargeStage)]);
                     return i;
                 }
             }
@@ -1346,7 +1462,7 @@ namespace Platformer.Mechanics
                     }
                     else if (m_lastChargeStage != m_chargeStage)
                     {
-                        m_chargePFX.startColor = new(chargeLevelColors[Math.Clamp(m_chargeStage, 0, maxChargeStage)]);
+                        m_chargePFX.startColor = new(chargeLevelColors[Mathf.Clamp(m_chargeStage, 0, maxChargeStage)]);
                         m_chargeParticles.Play();
                     }
                     break;
@@ -1397,7 +1513,7 @@ namespace Platformer.Mechanics
 
                             // apply air control and drag
                             lateralSpeed += lateralMove * airControlLateral * Time.deltaTime;
-                            float overspeed = Math.Abs(lateralVel.magnitude) - maxSpeed;
+                            float overspeed = Mathf.Abs(lateralVel.magnitude) - maxSpeed;
                             float dragRatio = overspeed / (maxDragThreshold - maxSpeed);
                             float drag = Mathf.Lerp(airControlLateral, maxDragLateral, dragRatio);
                             if (lateralSpeed > maxSpeed)
@@ -1529,12 +1645,12 @@ namespace Platformer.Mechanics
                 float targetXVelocity = slideSpeedModifier * maxSpeed * lateralMove;
                 if (targetXVelocity > lateralSpeed)
                 {
-                    float accel = Math.Sign(lateralSpeed) == 1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
+                    float accel = Mathf.Sign(lateralSpeed) == 1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
                     lateralVel = Mathf.Min(targetXVelocity, lateralSpeed + (accel * Time.deltaTime)) * AlongGround;
                 }
                 else if (targetXVelocity < lateralSpeed)
                 {
-                    float accel = Math.Sign(lateralSpeed) == -1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
+                    float accel = Mathf.Sign(lateralSpeed) == -1 ? groundAccel * slideDownhillAccelModifier : (groundBraking * (slope == 0 ? slideFlatDecelModifier : slideUphillDecelModifier));
                     lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * AlongGround;
                 }
 
@@ -1549,12 +1665,12 @@ namespace Platformer.Mechanics
                 float targetXVelocity = lateralMove * maxSpeed;
                 if(targetXVelocity > lateralSpeed)
                 {
-                    float accel = Math.Sign(lateralSpeed) == 1 ? groundAccel : groundBraking;
+                    float accel = Mathf.Sign(lateralSpeed) == 1 ? groundAccel : groundBraking;
                     lateralVel = Mathf.Min(targetXVelocity, lateralSpeed + (accel * Time.deltaTime)) * AlongGround;
                 }
                 else if (targetXVelocity < lateralSpeed)
                 {
-                    float accel = Math.Sign(lateralSpeed) == -1 ? groundAccel : groundBraking;
+                    float accel = Mathf.Sign(lateralSpeed) == -1 ? groundAccel : groundBraking;
                     lateralVel = Mathf.Max(targetXVelocity, lateralSpeed - (accel * Time.deltaTime)) * AlongGround; 
                 }
 
@@ -1567,12 +1683,22 @@ namespace Platformer.Mechanics
                 jumpChargeTime = 0.0f;
                 m_chargeStage = -1;
                 m_doLaunch = false;
-            }    
+            }
 
             if (lateralMove > 0.01f)
+            {
                 m_spriteRenderer.flipX = false;
+                Vector3 baseOffset = m_spriteRenderer.transform.parent.localPosition;
+                baseOffset.x = Mathf.Abs(baseOffset.x);
+                m_spriteRenderer.transform.parent.localPosition = baseOffset;
+            }
             else if (lateralMove < -0.01f)
+            {
                 m_spriteRenderer.flipX = true;
+                Vector3 baseOffset = m_spriteRenderer.transform.parent.localPosition;
+                baseOffset.x = -Mathf.Abs(baseOffset.x);
+                m_spriteRenderer.transform.parent.localPosition = baseOffset;
+            }
 
             m_animator.SetBool("grounded", IsStateOnGround());
             m_animator.SetBool("sliding", m_bIsSliding);

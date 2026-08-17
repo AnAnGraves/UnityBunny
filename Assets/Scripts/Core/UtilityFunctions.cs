@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
+using static UtilityFunctions;
 
 class UtilityFunctions
 {
@@ -113,4 +115,69 @@ class UtilityFunctions
         float res = a % b;
         return res < 0 ? res + b : res;
     }
+
+    //flags for encoding a complete ordering of three floats (named left middle and right) in one ushort value
+    //could technically say X_LAST -> !(X_FIRST || X_LAST) and fit it into a byte (6 flags) but I don't think it's worth it unless it's like the last memory optimization available
+    [Flags]
+    public enum OrderThreeResult : ushort
+    {
+        LEFT_FIRST      = 1 << 1,
+        MIDDLE_FIRST    = 1 << 2,
+        RIGHT_FIRST     = 1 << 3,
+        LEFT_SECOND     = 1 << 4,
+        MIDDLE_SECOND   = 1 << 5,
+        RIGHT_SECOND    = 1 << 6,
+        LEFT_LAST       = 1 << 7,
+        MIDDLE_LAST     = 1 << 8,
+        RIGHT_LAST      = 1 << 9,
+    }
+
+    //returns a ushort of flags from OrderThreeResult that tell you the ordering of the three values
+    public static OrderThreeResult OrderThree(float left, float middle, float right)
+    {
+        if(left < middle)
+        {
+            if(left < right) //left first
+            {
+                if(middle < right) //left, middle, right
+                {
+                    return OrderThreeResult.LEFT_FIRST | OrderThreeResult.MIDDLE_SECOND | OrderThreeResult.RIGHT_LAST;
+                }
+                else //left, right, middle
+                {
+                    return OrderThreeResult.LEFT_FIRST | OrderThreeResult.RIGHT_SECOND | OrderThreeResult.MIDDLE_LAST;
+                }
+            }
+            else //left < middle && left > right -> right, left, middle
+            {
+                return OrderThreeResult.RIGHT_FIRST | OrderThreeResult.LEFT_SECOND | OrderThreeResult.MIDDLE_LAST;
+            }
+        }
+        else // middle < left
+        {
+            if(middle < right) //middle first
+            {
+                if(left < right) //middle, left, right
+                {
+                    return OrderThreeResult.MIDDLE_FIRST | OrderThreeResult.LEFT_SECOND | OrderThreeResult.RIGHT_LAST;
+                }
+                else //middle, right, left
+                {
+                    return OrderThreeResult.MIDDLE_FIRST | OrderThreeResult.RIGHT_SECOND | OrderThreeResult.LEFT_LAST;
+                }
+            }
+            else // middle < left && middle > right -> right, middle, left
+            {
+                return OrderThreeResult.RIGHT_FIRST | OrderThreeResult.MIDDLE_SECOND | OrderThreeResult.LEFT_LAST;
+            }
+        }
+    }
+
+    public static float SignedAngleBetweenAngles(float start, float end)
+    {
+        float delta = end - start;
+        delta = Mod((delta + 180f), 360f) - 180f;
+        return delta;
+    }
 }
+
