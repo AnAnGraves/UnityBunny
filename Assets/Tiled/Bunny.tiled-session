@@ -1,12 +1,12 @@
 {
-    "activeFile": "Tilesets/DirectionTiles.tsx",
+    "activeFile": "Prefabs/TheRing.tmx",
     "expandedProjectPaths": [
-        "Worlds",
         "Prefabs/Platforms",
-        "Maps",
         ".",
         "Prefabs",
-        "Tilesets"
+        "Worlds",
+        "Tilesets",
+        "Maps"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -35,19 +35,19 @@
             "scaleInEditor": 1.5
         },
         "Maps/MetricsMap.tmx": {
-            "scale": 0.25,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 6022,
-                "y": 6146
+                "x": 7961.666666666666,
+                "y": 9421.666666666666
             }
         },
         "Maps/MetricsMapMirror.tmx": {
-            "scale": 0.25,
-            "selectedLayer": 2,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 6146,
-                "y": 6146
+                "x": 4284.666666666666,
+                "y": 8867.333333333332
             }
         },
         "Maps/MetricsWorld.tmx": {
@@ -70,7 +70,7 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 256,
+                "x": 255.5,
                 "y": 383.5
             }
         },
@@ -99,11 +99,11 @@
             }
         },
         "Prefabs/TheRing.tmx": {
-            "scale": 0.25,
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2112,
-                "y": 2050
+                "x": 2293,
+                "y": 1637
             }
         },
         "TestMap.tmx": {
@@ -171,15 +171,15 @@
     "property.type": "GravityDirection",
     "recentFiles": [
         "Maps/TestMap.tmx",
+        "Tilesets/DirectionTiles.tsx",
+        "Tilesets/GrasslandTiles.tsx",
+        "Tilesets/RailTiles.tsx",
+        "Prefabs/FloatingIsland1.tmx",
         "Prefabs/Platforms/MetricPlatform.tmx",
         "Maps/MetricsMapMirror.tmx",
         "Maps/MetricsMap.tmx",
         "Tilesets/MetricsTiles.tsx",
         "Prefabs/TheRing.tmx",
-        "Prefabs/FloatingIsland1.tmx",
-        "Tilesets/RailTiles.tsx",
-        "Tilesets/GrasslandTiles.tsx",
-        "Tilesets/DirectionTiles.tsx",
         "Maps/MetricsWorld.tmx",
         "Tilesets/UtilityTiles.tsx"
     ],
