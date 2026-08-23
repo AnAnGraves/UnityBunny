@@ -38,16 +38,16 @@
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 7961.666666666666,
-                "y": 9421.666666666666
+                "x": 6123.666666666666,
+                "y": 6144.333333333333
             }
         },
         "Maps/MetricsMapMirror.tmx": {
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 4284.666666666666,
-                "y": 8867.333333333332
+                "x": 6144.666666666666,
+                "y": 6144.666666666666
             }
         },
         "Maps/MetricsWorld.tmx": {
@@ -70,7 +70,7 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 255.5,
+                "x": 256,
                 "y": 383.5
             }
         },
@@ -86,8 +86,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 741.25,
-                "y": 378.75
+                "x": 384.25,
+                "y": 127.75
             }
         },
         "Prefabs/TemplatePrefab.tmx": {
@@ -102,8 +102,8 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2293,
-                "y": 1637
+                "x": 2112,
+                "y": 2049
             }
         },
         "TestMap.tmx": {

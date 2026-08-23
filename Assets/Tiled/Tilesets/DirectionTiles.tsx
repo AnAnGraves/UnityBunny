@@ -77,5 +77,8 @@
   <properties>
    <property name="Gravity" type="int" propertytype="GravityDirection" value="10"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="128" height="128"/>
+  </objectgroup>
  </tile>
 </tileset>

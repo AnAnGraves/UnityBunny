@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="33" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/RailTiles.tsx"/>
+ <tileset firstgid="13" source="../Tilesets/GrasslandTiles.tsx"/>
+ <tileset firstgid="94" source="../Tilesets/DirectionTiles.tsx"/>
+ <tileset firstgid="106" source="../Tilesets/MetricsTiles.tsx"/>
+ <layer id="4" name="Gravity" class="GravityLayer" width="33" height="32" opacity="0.1">
+  <data encoding="base64" compression="zlib">
+   eJztlYEKgzAMRPunVp3s//9gGzRQjjRpe6FMtoMDEeE9Y4Mp/XPHnKUjOUoj+bMOrMcsP8pD4z/ezR29AjxafKnHl856ePxPn0avNOdxwvUsn/FAB4bf64F87dwzfM9jK7X48hzDR49dcdjhvuawkXwpsuo54Iwk8v4rHTJ0pYOXFQ6tMyn78wsO374X8pzMg+HLrK0z2fI4oAwfv7m2F/V+tv4xox4tvuw9Bh1YD4+vOaAP48Hyez2sRPA9j55E8C2PkbB81iOKjx55oJH8OiMOd8kLN3rO9w==
+  </data>
+ </layer>
+ <layer id="5" name="Background" class="VisualOnlyLayer" width="33" height="32" tintcolor="#7f7f7f">
+  <properties>
+   <property name="RenderOrder" type="int" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEKAAAIAzEf7f9x7yzokEDnXhUAsKGPPnMabhrShwYA+GQA/9IHtQ==
+  </data>
+ </layer>
+ <layer id="1" name="Regular Degular" class="TerrainLayer" width="33" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztljESgDAIBPNeO63096ZMARLIQSzuZujU3UlkoDWGiefsdTjq2sxHe4z8Z/KdG+gR4SM9VvgIDwR/xQPJ93hI/z2KL3nM8KXnENG+rfV2pcN4Rln3YDlUhg7fDlJfoGee5fDXvqh20DwydxAryNkv8bmDxMIdRPfwVOYOsoPP5OYF3HhYsw==
+  </data>
+ </layer>
+ <layer id="2" name="Foreground" class="VisualOnlyLayer" width="33" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztzqENAAAMw7C+v69HdsFQgS2FJwGAv7k8ePDgofEBgB4Lkx4Jow==
+  </data>
+ </layer>
+</map>
