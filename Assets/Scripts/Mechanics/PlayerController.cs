@@ -1017,8 +1017,9 @@ namespace Platformer.Mechanics
                 }
                 else if (IsStateOnGround() && !IsGrounded)
                 {
+                    //try to stick to slope if not sliding
                     Vector2 newDown;
-                    if (SlidingSlopeTest(out newDown) && (Vector2.Dot(-CapsuleUpVector, newDown) < 0.9f)) 
+                    if (!m_bIsSliding && SlidingSlopeTest(out newDown) && (Vector2.Dot(-CapsuleUpVector, newDown) < 0.9f)) 
                     {
                         float angle = RotateCapsuleAndUnstick(newDown);
                         SnapToSurfaceUnderPoint(body.position, newDown);
@@ -1112,6 +1113,30 @@ namespace Platformer.Mechanics
             else if(count == 2)
             {
                 //only _FIRST cast did NOT hit surface
+                if ((ordering & LEFT_FIRST) != 0)
+                {
+                    Vector2 spriteRight = rightHit.point - midHit.point;
+                    spriteUp = Vector2.Perpendicular(spriteRight.normalized); //90 degree CCW rotation brings right to up
+                    Vector2 midpoint = midHit.point;
+
+                    float offsetDist = Mathf.Min(midDist, Vector2.Dot(midpoint - midOrigin, PersonalGravityDirection));
+                    offset = offsetDist * PersonalGravityDirection;
+                }
+                if ((ordering & RIGHT_FIRST) != 0)
+                {
+                    Vector2 spriteRight = midHit.point - leftHit.point;
+                    spriteUp = Vector2.Perpendicular(spriteRight.normalized); //90 degree CCW rotation brings right to up
+                    Vector2 midpoint = midHit.point;
+
+                    float offsetDist = Mathf.Min(midDist, Vector2.Dot(midpoint - midOrigin, PersonalGravityDirection));
+                    offset = offsetDist * PersonalGravityDirection;
+                }
+                if ((ordering & MIDDLE_FIRST) != 0)
+                {
+                    //only middle didn't hit, so presumably crossing some kind of small gap
+                    //except being tile-based I don't believe this is possible so, ignore this
+                    Debug.Log("Wrong!");
+                }
             }
             else // count == 3
             {
@@ -1123,9 +1148,9 @@ namespace Platformer.Mechanics
                 float offsetDist = Mathf.Min(midDist, Vector2.Dot(midpoint - midOrigin, PersonalGravityDirection));
                 offset = offsetDist * PersonalGravityDirection;
 
-                Debug.DrawLine(leftHit.point, leftHit.point + spriteRight, Color.yellow);
-                Debug.DrawLine(midOrigin, midOrigin + (midDist * PersonalGravityDirection), Color.purple);
-                Debug.DrawLine(leftOrigin, rightOrigin, Color.red);
+                //Debug.DrawLine(leftHit.point, leftHit.point + spriteRight, Color.yellow);
+                //Debug.DrawLine(midOrigin, midOrigin + (midDist * PersonalGravityDirection), Color.purple);
+                //Debug.DrawLine(leftOrigin, rightOrigin, Color.red);
             }
 
             //get signed angle between capsule up and desired sprite up
@@ -1358,12 +1383,13 @@ namespace Platformer.Mechanics
         void UpdateJumpState()
         {
             //before anything, if we're in 'Grounded' state but the last movement update made took us off a ledge, become airborne IF there isn't a walkable surface we should follow below us
+            //if sliding, we should just launch off of edges
             if(m_state == JumpState.Grounded && !IsGrounded)
             {
                 Vector2 originalUp = GroundNormal;
                 Vector2 newDown;
                 bool snapped = false;
-                if (SlidingSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
+                if (!m_bIsSliding && SlidingSlopeTest(out newDown) && (Vector2.Dot(originalUp, newDown) > -0.9f)) //just check if they're opposites rather than flip one to match the other
                 {
                     if(Vector2.Dot(newDown, PersonalGravityDirection) > 0.5f)
                     {
