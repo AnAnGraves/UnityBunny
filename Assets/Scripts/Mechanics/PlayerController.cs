@@ -1703,7 +1703,16 @@ namespace Platformer.Mechanics
                 m_doLaunch = false;
             }
 
-            if (lateralMove > 0.01f)
+            if(m_bIsSliding)
+            {
+                bool flipped = Vector2.Dot(lateralDirection, velocity) < 0f;
+                m_spriteRenderer.flipX = flipped;
+                Vector3 baseOffset = m_spriteRenderer.transform.localPosition;
+                baseOffset.x = flipped ? -Mathf.Abs(baseOffset.x) : Mathf.Abs(baseOffset.x);
+                m_spriteRenderer.transform.localPosition = baseOffset;
+            }
+            //note that the below can't be combined like this bc facing should not change when the stick is not pressed
+            else if (lateralMove > 0.01f)
             {
                 m_spriteRenderer.flipX = false;
                 Vector3 baseOffset = m_spriteRenderer.transform.localPosition;
@@ -1726,7 +1735,7 @@ namespace Platformer.Mechanics
 
             m_animator.SetBool("grounded", IsStateOnGround());
             m_animator.SetBool("sliding", m_bIsSliding);
-            m_animator.SetFloat("velocityX", (Mathf.Abs(lateralMove) > RunAnimThreshold ? Mathf.Abs(lateralMove) : 0.0f) / maxSpeed);
+            m_animator.SetFloat("velocityX", IsStateCharging() ? 0f : (Mathf.Abs(lateralMove) > RunAnimThreshold ? Mathf.Abs(lateralMove) : 0.0f) / maxSpeed);
 
             //targetVelocity = velocity;
         }
