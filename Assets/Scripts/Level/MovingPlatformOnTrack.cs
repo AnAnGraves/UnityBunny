@@ -1,13 +1,8 @@
 ﻿using Platformer.Mechanics;
 using SuperTiled2Unity;
-using SuperTiled2Unity.Editor;
-using System;
+//using SuperTiled2Unity.Editor;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using Unity.Tutorials.Core.Editor;
-using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
@@ -74,7 +69,7 @@ namespace SuperMovingPlatform
             }
             Assert.IsNotNull(rbComp);
             rbComp.bodyType = RigidbodyType2D.Static;
-            rbComp.sharedMaterial = ST2USettings.instance.m_DefaultPhysMat;
+            //rbComp.sharedMaterial = ST2USettings.instance.m_DefaultPhysMat;
 
             GameObject goTilemap = GetComponentInChildren<SuperMap>().gameObject;
             if (!goTilemap)

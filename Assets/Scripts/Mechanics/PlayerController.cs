@@ -231,17 +231,22 @@ namespace Platformer.Mechanics
         internal ParticleSystem m_chargeParticles;
         internal ParticleSystem.MainModule m_chargePFX;
         public Health m_health;
+
+        public PlayerInteractionComponent m_interact;
         public bool m_controlEnabled = true;
 
         //TODO: everything in UI should go into a new component
         internal Canvas m_UICanvas;
+        internal Canvas m_UIScreenSpace;
         internal SpriteRenderer m_AimArrowSprite;
+        internal TextMeshProUGUI m_InteractText;
 
         public Color[] chargeLevelColors = { Color.red, Color.green, Color.blue, Color.white };
 
         Vector2 m_move;
         Vector2 m_aim;
         internal SpriteRenderer m_spriteRenderer;
+        internal SpriteRenderer m_backpackRenderer;
         internal Animator m_animator;
         readonly PlatformerModel m_model = Simulation.GetModel<PlatformerModel>();
         bool m_bIsPaused = false;
@@ -254,6 +259,9 @@ namespace Platformer.Mechanics
         private InputAction m_PauseAction;
         private InputAction m_FrameAdvanceAction;
         private InputAction m_SlideAction;
+        private InputAction m_InteractAction;
+
+        private InteractableObject m_BestInteractable = null;
 
         private ContactFilter2D m_terrainFilter;
 
@@ -554,6 +562,7 @@ namespace Platformer.Mechanics
         void Awake()
         {
             m_health = GetComponent<Health>();
+            m_interact = GetComponent<PlayerInteractionComponent>();
             m_audioSource = GetComponentInChildren<AudioSource>();
             m_collider2d = GetComponentInChildren<Collider2D>();
             m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -568,9 +577,43 @@ namespace Platformer.Mechanics
             m_terrainFilter.ClearNormalAngle();
             m_terrainFilter.SetLayerMask(LayerMask.GetMask("Terrain"));
 
+            //Sprites
+            Transform mainSpriteTx = FindDeepChild(transform, "MainRenderer");
+            if(mainSpriteTx)
+            {
+                m_spriteRenderer = mainSpriteTx.gameObject.GetComponent<SpriteRenderer>();
+
+                Transform backpackTx = FindDeepChild(mainSpriteTx, "BackpackRenderer");
+                if(backpackTx)    
+                {
+                    m_backpackRenderer = backpackTx.gameObject.GetComponent<SpriteRenderer>();
+                }
+            }
+
             //UI
-            m_UICanvas = GetComponentInChildren<Canvas>();
-            m_AimArrowSprite = m_UICanvas.gameObject.GetComponentInChildren<SpriteRenderer>();
+            Transform uiTransform = FindDeepChild(transform, "PlayerUI");
+            if (uiTransform)
+            {
+                m_UICanvas = uiTransform.gameObject.GetComponent<Canvas>();
+            }
+
+            Transform ssuiTransform = FindDeepChild(transform, "ScreenSpaceCanvas");
+            if (ssuiTransform)
+            {
+                m_UIScreenSpace = ssuiTransform.gameObject.GetComponent<Canvas>();
+            }
+
+            Transform arrowTransform = FindDeepChild(m_UICanvas.transform, "Arrow");
+            if(arrowTransform)
+            {
+                m_AimArrowSprite = arrowTransform.gameObject.GetComponent<SpriteRenderer>();
+            }
+
+            Transform interactTransform = FindDeepChild(m_UIScreenSpace.transform, "InteractText");
+            if (interactTransform)
+            {
+                m_InteractText = interactTransform.gameObject.GetComponent<TextMeshProUGUI>();
+            }
 
             m_MoveAction = InputSystem.actions.FindAction("Player/Move");
             m_JumpAction = InputSystem.actions.FindAction("Player/Jump");
@@ -579,6 +622,7 @@ namespace Platformer.Mechanics
             m_PauseAction = InputSystem.actions.FindAction("Player/Pause");
             m_FrameAdvanceAction = InputSystem.actions.FindAction("Player/FrameAdvance");
             m_SlideAction = InputSystem.actions.FindAction("Player/Slide");
+            m_InteractAction = InputSystem.actions.FindAction("Player/Interact");
 
             m_MoveAction.Enable();
             m_JumpAction.Enable();
@@ -587,11 +631,22 @@ namespace Platformer.Mechanics
             m_PauseAction.Enable();
             m_FrameAdvanceAction.Enable();
             m_SlideAction.Enable();
+            m_InteractAction.Enable();
 
             _BoundsCorners[2] = new(-CapsuleHalfWidth,  0            , 0f); //bottom left
             _BoundsCorners[1] = new(CapsuleHalfWidth ,  0            , 0f); //bottom right
             _BoundsCorners[0] = new(CapsuleHalfWidth ,  CapsuleHeight, 0f); //top right
             _BoundsCorners[3] = new(-CapsuleHalfWidth,  CapsuleHeight, 0f); //top left
+        }
+
+        internal void ToggleBackpack()
+        {
+            if(m_backpackRenderer)
+            {
+                Color color = m_backpackRenderer.color;
+                color.a = 1 - color.a;
+                m_backpackRenderer.color = color;
+            }
         }
 
         protected void UpdatePersonalGravityModifier()
@@ -656,6 +711,8 @@ namespace Platformer.Mechanics
                 }
             }
 
+            UpdateInteraction();
+
             UpdateInputs();
 
             if (m_bIsPaused && !m_bFrameAdvance) return; //halt update immediately
@@ -671,6 +728,11 @@ namespace Platformer.Mechanics
 
             UpdateUI();
             DebugDraw();
+        }
+
+        protected void UpdateInteraction()
+        {
+            m_BestInteractable = m_interact.GetBestInteractable();
         }
 
         private void UpdateUI()
@@ -690,6 +752,19 @@ namespace Platformer.Mechanics
             else
             {
                 m_AimArrowSprite.size = Vector2.zero;
+            }
+
+            if(m_BestInteractable)
+            {
+                Color color = m_InteractText.color;
+                color.a = 1;
+                m_InteractText.color = color;
+            }
+            else
+            {
+                Color color = m_InteractText.color;
+                color.a = 0;
+                m_InteractText.color = color;
             }
         }
 
@@ -761,6 +836,15 @@ namespace Platformer.Mechanics
 
             if (m_controlEnabled)
             {
+
+                if(m_InteractAction.WasPressedThisFrame())
+                {
+                    if(m_BestInteractable)
+                    {
+                        m_BestInteractable.GetComponent<InteractableObject>().OnInteract();
+                    }
+                }
+
                 //ground movement or air control
                 //if (m_state == JumpState.Grounded || (!m_bIsPreBallistic && m_state == JumpState.InFlight) || m_state == JumpState.Falling)
                 //{

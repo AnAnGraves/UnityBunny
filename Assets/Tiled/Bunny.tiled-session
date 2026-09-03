@@ -43,11 +43,11 @@
             }
         },
         "Maps/MetricsMapMirror.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 6144.666666666666,
-                "y": 6144.666666666666
+                "x": 2352.5,
+                "y": 1433.5
             }
         },
         "Maps/MetricsWorld.tmx": {
